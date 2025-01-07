@@ -53,3 +53,12 @@ The directory structure of the project looks like this:
 Created using [mlops_template](https://github.com/SkafteNicki/mlops_template),
 a [cookiecutter template](https://github.com/cookiecutter/cookiecutter) for getting
 started with Machine Learning Operations (MLOps).
+
+
+## MLops tools
+
+### Typing
+This [cheat sheet](https://mypy.readthedocs.io/en/stable/cheat_sheet_py3.html) is a good resource on typing. Run [mypy](https://mypy.readthedocs.io/en/stable/index.html) on the `tasks.py` file
+```bash
+mypy tasks.py
+```
