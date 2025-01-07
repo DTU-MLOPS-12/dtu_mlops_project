@@ -118,7 +118,8 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- 12 ---
+--- question 1 fill here ---
+12
 
 ### Question 2
 > **Enter the study number for each member in the group**
@@ -129,7 +130,8 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- s233489, jonnil, s091969, s233480 ---
+--- question 2 fill here ---
+s233489, jonnil, s091969, s233480
 
 ### Question 3
 > **A requirement to the project is that you include a third-party package not covered in the course. What framework**
