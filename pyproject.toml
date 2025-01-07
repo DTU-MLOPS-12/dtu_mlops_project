@@ -7,7 +7,10 @@ name = "dtu_mlops_project"
 version = "0.0.1"
 description = "02476 Machine Learning Operations Project"
 authors = [
-  { name = "s233489@student.dtu.dk jonnil@dtu.dk s091969@student.dtu.dk s233480@student.dtu.dk", email = "your@email.com" },
+  { name = "s233489", email = "s233489@student.dtu.dk" },
+  { name = "jonnil", email = "jonnil@dtu.dk" },
+  { name = "s091969", email = "s091969@student.dtu.dk" },
+  { name = "s233480", email = "s233480@student.dtu.dk" }
 ]
 
 readme = "README.md"
