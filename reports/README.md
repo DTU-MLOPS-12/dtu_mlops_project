@@ -118,7 +118,6 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- question 1 fill here ---
 12
 
 ### Question 2
@@ -130,7 +129,6 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- question 2 fill here ---
 s233489, jonnil, s091969, s233480
 
 ### Question 3
