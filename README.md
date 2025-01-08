@@ -59,6 +59,45 @@ Created using [mlops_template](https://github.com/SkafteNicki/mlops_template),
 a [cookiecutter template](https://github.com/cookiecutter/cookiecutter) for getting
 started with Machine Learning Operations (MLOps).
 
+
+
+## MLops tools
+
+### Dev Environment Setup
+- Setup first time
+```bash
+cd /dtu_mlops_project 
+sudo apt install python3.12-venv # Optional if not installed
+python3 -m venv env  # create a virtual environment in project
+source env/bin/activate  # activate that virtual environment
+```
+
+- Install pip requirements
+```bash
+# install requirements.txt
+pip install .
+# or in developer mode requirements_dev.txt
+pip install -e .
+```
+
+- Open project in VS Code with active env
+```bash
+code .
+```
+
+- Deactivate env and delete files (debugging)
+```bash
+cd /dtu_mlops_project
+deactivate
+python3 -m venv --clear env
+```
+
+### Typing
+This [cheat sheet](https://mypy.readthedocs.io/en/stable/cheat_sheet_py3.html) is a good resource on typing. Run [mypy](https://mypy.readthedocs.io/en/stable/index.html) on the `tasks.py` file
+```bash
+mypy tasks.py
+```
+
 ## Invoke Commands
 Information about all available executable tasks:
  ```bash
