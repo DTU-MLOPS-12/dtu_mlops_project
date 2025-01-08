@@ -102,6 +102,11 @@ Information about all available executable tasks:
     invoke docker-build
     ```
 
+- Run and serve the backend API
+    ```bash
+    invoke runserver
+    ```
+
 ### Documentation Commands
 -  Build documentation from the docs directory into a static website:
     ```bash 
@@ -112,3 +117,17 @@ Information about all available executable tasks:
     ```bash
     invoke serve-docs
     ```
+
+## CLI's
+
+This project comes with a few different scripts, each with their own options:
+
+### `data.py`
+
+### `evaluate.py`
+
+### `model.py`
+
+### `train.py`
+
+### `visualize.py`
