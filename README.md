@@ -59,24 +59,56 @@ Created using [mlops_template](https://github.com/SkafteNicki/mlops_template),
 a [cookiecutter template](https://github.com/cookiecutter/cookiecutter) for getting
 started with Machine Learning Operations (MLOps).
 
-## Relevant Commands
-
 ## Invoke Commands
-- `invoke --list`: Information about all available tasks
+Information about all available executable tasks:
+ ```bash
+ invoke --list
+ ```
 
 ### Setup Commands
-- `invoke create-environment`: Create a new conda environment for the project.
-- `invoke requirements`: Install project requirements from requirements.txt.
-- `invoke dev-requirements`: Install development requirements from requirements.txt.
+- Create a new conda environment for the project:
+    ```bash
+    invoke create-environment
+    ```
+
+- Install project requirements from requirements.txt:
+    ```bash
+    invoke requirements
+    ```
+
+- Install development requirements from requirements_dev.txt:
+    ```bash
+    invoke dev-requirements
+    ```
 
 ### MLOps Commands
-- `invoke preprocess-data`: Execute the data preprocessing pipeline, which includes data cleaning, normalization, and feature engineering.
-- `invoke train`: Train the machine learning model using the preprocessed data and specified configuration settings.
-- `invoke test`: Run the test suite to evaluate the performance and accuracy of the trained model.
-- `invoke docker-build`: Build Docker images for the project, including environments for training and API deployment.
+- Execute the data preprocessing pipeline, which includes data cleaning, normalization, and feature engineering:
+    ```bash
+    invoke preprocess-data
+    ```
+
+- Train the machine learning model using the preprocessed data and specified configuration settings:
+    ```bash
+    invoke train
+    ```
+
+- Run the test suite to evaluate the performance and accuracy of the trained model:
+    ```bash
+    invoke test
+    ```
+
+- Build Docker images for the project, including environments for training and API deployment:
+    ```bash
+    invoke docker-build
+    ```
 
 ### Documentation Commands
-- `invoke build-docs`: Build documentation from the docs directory into a static website.
-- `invoke serve-docs`: Starts a local server that can be used to view the documentation from the docs directory.
+-  Build documentation from the docs directory into a static website:
+    ```bash 
+    invoke build-docs
+    ```
 
-## TODO: Add more commands
+- Starts a local server that can be used to view the documentation from the docs directory:
+    ```bash
+    invoke serve-docs
+    ```
