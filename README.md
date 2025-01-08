@@ -61,6 +61,7 @@ started with Machine Learning Operations (MLOps).
 
 
 
+
 ## MLops tools
 
 ### Dev Environment Setup
@@ -90,6 +91,13 @@ code .
 cd /dtu_mlops_project
 deactivate
 python3 -m venv --clear env
+```
+### Linting
+
+This [page](https://docs.astral.sh/ruff/) contains an overview of the Ruff tool, which is an extremely fast code linter and formatter. As an example, you can run the following:
+
+```bash
+ruff check tasks.py
 ```
 
 ### Typing
