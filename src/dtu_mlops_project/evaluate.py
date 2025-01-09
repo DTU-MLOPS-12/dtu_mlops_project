@@ -1,7 +1,9 @@
 import torch
 import typer
-from model import MyAwesomeModel
+from pathlib import Path
+from typing import Annotated
 
+from model import MyAwesomeModel
 from data import corrupt_mnist
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
@@ -9,7 +11,9 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.ba
 app = typer.Typer()
 
 @app.command()
-def evaluate(model_checkpoint: str) -> None:
+def evaluate(
+    model_checkpoint: Annotated[Path, typer.Option("--model-checkpoint", help="Path to the model checkpoint file")]
+) -> None:
     """Evaluate a trained model."""
     print("Evaluating like my life depended on it")
     print(model_checkpoint)
