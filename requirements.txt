@@ -4,4 +4,4 @@ fastapi==0.115.6
 uvicorn==0.34.0
 scikit-learn==1.6.0
 matplotlib==3.10.0
-
+wandb==0.19.2
