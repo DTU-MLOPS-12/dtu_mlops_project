@@ -3,6 +3,8 @@ TODO: Give the project a title^
 
 02476 Machine Learning Operations Project at DTU
 
+TODO: On DTU Learn hand-in (as a group) the link to your GitHub repository as an assignment
+
 ## Project Description
 Our new customer requires a custom and flexible image classification solution for real-world photos, specifically designed for robotics and edge AI platforms. A crucial requirement is the ability to rapidly add new classes while maintaining strict constraints on model size to ensure optimal inference performance on limited hardware resources. 
 
