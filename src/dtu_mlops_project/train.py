@@ -1,16 +1,21 @@
 import matplotlib.pyplot as plt
 import torch
 import typer
+
 from model import MyAwesomeModel
-
 from data import corrupt_mnist
+from utils import get_device
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
+DEVICE = get_device()
 
 app = typer.Typer()
 
 @app.command()
-def train(lr: float = 1e-3, batch_size: int = 32, epochs: int = 10) -> None:
+def train(
+    lr: float = typer.Option(1e-3, help="Learning rate for the optimizer"),
+    batch_size: int = typer.Option(32, help="Batch size for training"),
+    epochs: int = typer.Option(10, help="Number of training epochs")
+) -> None:
     """Train a model on MNIST."""
     print("Training day and night")
     print(f"{lr=}, {batch_size=}, {epochs=}")

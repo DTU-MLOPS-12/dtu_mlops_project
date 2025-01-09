@@ -3,13 +3,21 @@ import torch
 import typer
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
+from pathlib import Path
+from typing import Annotated
 
-from template.model import MyAwesomeModel
+from model import MyAwesomeModel
+from utils import get_device
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
+DEVICE = get_device()
 
+app = typer.Typer()
 
-def visualize(model_checkpoint: str, figure_name: str = "embeddings.png") -> None:
+@app.command()
+def visualize(
+    model_checkpoint: Annotated[Path, typer.Option("--model-checkpoint", help="Path to the model checkpoint file")],
+    figure_name: Annotated[str, typer.Option("embeddings.png", help="Name of the output figure file")]
+) -> None:
     """Visualize model predictions."""
 
     model = MyAwesomeModel().to(DEVICE)
@@ -51,4 +59,4 @@ def visualize(model_checkpoint: str, figure_name: str = "embeddings.png") -> Non
 
 
 if __name__ == "__main__":
-    typer.run(visualize)
+    app()
