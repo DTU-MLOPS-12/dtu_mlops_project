@@ -10,7 +10,11 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.ba
 app = typer.Typer()
 
 @app.command()
-def train(lr: float = 1e-3, batch_size: int = 32, epochs: int = 10) -> None:
+def train(
+    lr: float = typer.Option(1e-3, help="Learning rate for the optimizer"),
+    batch_size: int = typer.Option(32, help="Batch size for training"),
+    epochs: int = typer.Option(10, help="Number of training epochs")
+) -> None:
     """Train a model on MNIST."""
     print("Training day and night")
     print(f"{lr=}, {batch_size=}, {epochs=}")
