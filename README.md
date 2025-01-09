@@ -12,7 +12,7 @@ The customer demands that we create a proof-of-concept system capable of trainin
 
 For this challenge, we will select a pretrained model from PyTorch Image Models (TIMM) and fine-tune it using relevant classes from a subset of the ImageNet dataset. With over 10,000 classes available in ImageNet, our solution can adapt dynamically to meet the customer's evolving classification needs. 
 
-We will begin by utilizing MobileNet-V4 in various sizes, which has not been trained on the ImageNet dataset, to evaluate its performance and ensure high classification accuracy. To support our customers' need for various models and minimize boilerplate in our solution, we will incorporate the official training script from TIMM. This approach will enable us to fine-tune the model using multiple hyperparameters and to leverage a vast number of TIMM classification models in our solution.
+We will begin by utilizing MobileNet-V4 in various sizes, which has not been trained on the ImageNet dataset, to evaluate its performance and ensure high classification accuracy. To support our customers' need for various models and minimize boilerplate in our solution, we will integrate the official training script from TIMM, a open-source third-party package. This approach will enable us to fine-tune a model using multiple hyperparameters and to leverage a vast number of TIMM classification models in our solution.
 
 Subsequently, we plan to optimize the model through quantization techniques and create a robust classification endpoint utilizing FastAPI.
 
