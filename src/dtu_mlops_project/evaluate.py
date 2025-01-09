@@ -5,8 +5,9 @@ from typing import Annotated
 
 from model import MyAwesomeModel
 from data import corrupt_mnist
+from utils import get_device
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
+DEVICE = get_device()
 
 app = typer.Typer()
 
