@@ -24,6 +24,3 @@ jobs:
 
       - name: Ruff check
         run: ruff check .
-
-      - name: Ruff format
-        run: ruff format .
