@@ -1,6 +1,6 @@
 # dtu_mlops_project
 
-02476 Machine Learning Operations Project
+02476 Machine Learning Operations Project at DTU
 
 ## Authors
 TODO
