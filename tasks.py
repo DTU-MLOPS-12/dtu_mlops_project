@@ -38,11 +38,12 @@ def dev_requirements(ctx: Context) -> None:
 
 @task
 def preprocess_data(
-    ctx: Context, raw_data: str = "data/raw",
-    output_folder: str = "data/processed",
+    ctx: Context, 
+    raw_dir: str = "data/raw",
+    processed_dir: str = "data/processed",
 ) -> None:
     """Preprocess data."""
-    ctx.run(f"python src/{PROJECT_NAME}/data.py --raw-dir {raw_data} --processed-dir {output_folder}",
+    ctx.run(f"python src/{PROJECT_NAME}/data.py --raw-dir {raw_dir} --processed-dir {processed_dir}",
             echo=True, pty=not WINDOWS)
 
 
