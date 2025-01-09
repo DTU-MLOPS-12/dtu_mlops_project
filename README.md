@@ -1,9 +1,7 @@
 # dtu_mlops_project
+TODO: Give the project a title^
 
-02476 Machine Learning Operations Project
-
-## Authors
-TODO
+02476 Machine Learning Operations Project on DTU
 
 ## Project Description
 Our new customer requires a custom and flexible image classification solution for real-world photos, specifically designed for robotics and edge AI platforms. A crucial requirement is the ability to rapidly add new classes while maintaining strict constraints on model size to ensure optimal inference performance on limited hardware resources. 
