@@ -42,7 +42,7 @@ def preprocess_data(
     output_folder: str = "data/processed",
 ) -> None:
     """Preprocess data."""
-    ctx.run(f"python src/{PROJECT_NAME}/data.py --raw-data {raw_data} --output-folder {output_folder}",
+    ctx.run(f"python src/{PROJECT_NAME}/data.py --raw-dir {raw_data} --processed-dir {output_folder}",
             echo=True, pty=not WINDOWS)
 
 
