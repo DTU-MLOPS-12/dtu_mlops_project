@@ -28,7 +28,7 @@ as your final hand-in.
 Running
 
 ```bash
-python report.py check
+cd reports && python report.py check
 ```
 
 Will check your answers in this template against the constraints listed for each question e.g. is your answer too

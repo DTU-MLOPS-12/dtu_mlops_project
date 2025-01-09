@@ -6,3 +6,5 @@ uvicorn==0.34.0
 scikit-learn==1.6.0
 matplotlib==3.10.0
 wandb==0.19.2
+loguru==0.7.3
+pydantic==2.10.5
