@@ -16,7 +16,7 @@ app = typer.Typer()
 @app.command()
 def visualize(
     model_checkpoint: Annotated[Path, typer.Option("--model-checkpoint", help="Path to the model checkpoint file")],
-    figure_name: Annotated[str, typer.Option("embeddings.png", help="Name of the output figure file")]
+    figure_name: Annotated[str, typer.Option("--figure-name", help="Name of the output figure file")] = "embeddings.png"
 ) -> None:
     """Visualize model predictions."""
 

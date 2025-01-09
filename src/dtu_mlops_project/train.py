@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import torch
 import typer
+import wandb
 
 from model import MyAwesomeModel
 from data import corrupt_mnist
@@ -19,6 +20,13 @@ def train(
     """Train a model on MNIST."""
     print("Training day and night")
     print(f"{lr=}, {batch_size=}, {epochs=}")
+
+    wandb.init(
+        project="corrupt_mnist",
+        config={"lr": lr, 
+                "batch_size": batch_size, 
+                "epochs": epochs},
+    )
 
     model = MyAwesomeModel().to(DEVICE)
     train_set, _ = corrupt_mnist()
@@ -43,8 +51,16 @@ def train(
             accuracy = (y_pred.argmax(dim=1) == target).float().mean().item()
             statistics["train_accuracy"].append(accuracy)
 
+            wandb.log({"train_loss": loss.item(), "train_accuracy": accuracy})
+
             if i % 100 == 0:
                 print(f"Epoch {epoch}, iter {i}, loss: {loss.item()}")
+
+                images = wandb.Image(img[:5].detach().cpu(), caption="Input images")
+                wandb.log({"images": images})
+
+                grads = torch.cat([p.grad.flatten() for p in model.parameters() if p.grad is not None], 0)
+                wandb.log({"gradients": wandb.Histogram(grads)})
 
     print("Training complete")
     torch.save(model.state_dict(), "models/model.pth")
