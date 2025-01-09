@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import torch
 import typer
 import wandb
+from sklearn.metrics import RocCurveDisplay, accuracy_score, f1_score, precision_score, recall_score
 
 from model import MyAwesomeModel
 from data import corrupt_mnist
@@ -63,7 +64,19 @@ def train(
                 wandb.log({"gradients": wandb.Histogram(grads)})
 
     print("Training complete")
-    torch.save(model.state_dict(), "models/model.pth")
+    model_path = "models/model.pth"
+    torch.save(model.state_dict(), model_path)
+
+    # Log the model as an artifact
+    artifact = wandb.Artifact(
+        name="corrupt_mnist_model",
+        type="model",
+        description="A model trained to classify corrupt MNIST images"
+    )
+    artifact.add_file(model_path)
+    wandb.log_artifact(artifact)
+
+    # Link the artifact to the model registry
     fig, axs = plt.subplots(1, 2, figsize=(15, 5))
     axs[0].plot(statistics["train_loss"])
     axs[0].set_title("Train loss")
