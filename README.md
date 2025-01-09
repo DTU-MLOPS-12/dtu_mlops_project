@@ -3,12 +3,6 @@ TODO: Give the project a title^
 
 02476 Machine Learning Operations Project on DTU
 
-## Authors
-- Nicolai Veiglin Arends
-- Thomas Larsen
-- Jonas Birkelund Nilsson
-- Tomas Hagenau Andersen
-
 ## Project Description
 TODO 
 
