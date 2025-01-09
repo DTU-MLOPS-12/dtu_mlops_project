@@ -1,6 +1,8 @@
 import torch
 from torch import nn
+import typer
 
+app = typer.Typer()
 
 class MyAwesomeModel(nn.Module):
     """My awesome model."""
@@ -26,7 +28,11 @@ class MyAwesomeModel(nn.Module):
         return self.fc1(x)
 
 
-if __name__ == "__main__":
+@app.command()
+def model_info() -> None:
+    """
+    Print model architecture and number of parameters.
+    """
     model = MyAwesomeModel()
     print(f"Model architecture: {model}")
     print(f"Number of parameters: {sum(p.numel() for p in model.parameters())}")
@@ -34,3 +40,7 @@ if __name__ == "__main__":
     dummy_input = torch.randn(1, 1, 28, 28)
     output = model(dummy_input)
     print(f"Output shape: {output.shape}")
+
+if __name__ == '__main__':
+    app()
+

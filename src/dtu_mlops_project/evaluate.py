@@ -6,7 +6,9 @@ from data import corrupt_mnist
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
+app = typer.Typer()
 
+@app.command()
 def evaluate(model_checkpoint: str) -> None:
     """Evaluate a trained model."""
     print("Evaluating like my life depended on it")
@@ -29,4 +31,4 @@ def evaluate(model_checkpoint: str) -> None:
 
 
 if __name__ == "__main__":
-    typer.run(evaluate)
+    app()
