@@ -47,9 +47,13 @@ def preprocess_data(
 
 
 @task
-def train(ctx: Context) -> None:
+def train(ctx: Context,
+          lr: float = 1e-3,
+          batch_size: int = 32,
+          epochs: int = 10) -> None:
     """Train model."""
-    ctx.run(f"python src/{PROJECT_NAME}/train.py", echo=True, pty=not WINDOWS)
+    ctx.run(f"python src/{PROJECT_NAME}/train.py --lr {lr} --batch-size {batch_size} --epochs {epochs}", 
+            echo=True, pty=not WINDOWS)
 
 
 @task
@@ -80,8 +84,6 @@ def runserver(ctx: Context, port: int = 8000) -> None:
 
 
 # Documentation commands
-
-
 @task(dev_requirements)
 def build_docs(ctx: Context) -> None:
     """Build documentation."""
