@@ -21,6 +21,7 @@ Subsequently, we plan to optimize the model through quantization techniques and 
 Resources:
 - [PyTorch Image Models (TIMM) Documentation](https://github.com/huggingface/pytorch-image-models?tab=readme-ov-file#getting-started-documentation)
 - [MobileNet-V4](https://huggingface.co/blog/rwightman/mobilenetv4)
+- [imagenet-1k-wds Dataset](https://huggingface.co/datasets/timm/imagenet-1k-wds)
 - [Classes](https://huggingface.co/datasets/ILSVRC/imagenet-1k/blob/main/classes.py)
    - Trucks:
    - Buses: n03769881, n04146614, n04487081
