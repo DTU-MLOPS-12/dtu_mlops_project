@@ -57,10 +57,10 @@ def api_predict(image_file: fastapi.UploadFile | None = None):
     """
     if not image_file:
         logger.error("Received a request without an image file/with an invalid file")
-        return {
-            'message': HTTPStatus.BAD_REQUEST.phrase,
-            'status': HTTPStatus.BAD_REQUEST,
-        }
+        raise fastapi.HTTPException(
+            status_code=400,
+            detail='Expected a valid image file'
+        )
 
     image = Image.open(image_file.file)
     if image.mode != 'RGB':
