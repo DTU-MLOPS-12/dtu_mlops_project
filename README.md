@@ -1,7 +1,8 @@
-# dtu_mlops_project
-TODO: Give the project a title^
+# MLOps-Driven Fine-Tuning of MobileNet-V4 for Vehicle Classification Using ImageNet
 
-02476 Machine Learning Operations Project at DTU
+This repository is for the project in course 02476 - Machine Learning Operations at DTU.
+
+This project focuses on fine-tuning a MobileNet-V4 model, sourced from PyTorch Image Models (TIMM) utilizing the ImageNet dataset [described in the Project Description.](#project-description)  
 
 ## Project Description
 Our new customer requires a custom and flexible image classification solution for real-world photos, specifically designed for robotics and edge AI platforms. A crucial requirement is the ability to rapidly add new classes while maintaining strict constraints on model size to ensure optimal inference performance on limited hardware resources. 
