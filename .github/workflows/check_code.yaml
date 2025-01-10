@@ -24,3 +24,6 @@ jobs:
 
       - name: Ruff check
         run: ruff check .
+
+      - name: Mypy type check
+        run: mypy src/dtu_mlops_project/
