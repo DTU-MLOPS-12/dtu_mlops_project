@@ -57,14 +57,13 @@ def api_predict(image_file: fastapi.UploadFile | None = None):
             'status': HTTPStatus.BAD_REQUEST,
         }
 
-    image = Image.open(image_file)
+    image = Image.open(image_file.file)
     if image.mode != 'RGB':
         image = image.convert(mode='RGB')
 
-    probs, classes = model.dummy_model(image)
+    probs, classes = 1, 1  # model.dummy_model(image)
 
     return HTTP_200_OK | {
         'probabilities': probs,
         'classification_indices': classes,
     }
-
