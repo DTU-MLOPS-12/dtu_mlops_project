@@ -9,6 +9,8 @@ from . import model
 @asynccontextmanager
 async def lifespan(app: fastapi.FastAPI):
     print("API is up and running...")
+    app.dummy_model = model.get_dummy_model()
+    print("Model initialization complete...")
     yield
     print("Shutting down API")
 
@@ -61,7 +63,7 @@ def api_predict(image_file: fastapi.UploadFile | None = None):
     if image.mode != 'RGB':
         image = image.convert(mode='RGB')
 
-    probs, classes = 1, 1  # model.dummy_model(image)
+    probs, classes = app.dummy_model(image)
 
     return HTTP_200_OK | {
         'probabilities': probs,
