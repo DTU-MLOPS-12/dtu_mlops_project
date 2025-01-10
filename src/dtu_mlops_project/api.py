@@ -1,18 +1,19 @@
 from contextlib import asynccontextmanager
+
 import fastapi
+from loguru import logger
 from http import HTTPStatus
 from PIL import Image
 
 from . import model
 
+dummy_model = model.get_dummy_model()
 
 @asynccontextmanager
 async def lifespan(app: fastapi.FastAPI):
-    print("API is up and running...")
-    app.dummy_model = model.get_dummy_model()
-    print("Model initialization complete...")
+    logger.info("API is up and running...")
     yield
-    print("Shutting down API")
+    logger.info("Shutting down API")
 
 
 # The FastAPI app object
@@ -30,6 +31,7 @@ def home():
     """
     Root end-point (for health-check purposes)
     """
+    logger.debug("Received a health-check request.")
     return HTTP_200_OK
 
 
@@ -54,6 +56,7 @@ def api_predict(image_file: fastapi.UploadFile | None = None):
     model through it.
     """
     if not image_file:
+        logger.error("Received a request without an image file/with an invalid file")
         return {
             'message': HTTPStatus.BAD_REQUEST.phrase,
             'status': HTTPStatus.BAD_REQUEST,
@@ -61,9 +64,12 @@ def api_predict(image_file: fastapi.UploadFile | None = None):
 
     image = Image.open(image_file.file)
     if image.mode != 'RGB':
+        logger.debug("Image is not in RGB mode. Performing conversion")
         image = image.convert(mode='RGB')
 
-    probs, classes = app.dummy_model(image)
+    probs, classes = dummy_model(image)
+    logger.debug(f"Dummy model computed probabilities: '{probs}' "
+                 f"with corresponding class indices: '{classes}'")
 
     return HTTP_200_OK | {
         'probabilities': probs,
