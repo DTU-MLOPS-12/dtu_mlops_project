@@ -1,8 +1,6 @@
 # dtu_mlops_project
 TODO: Give the project a title^
 
-TODO: On DTU Learn hand-in (as a group) the link to your GitHub repository as an assignment
-
 02476 Machine Learning Operations Project at DTU
 
 ## Project Description
