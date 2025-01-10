@@ -38,18 +38,38 @@ def dev_requirements(ctx: Context) -> None:
 
 @task
 def preprocess_data(
-    ctx: Context, raw_data: str = "data/raw",
-    output_folder: str = "data/processed",
+    ctx: Context,
+    raw_dir: str = "data/raw",
+    processed_dir: str = "data/processed",
 ) -> None:
     """Preprocess data."""
-    ctx.run(f"python src/{PROJECT_NAME}/data.py --raw-data {raw_data} --output-folder {output_folder}",
+    ctx.run(f"python src/{PROJECT_NAME}/data.py --raw-dir {raw_dir} --processed-dir {processed_dir}",
             echo=True, pty=not WINDOWS)
 
 
 @task
-def train(ctx: Context) -> None:
+def train(ctx: Context,
+          lr: float = 1e-3,
+          batch_size: int = 32,
+          epochs: int = 10) -> None:
     """Train model."""
-    ctx.run(f"python src/{PROJECT_NAME}/train.py", echo=True, pty=not WINDOWS)
+    ctx.run(f"python src/{PROJECT_NAME}/train.py --lr {lr} --batch-size {batch_size} --epochs {epochs}",
+            echo=True, pty=not WINDOWS)
+
+
+@task
+def evaluate(ctx: Context,
+             model_checkpoint: str = "models/model.pth") -> None:
+    """Evaluate model."""
+    ctx.run(f"python src/{PROJECT_NAME}/evaluate.py --model-checkpoint {model_checkpoint}", echo=True, pty=not WINDOWS)
+
+
+@task
+def visualize(ctx: Context,
+              model_checkpoint: str = "models/model.pth", 
+              figure_name: str = "embeddings.png") -> None:
+    """Visualize model predictions."""
+    ctx.run(f"python src/{PROJECT_NAME}/visualize.py --model-checkpoint {model_checkpoint} --figure-name {figure_name}", echo=True, pty=not WINDOWS)
 
 
 @task
