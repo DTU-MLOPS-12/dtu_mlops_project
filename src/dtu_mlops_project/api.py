@@ -35,7 +35,7 @@ def home():
     return HTTP_200_OK
 
 
-@app.get('/about')
+@app.get('/about/')
 def about():
     """
     A small 'about' section
@@ -49,7 +49,7 @@ def about():
     }
 
 
-@app.post("/api/predict")
+@app.post("/api/predict/")
 def api_predict(image_file: fastapi.UploadFile | None = None):
     """
     API endpoint that receives an image file an runs the dummy
