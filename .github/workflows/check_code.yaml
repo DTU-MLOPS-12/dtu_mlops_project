@@ -25,12 +25,12 @@ jobs:
           pip install ruff
           pip list
 
-      - name: Ruff check and continue
+      - name: Ruff check
         run: |
-          ruff check src/dtu_mlops_project/ || true
+          ruff check src/dtu_mlops_project/
           echo "Ruff check completed."
 
-      - name: Mypy type check and continue
+      - name: Mypy type check
         run: | 
-          mypy src/dtu_mlops_project/ || true
+          mypy src/dtu_mlops_project/
           echo "Mypy type check completed."
