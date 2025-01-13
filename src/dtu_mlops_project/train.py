@@ -12,11 +12,12 @@ DEVICE = get_device()
 
 app = typer.Typer()
 
+
 @app.command()
 def train(
     lr: float = typer.Option(1e-3, help="Learning rate for the optimizer"),
     batch_size: int = typer.Option(32, help="Batch size for training"),
-    epochs: int = typer.Option(10, help="Number of training epochs")
+    epochs: int = typer.Option(10, help="Number of training epochs"),
 ) -> None:
     """Train a model on MNIST."""
     print("Training day and night")
@@ -24,9 +25,7 @@ def train(
 
     wandb.init(
         project="corrupt_mnist",
-        config={"lr": lr, 
-                "batch_size": batch_size, 
-                "epochs": epochs},
+        config={"lr": lr, "batch_size": batch_size, "epochs": epochs},
     )
 
     model = MyAwesomeModel().to(DEVICE)
@@ -69,9 +68,7 @@ def train(
 
     # Log the model as an artifact
     artifact = wandb.Artifact(
-        name="corrupt_mnist_model",
-        type="model",
-        description="A model trained to classify corrupt MNIST images"
+        name="corrupt_mnist_model", type="model", description="A model trained to classify corrupt MNIST images"
     )
     artifact.add_file(model_path)
     wandb.log_artifact(artifact)

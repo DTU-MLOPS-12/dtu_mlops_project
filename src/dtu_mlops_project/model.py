@@ -4,6 +4,7 @@ import typer
 
 app = typer.Typer()
 
+
 class MyAwesomeModel(nn.Module):
     """My awesome model."""
 
@@ -41,6 +42,6 @@ def model_info() -> None:
     output = model(dummy_input)
     print(f"Output shape: {output.shape}")
 
-if __name__ == '__main__':
-    app()
 
+if __name__ == "__main__":
+    app()

@@ -4,12 +4,9 @@ from http import HTTPStatus
 app = fastapi.FastAPI()
 
 
-@app.get('/')
+@app.get("/")
 def home():
     """
     Root end-point (for health-check purposes)
     """
-    return {
-        'message': HTTPStatus.OK.phrase,
-        'status-code': HTTPStatus.OK
-    }
+    return {"message": HTTPStatus.OK.phrase, "status-code": HTTPStatus.OK}

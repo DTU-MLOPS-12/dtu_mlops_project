@@ -11,9 +11,12 @@ DEVICE = get_device()
 
 app = typer.Typer()
 
+
 @app.command()
 def evaluate(
-    model_checkpoint: Annotated[Path, typer.Option("--model-checkpoint", help="Path to the model checkpoint file")] = "models/model.pth"
+    model_checkpoint: Annotated[
+        Path, typer.Option("--model-checkpoint", help="Path to the model checkpoint file")
+    ] = "models/model.pth",
 ) -> None:
     """Evaluate a trained model."""
     print("Evaluating like my life depended on it")
