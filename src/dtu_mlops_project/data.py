@@ -5,16 +5,23 @@ from typing import Annotated
 
 app = typer.Typer()
 
+
 def normalize(images: torch.Tensor) -> torch.Tensor:
     """Normalize images."""
     return (images - images.mean()) / images.std()
+
 
 @app.command()
 def preprocess_data(
     raw_dir: Annotated[Path, typer.Option("--raw-dir")] = "data/raw/",
     processed_dir: Annotated[Path, typer.Option("--processed-dir")] = "data/processed"
 ) -> None:
-    """Process raw data and save it to processed directory."""
+    """
+    Process raw data and save it to processed directory.
+
+    :param raw_dir: Path-like object designating the location of the raw data
+    :param processed_dir: Path-like object designating the location of the output of the preprocessing result.
+    """
     train_images, train_target = [], []
     for i in range(6):
         train_images.append(torch.load(f"{raw_dir}/train_images_{i}.pt"))
@@ -38,6 +45,7 @@ def preprocess_data(
     torch.save(test_images, f"{processed_dir}/test_images.pt")
     torch.save(test_target, f"{processed_dir}/test_target.pt")
 
+
 def corrupt_mnist() -> tuple[torch.utils.data.Dataset, torch.utils.data.Dataset]:
     """Return train and test datasets for corrupt MNIST."""
     train_images = torch.load("data/processed/train_images.pt")
@@ -48,7 +56,7 @@ def corrupt_mnist() -> tuple[torch.utils.data.Dataset, torch.utils.data.Dataset]
     train_set = torch.utils.data.TensorDataset(train_images, train_target)
     test_set = torch.utils.data.TensorDataset(test_images, test_target)
     return train_set, test_set
-  
+
 
 if __name__ == "__main__":
     app()
