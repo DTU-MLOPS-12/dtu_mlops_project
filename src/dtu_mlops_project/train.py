@@ -1,13 +1,17 @@
 import matplotlib.pyplot as plt
 import torch
 import typer
+import wandb
+
+from data import corrupt_mnist
 from model import MyAwesomeModel
 from utils import get_device
 
-import wandb
-from data import corrupt_mnist
+
 
 app = typer.Typer()
+
+
 DEVICE = get_device()
 
 
