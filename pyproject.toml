@@ -27,5 +27,8 @@ dev = {file = ['requirements_dev.txt']}
 line-length = 120
 lint.select = ["I"]
 
+[tool.ruff.format]
+isort = true
+
 [tool.coverage.run]
 omit = ["tests/*"]
