@@ -6,9 +6,14 @@ on:
       - '**.py'
 
 jobs:
-  format:
-      runs-on: ubuntu-latest
-      steps:
+  testrunner:
+    name: "Run the test suite"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}
+
+    steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -21,21 +26,16 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
+          activate_environment: dtu_mlops_project
           python-version: 3.12 
-
-      - name: Create conda environment
-        run: |
-          pip install invoke
-          invoke create-environment
-          conda init
+          channels: conda-forge
 
       - name: Install dependencies
         run: |
-          conda activate dtu_mlops_project
           pip install -r requirements.txt
           pip install -r requirements_dev.txt
+          pip install -e .
 
       - name: Run the tests
         run: |
-          invoke test
-          coverage report
+          coverage run -m pytest tests/
