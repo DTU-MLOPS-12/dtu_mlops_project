@@ -9,6 +9,9 @@ from . import model
 
 dummy_model = model.get_dummy_model()
 
+IMAGE_MIME_TYPES = ('image/jpeg', 'image/png', 'image/svg', 'image/svg+xml')
+
+
 @asynccontextmanager
 async def lifespan(app: fastapi.FastAPI):
     logger.info("API is up and running...")
@@ -50,16 +53,19 @@ def about():
 
 
 @app.post("/api/predict/")
-def api_predict(image_file: fastapi.UploadFile | None = None):
+def api_predict(image_file: fastapi.UploadFile):
     """
     API endpoint that receives an image file an runs the dummy
     model through it.
     """
-    if not image_file:
-        logger.error("Received a request without an image file/with an invalid file")
+    if image_file.content_type not in IMAGE_MIME_TYPES:
+        logger.error("Received an image file of with the wrong MIME type - "
+                     f"expected: {IMAGE_MIME_TYPES}, "
+                     f"got: {image_file.content_type}")
         raise fastapi.HTTPException(
             status_code=400,
-            detail='Expected a valid image file'
+            detail=(f"Got an invalid file type: {image_file.content_type}. "
+                    f"Acceptable file types are: {IMAGE_MIME_TYPES}")
         )
 
     image = Image.open(image_file.file)
