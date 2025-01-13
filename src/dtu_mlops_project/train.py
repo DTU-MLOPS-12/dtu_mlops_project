@@ -1,11 +1,11 @@
+import matplotlib.pyplot as plt
 import torch
 import typer
-import matplotlib.pyplot as plt
-from sklearn.metrics import RocCurveDisplay, accuracy_score, f1_score, precision_score, recall_score
-import wandb
-
 from model import MyAwesomeModel
+from sklearn.metrics import RocCurveDisplay, accuracy_score, f1_score, precision_score, recall_score
 from utils import get_device
+
+import wandb
 from data import corrupt_mnist
 
 DEVICE = get_device()
