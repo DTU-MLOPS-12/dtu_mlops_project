@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt # noqa: I001
 import torch
 import typer
 import wandb
@@ -7,10 +7,7 @@ from data import corrupt_mnist
 from model import MyAwesomeModel
 from utils import get_device
 
-
-
 app = typer.Typer()
-
 
 DEVICE = get_device()
 
