@@ -23,6 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install ruff
+          pip install mypy
           pip list
 
       - name: Ruff check
