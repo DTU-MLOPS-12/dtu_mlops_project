@@ -16,7 +16,12 @@ def preprocess_data(
     raw_dir: Annotated[Path, typer.Option("--raw-dir")] = "data/raw/",
     processed_dir: Annotated[Path, typer.Option("--processed-dir")] = "data/processed",
 ) -> None:
-    """Process raw data and save it to processed directory."""
+    """
+    Process raw data and save it to processed directory.
+
+    :param raw_dir: Path-like object designating the location of the raw data
+    :param processed_dir: Path-like object designating the location of the output of the preprocessing result.
+    """
     train_images, train_target = [], []
     for i in range(6):
         train_images.append(torch.load(f"{raw_dir}/train_images_{i}.pt"))

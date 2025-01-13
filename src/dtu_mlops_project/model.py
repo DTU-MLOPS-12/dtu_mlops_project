@@ -1,8 +1,43 @@
+import functools
+import typing
+
+import timm
 import torch
 from torch import nn
 import typer
 
 app = typer.Typer()
+
+
+@functools.cache
+def get_dummy_model() -> typing.Callable:
+    """
+    Initializes a 'dummy' model ('mobilenetv4') for temporary use.
+
+    :returns: A callable which can run the initialized model.
+    """
+    model_name = 'mobilenetv4_conv_small.e2400_r224_in1k'
+    mobilenetv4_model = timm.create_model(model_name, pretrained=True)
+    mobilenetv4_model = mobilenetv4_model.eval()
+
+    data_config = timm.data.resolve_model_data_config(mobilenetv4_model)
+    transforms = timm.data.create_transform(**data_config, is_training=False)
+
+    def _run_model(image, k: int = 5) -> typing.Tuple:
+        """
+        Runs the model on an image object with and computes the top 'k'
+        probabilities and their associated class indices.
+
+        :param image: The image to run the model on.
+        :param k: The number of classes to return.
+        :returns: a tuple of top 'k' class indices and their probabilities.
+        """
+        output = mobilenetv4_model(transforms(image).unsqueeze(0))
+
+        probabilities, class_indices = torch.topk(output.softmax(dim=1) * 100, k=k)
+        return probabilities, class_indices
+
+    return _run_model
 
 
 class MyAwesomeModel(nn.Module):
@@ -43,5 +78,5 @@ def model_info() -> None:
     print(f"Output shape: {output.shape}")
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app()
