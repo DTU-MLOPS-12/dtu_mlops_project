@@ -16,7 +16,7 @@ def get_dummy_model() -> typing.Callable:
 
     :returns: A callable which can run the initialized model.
     """
-    model_name = 'mobilenetv4_conv_small.e2400_r224_in1k'
+    model_name = "mobilenetv4_conv_small.e2400_r224_in1k"
     mobilenetv4_model = timm.create_model(model_name, pretrained=True)
     mobilenetv4_model = mobilenetv4_model.eval()
 
@@ -78,5 +78,5 @@ def model_info() -> None:
     print(f"Output shape: {output.shape}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app()
