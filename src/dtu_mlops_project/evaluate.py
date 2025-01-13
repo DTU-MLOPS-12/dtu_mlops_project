@@ -1,11 +1,12 @@
-import torch
-import typer
 from pathlib import Path
 from typing import Annotated
 
+import torch
+import typer
 from model import MyAwesomeModel
-from data import corrupt_mnist
 from utils import get_device
+
+from data import corrupt_mnist
 
 DEVICE = get_device()
 

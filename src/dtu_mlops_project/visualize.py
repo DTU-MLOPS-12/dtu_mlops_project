@@ -1,12 +1,12 @@
-import matplotlib.pyplot as plt
-import torch
-import typer
-from sklearn.decomposition import PCA
-from sklearn.manifold import TSNE
 from pathlib import Path
 from typing import Annotated
 
+import matplotlib.pyplot as plt
+import torch
+import typer
 from model import MyAwesomeModel
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 from utils import get_device
 
 DEVICE = get_device()

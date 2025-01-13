@@ -3,8 +3,8 @@ import typing
 
 import timm
 import torch
-from torch import nn
 import typer
+from torch import nn
 
 app = typer.Typer()
 

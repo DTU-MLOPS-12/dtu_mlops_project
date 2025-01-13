@@ -1,7 +1,8 @@
-import torch
-import typer
 from pathlib import Path
 from typing import Annotated
+
+import torch
+import typer
 
 app = typer.Typer()
 

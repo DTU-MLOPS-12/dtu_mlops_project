@@ -1,8 +1,8 @@
 from contextlib import asynccontextmanager
+from http import HTTPStatus
 
 import fastapi
 from loguru import logger
-from http import HTTPStatus
 from PIL import Image
 
 from . import model
