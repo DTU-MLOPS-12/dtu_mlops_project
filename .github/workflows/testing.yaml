@@ -1,0 +1,41 @@
+name: Run the test suite with pytest
+
+on:
+  push:
+    path:
+      - '**.py'
+
+jobs:
+  testrunner:
+    name: "Run the test suite"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+          cache: 'pip'
+
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          activate_environment: dtu_mlops_project
+          python-version: 3.12 
+          channels: conda-forge
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements_dev.txt
+          pip install -e .
+
+      - name: Run the tests
+        run: |
+          coverage run -m pytest tests/
