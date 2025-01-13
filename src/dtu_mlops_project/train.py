@@ -7,9 +7,8 @@ from data import corrupt_mnist
 from model import MyAwesomeModel
 from utils import get_device
 
-DEVICE = get_device()
-
 app = typer.Typer()
+DEVICE = get_device()
 
 
 @app.command()
