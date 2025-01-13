@@ -1,4 +1,4 @@
-name: Check code formatting and style with Ruff
+name: Check code formatting and style with Ruff and MyPy
 
 on:
   workflow_dispatch:
@@ -23,7 +23,7 @@ jobs:
           pip list
 
       - name: Ruff check
-        run: ruff check .
+        run: ruff check src/dtu_mlops_project/
 
       - name: Mypy type check
         run: mypy src/dtu_mlops_project/
