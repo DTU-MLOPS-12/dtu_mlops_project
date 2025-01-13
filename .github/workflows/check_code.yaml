@@ -1,6 +1,9 @@
 name: Check code formatting and style with Ruff and MyPy
 
 on:
+  pull_request:
+   branches:
+     - main
   workflow_dispatch:
     
 jobs:
