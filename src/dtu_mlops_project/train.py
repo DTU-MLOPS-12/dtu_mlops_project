@@ -247,18 +247,17 @@ def main(
     # Initialize an empty dictionary for arguments
     args_dict = {}
 
-    # Capture the rest of the arguments
-    for key, value in locals().items():
-        # Add them to the args_dict
-        if key != "config":  # Avoid overriding config option
-            args_dict[key] = value
-
     # If there's a config file, load it and update the defaults
     if config:
         with open(config, 'r') as f:
             cfg = yaml.safe_load(f)
-            # Apply the config values to override default arguments
             args_dict.update(cfg)
+
+    # Capture the command-line arguments
+    for key, value in locals().items():
+        # Add them to the args_dict
+        if key != "config":
+            args_dict[key] = value
 
     # Cache the arguments as a text string to save them later
     args_text = yaml.safe_dump(args_dict, default_flow_style=False)
