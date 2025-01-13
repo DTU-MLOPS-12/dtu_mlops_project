@@ -24,7 +24,7 @@ jobs:
 
       - name: Ruff format
         run: |
-          ruff check src/dtu_mlops_project/ --fix
+          ruff check src/dtu_mlops_project/ --select I --fix
           ruff format src/dtu_mlops_project/
           echo "Code formatting with Ruff is complete."
 
