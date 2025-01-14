@@ -47,7 +47,7 @@ try:
     from functorch.compile import memory_efficient_fusion
 
     has_functorch = True
-except ImportError as e:
+except ImportError:
     has_functorch = False
 
 has_compile = hasattr(torch, "compile")
@@ -335,7 +335,7 @@ def validate(args):
     )
 
     if args.valid_labels:
-        with open(args.valid_labels, "r") as f:
+        with open(args.valid_labels) as f:
             valid_labels = [int(line.rstrip()) for line in f]
     else:
         valid_labels = None
@@ -409,19 +409,11 @@ def validate(args):
 
             if batch_idx % args.log_freq == 0:
                 _logger.info(
-                    "Test: [{0:>4d}/{1}]  "
-                    "Time: {batch_time.val:.3f}s ({batch_time.avg:.3f}s, {rate_avg:>7.2f}/s)  "
-                    "Loss: {loss.val:>7.4f} ({loss.avg:>6.4f})  "
-                    "Acc@1: {top1.val:>7.3f} ({top1.avg:>7.3f})  "
-                    "Acc@5: {top5.val:>7.3f} ({top5.avg:>7.3f})".format(
-                        batch_idx,
-                        len(loader),
-                        batch_time=batch_time,
-                        rate_avg=input.size(0) / batch_time.avg,
-                        loss=losses,
-                        top1=top1,
-                        top5=top5,
-                    )
+                    f"Test: [{batch_idx:>4d}/{len(loader)}]  "
+                    f"Time: {batch_time.val:.3f}s ({batch_time.avg:.3f}s, {input.size(0) / batch_time.avg:>7.2f}/s)  "
+                    f"Loss: {losses.val:>7.4f} ({losses.avg:>6.4f})  "
+                    f"Acc@1: {top1.val:>7.3f} ({top1.avg:>7.3f})  "
+                    f"Acc@5: {top5.val:>7.3f} ({top5.avg:>7.3f})"
                 )
 
     if real_labels is not None:
@@ -525,7 +517,7 @@ def main():
                 if args.checkpoint:
                     r["checkpoint"] = args.checkpoint
                 results.append(r)
-        except KeyboardInterrupt as e:
+        except KeyboardInterrupt:
             pass
         results = sorted(results, key=lambda x: x["top1"], reverse=True)
     else:

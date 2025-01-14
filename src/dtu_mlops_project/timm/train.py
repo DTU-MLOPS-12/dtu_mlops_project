@@ -61,7 +61,7 @@ try:
     from functorch.compile import memory_efficient_fusion
 
     has_functorch = True
-except ImportError as e:
+except ImportError:
     has_functorch = False
 
 has_compile = hasattr(torch, "compile")
@@ -628,7 +628,7 @@ def _parse_args():
     # Do we have a config file to parse?
     args_config, remaining = config_parser.parse_known_args()
     if args_config.config:
-        with open(args_config.config, "r") as f:
+        with open(args_config.config) as f:
             cfg = yaml.safe_load(f)
             parser.set_defaults(**cfg)
 
@@ -1207,7 +1207,7 @@ def main():
 
     if best_metric is not None:
         # log best metric as tracked by checkpoint saver
-        _logger.info("*** Best metric: {0} (epoch {1})".format(best_metric, best_epoch))
+        _logger.info(f"*** Best metric: {best_metric} (epoch {best_epoch})")
 
     if utils.is_primary(args):
         # for parsable results display, dump top-10 summaries to avoid excess console spam

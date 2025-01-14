@@ -23,7 +23,7 @@ def get_dummy_model() -> typing.Callable:
     data_config = timm.data.resolve_model_data_config(mobilenetv4_model)
     transforms = timm.data.create_transform(**data_config, is_training=False)
 
-    def _run_model(image, k: int = 5) -> typing.Tuple:
+    def _run_model(image, k: int = 5) -> tuple:
         """
         Runs the model on an image object with and computes the top 'k'
         probabilities and their associated class indices.
