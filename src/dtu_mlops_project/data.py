@@ -1,20 +1,16 @@
 import json
 import os
-from datasets import load_dataset, DatasetDict, load_from_disk, Dataset
-import matplotlib.pyplot as plt
-from PIL import Image
 import random
-
 from pathlib import Path
-from typing import Optional, Union
-from typing import Annotated
-import typer
-from typing import List, Optional
-from pathlib import Path
-from loguru import logger
+from typing import Annotated, List, Optional, Union
 
+import matplotlib.pyplot as plt
 import torch
 import typer
+from loguru import logger
+from PIL import Image
+
+from datasets import Dataset, DatasetDict, load_dataset, load_from_disk
 
 app = typer.Typer()
 
