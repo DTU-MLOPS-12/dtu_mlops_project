@@ -230,7 +230,7 @@ gcloud config set project <project-id>
 ```
 
 
-#### DVC
+### DVC
 - Initialized DVC repository.
 ```bash
 dvc init
@@ -246,3 +246,4 @@ git add .dvc/config
 ```bash
 dvc remote modify remote_storage version_aware true
 ```
+
