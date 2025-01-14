@@ -1,13 +1,10 @@
-name: Check code with Ruff
+name: Fix and format code with Ruff
 
 on:
-  pull_request:
-   branches:
-     - main
   workflow_dispatch:
     
 jobs:
-  check:
+  format:
       runs-on: ubuntu-latest
       steps:
       - name: Checkout code
@@ -25,7 +22,11 @@ jobs:
           pip install ruff
           pip list
 
-      - name: Ruff check
+      - name: Ruff format
         run: |
-          ruff check src/dtu_mlops_project/
-          echo "Ruff check completed."
+          ruff check src/dtu_mlops_project/ --select I --fix
+          ruff format src/dtu_mlops_project/
+          echo "Code formatting with Ruff is complete."
+
+
+

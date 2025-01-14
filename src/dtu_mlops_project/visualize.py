@@ -1,22 +1,27 @@
-import matplotlib.pyplot as plt
-import torch
-import typer
-from sklearn.decomposition import PCA
-from sklearn.manifold import TSNE
 from pathlib import Path
 from typing import Annotated
 
+import matplotlib.pyplot as plt
+import torch
+import typer
 from model import MyAwesomeModel
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 from utils import get_device
 
 DEVICE = get_device()
 
 app = typer.Typer()
 
+
 @app.command()
 def visualize(
-    model_checkpoint: Annotated[Path, typer.Option("--model-checkpoint", help="Path to the model checkpoint file")] = "models/model.pth",
-    figure_name: Annotated[str, typer.Option("--figure-name", help="Name of the output figure file")] = "embeddings.png"
+    model_checkpoint: Annotated[
+        Path, typer.Option("--model-checkpoint", help="Path to the model checkpoint file")
+    ] = "models/model.pth",
+    figure_name: Annotated[
+        str, typer.Option("--figure-name", help="Name of the output figure file")
+    ] = "embeddings.png",
 ) -> None:
     """Visualize model predictions."""
 
