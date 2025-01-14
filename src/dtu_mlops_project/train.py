@@ -68,7 +68,7 @@ _logger = logging.getLogger('train')
 
 
 # Helper function to convert key=value list into a dictionary
-def parse_key_value_pair(pair: str) -> Dict[str, str]:
+def parse_key_value_pair(pair: str) -> dict[str, str]:
     return dict(kv.split('=') for kv in pair)
 
 @app.command()
@@ -102,10 +102,10 @@ def main(
     gp: str = typer.Option(None, help="Global pool type"),
     img_size: int = typer.Option(None, help="Image size"),
     in_chans: int = typer.Option(None, help="Image input channels"),
-    input_size: Optional[List[int]] = typer.Option(None, help="Input dimensions (d h w)"),
+    input_size: Optional[list[int]] = typer.Option(None, help="Input dimensions (d h w)"),
     crop_pct: float = typer.Option(None, help="Input image center crop percent"),
-    mean: List[float] = typer.Option(None, help="Override mean pixel value of dataset"),
-    std: List[float] = typer.Option(None, help="Override std deviation of dataset"),
+    mean: list[float] = typer.Option(None, help="Override mean pixel value of dataset"),
+    std: list[float] = typer.Option(None, help="Override std deviation of dataset"),
     interpolation: str = typer.Option("", help="Image resize interpolation type"),
     batch_size: int = typer.Option(128, "-b", help="Batch size for training"),
     validation_batch_size: int = typer.Option(None, "-vb", help="Validation batch size override"),
@@ -114,7 +114,7 @@ def main(
     grad_accum_steps: int = typer.Option(1, help="Number of steps to accumulate gradients"),
     grad_checkpointing: bool = typer.Option(False, help="Enable gradient checkpointing"),
     fast_norm: bool = typer.Option(False, help="Enable experimental fast normalization"),
-    model_kwargs: List[str] = typer.Option([], help="Additional model kwargs in key=value format"),
+    model_kwargs: list[str] = typer.Option([], help="Additional model kwargs in key=value format"),
     head_init_scale: float = typer.Option(None, help="Head initialization scale"),
     head_init_bias: float = typer.Option(None, help="Head initialization bias value"),
     torchcompile_mode: str = typer.Option(None, help="Torch.compile mode"),
@@ -132,18 +132,18 @@ def main(
     no_ddp_bb: bool = typer.Option(False, help="Disable broadcast buffers in DDP"),
     synchronize_step: bool = typer.Option(False, help="Synchronize CUDA at the end of each step"),
     local_rank: int = typer.Option(0, help="Local rank for distributed training"),
-    device_modules: List[str] = typer.Option(None, help="Python imports for device backend modules"),
+    device_modules: list[str] = typer.Option(None, help="Python imports for device backend modules"),
 
     # Optimizer parameters
     opt: str = typer.Option("sgd", help="Optimizer (default: sgd)"),
     opt_eps: float = typer.Option(None, help="Optimizer epsilon"),
-    opt_betas: List[float] = typer.Option(None, help="Optimizer betas"),
+    opt_betas: list[float] = typer.Option(None, help="Optimizer betas"),
     momentum: float = typer.Option(0.9, help="Optimizer momentum"),
     weight_decay: float = typer.Option(2e-5, help="Weight decay"),
     clip_grad: float = typer.Option(None, help="Clip gradient norm"),
     clip_mode: str = typer.Option("norm", help="Gradient clipping mode"),
     layer_decay: float = typer.Option(None, help="Layer-wise learning rate decay"),
-    opt_kwargs: List[str] = typer.Option([], help="Additional optimizer kwargs in key=value format"),
+    opt_kwargs: list[str] = typer.Option([], help="Additional optimizer kwargs in key=value format"),
 
     # Learning rate schedule parameters
     sched: str = typer.Option("cosine", help='LR scheduler (default: "cosine")'),
@@ -152,7 +152,7 @@ def main(
     lr_base: float = typer.Option(0.1, help="Base learning rate: lr = lr_base * global_batch_size / base_size"),
     lr_base_size: int = typer.Option(256, help="Base learning rate batch size (divisor, default: 256)."),
     lr_base_scale: str = typer.Option("", help='Base learning rate vs batch_size scaling ("linear", "sqrt", based on opt if empty)'),
-    lr_noise: List[float] = typer.Option(None, help="Learning rate noise on/off epoch percentages"),
+    lr_noise: list[float] = typer.Option(None, help="Learning rate noise on/off epoch percentages"),
     lr_noise_pct: float = typer.Option(0.67, help="Learning rate noise limit percent (default: 0.67)"),
     lr_noise_std: float = typer.Option(1.0, help="Learning rate noise std-dev (default: 1.0)"),
     lr_cycle_mul: float = typer.Option(1.0, help="Learning rate cycle len multiplier (default: 1.0)"),
@@ -164,7 +164,7 @@ def main(
     epochs: int = typer.Option(300, help="Number of epochs to train (default: 300)"),
     epoch_repeats: float = typer.Option(0.0, help="Epoch repeat multiplier (number of times to repeat dataset epoch per train epoch)."),
     start_epoch: int = typer.Option(None, help="Manual epoch number (useful on restarts)"),
-    decay_milestones: List[int] = typer.Option([90, 180, 270], help="List of decay epoch indices for multistep LR. Must be increasing"),
+    decay_milestones: list[int] = typer.Option([90, 180, 270], help="List of decay epoch indices for multistep LR. Must be increasing"),
     decay_epochs: float = typer.Option(90, help="Epoch interval to decay LR"),
     warmup_epochs: int = typer.Option(5, help="Epochs to warmup LR, if scheduler supports"),
     warmup_prefix: bool = typer.Option(False, help="Exclude warmup period from decay schedule."),
@@ -175,8 +175,8 @@ def main(
     # Augmentation & regularization parameters
     no_aug: bool = typer.Option(False, help="Disable all training augmentation, override other train aug args"),
     train_crop_mode: str = typer.Option(None, help="Crop-mode in train"),
-    scale: List[float] = typer.Option([0.08, 1.0], help="Random resize scale (default: 0.08 1.0)"),
-    ratio: List[float] = typer.Option([3. / 4., 4. / 3.], help="Random resize aspect ratio (default: 0.75 1.33)"),
+    scale: list[float] = typer.Option([0.08, 1.0], help="Random resize scale (default: 0.08 1.0)"),
+    ratio: list[float] = typer.Option([3. / 4., 4. / 3.], help="Random resize aspect ratio (default: 0.75 1.33)"),
     hflip: float = typer.Option(0.5, help="Horizontal flip training aug probability"),
     vflip: float = typer.Option(0.0, help="Vertical flip training aug probability"),
     color_jitter: float = typer.Option(0.4, help="Color jitter factor (default: 0.4)"),
@@ -197,7 +197,7 @@ def main(
     resplit: bool = typer.Option(False, help="Do not random erase first (clean) augmentation split"),
     mixup: float = typer.Option(0.0, help="Mixup alpha, mixup enabled if > 0. (default: 0.)"),
     cutmix: float = typer.Option(0.0, help="Cutmix alpha, cutmix enabled if > 0. (default: 0.)"),
-    cutmix_minmax: List[float] = typer.Option(None, help="Cutmix min/max ratio, overrides alpha and enables cutmix if set (default: None)"),
+    cutmix_minmax: list[float] = typer.Option(None, help="Cutmix min/max ratio, overrides alpha and enables cutmix if set (default: None)"),
     mixup_prob: float = typer.Option(1.0, help="Probability of performing mixup or cutmix when either/both is enabled"),
     mixup_switch_prob: float = typer.Option(0.5, help="Probability of switching to cutmix when both mixup and cutmix enabled"),
     mixup_mode: str = typer.Option("batch", help='How to apply mixup/cutmix params. Per "batch", "pair", or "elem"'),
@@ -239,7 +239,7 @@ def main(
     use_multi_epochs_loader: bool = typer.Option(False, help="Use multi-epochs-loader to save time at the beginning of every epoch"),
     log_wandb: bool = typer.Option(False, help="Log training and validation metrics to wandb"),
     wandb_project: str = typer.Option(None, help="Wandb project name"),
-    wandb_tags: List[str] = typer.Option([], help="Wandb tags"),
+    wandb_tags: list[str] = typer.Option([], help="Wandb tags"),
     wandb_resume_id: str = typer.Option("", help="If resuming a run, the id of the run in wandb"),
     ):
 
@@ -248,7 +248,7 @@ def main(
 
     # If there's a config file, load it and update the defaults
     if config:
-        with open(config, 'r') as f:
+        with open(config) as f:
             cfg = yaml.safe_load(f)
             args_dict.update(cfg)
 
@@ -826,7 +826,7 @@ def main(
 
     if best_metric is not None:
         # log best metric as tracked by checkpoint saver
-        _logger.info('*** Best metric: {0} (epoch {1})'.format(best_metric, best_epoch))
+        _logger.info(f'*** Best metric: {best_metric} (epoch {best_epoch})')
 
     if utils.is_primary(args):
         # for parsable results display, dump top-10 summaries to avoid excess console spam
