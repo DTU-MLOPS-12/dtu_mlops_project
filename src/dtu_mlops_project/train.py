@@ -22,7 +22,7 @@ import logging
 import os
 import time
 import typer
-from typing import List, Dict, Optional
+from typing import List, Dict
 from types import SimpleNamespace
 from collections import OrderedDict
 from contextlib import suppress
@@ -71,6 +71,8 @@ _logger = logging.getLogger('train')
 def parse_key_value_pair(pair: str) -> dict[str, str]:
     return dict(kv.split('=') for kv in pair)
 
+app = typer.Typer()
+
 @app.command()
 def main(
     # Config
@@ -102,7 +104,7 @@ def main(
     gp: str = typer.Option(None, help="Global pool type"),
     img_size: int = typer.Option(None, help="Image size"),
     in_chans: int = typer.Option(None, help="Image input channels"),
-    input_size: Optional[list[int]] = typer.Option(None, help="Input dimensions (d h w)"),
+    input_size: list[int] = typer.Option(None, help="Input dimensions (d h w)"),
     crop_pct: float = typer.Option(None, help="Input image center crop percent"),
     mean: list[float] = typer.Option(None, help="Override mean pixel value of dataset"),
     std: list[float] = typer.Option(None, help="Override std deviation of dataset"),
@@ -241,19 +243,24 @@ def main(
     wandb_project: str = typer.Option(None, help="Wandb project name"),
     wandb_tags: list[str] = typer.Option([], help="Wandb tags"),
     wandb_resume_id: str = typer.Option("", help="If resuming a run, the id of the run in wandb"),
+    ctx: typer.Context = typer.Option(None, hidden=True),  # Hidden argument for context
     ):
-
-    # Initialize an empty dictionary for arguments
-    args_dict = {}
 
     # If there's a config file, load it and update the defaults
     if config:
         with open(config) as f:
             cfg = yaml.safe_load(f)
-            args_dict.update(cfg)
 
-    # Capture the command-line arguments
-    for key, value in locals().items():
+            args_dict = {key:value for key,value in cfg.items()}
+
+    parsed_args = { param.name: ctx.params.get(param.name) for param in ctx.command.params if ctx.params.get(param.name) != param.default and ctx.params.get(param.name) != ()}
+    non_parsed_args = { param.name: ctx.params.get(param.name) for param in ctx.command.params if ctx.params.get(param.name) == param.default or ctx.params.get(param.name) == ()}
+
+    for key, value in non_parsed_args.items():
+        if key not in args_dict:
+            args_dict[key] = value if value != () else None
+
+    for key, value in parsed_args.items():
         # Add them to the args_dict
         if key != "config":
             args_dict[key] = value
