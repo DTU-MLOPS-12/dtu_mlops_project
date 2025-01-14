@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt # noqa: I001
+import matplotlib.pyplot as plt
 import torch
 import typer
 import wandb
