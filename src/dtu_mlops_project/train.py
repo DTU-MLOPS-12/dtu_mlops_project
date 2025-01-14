@@ -264,11 +264,8 @@ def main(
 
     args = SimpleNamespace(**args_dict)
 
-    model_kwargs_dict = {key: value for kv in args.model_kwargs for key, value in [kv.split('=')]}
-    opt_kwargs_dict = {key: value for kv in args.opt_kwargs for key, value in [kv.split('=')]}
-
-    args.model_kwargs = model_kwargs_dict
-    args.opt_kwargs = opt_kwargs_dict
+    args.model_kwargs = {key:value for kv in args.model_kwargs for key, value in [kv.split('=')]}
+    args.opt_kwargs = {key:value for kv in args.opt_kwargs for key, value in [kv.split('=')]}
 
     utils.setup_default_logging()
 
@@ -521,7 +518,7 @@ def main(
         input_key=args.input_key,
         target_key=args.target_key,
         num_samples=args.train_num_samples,
-        trust_remote_code=args.dataset_trust_remote_code,
+        #trust_remote_code=args.dataset_trust_remote_code,
     )
 
     if args.val_split:
@@ -537,7 +534,7 @@ def main(
             input_key=args.input_key,
             target_key=args.target_key,
             num_samples=args.val_num_samples,
-            trust_remote_code=args.dataset_trust_remote_code,
+            #trust_remote_code=args.dataset_trust_remote_code,
         )
 
     # setup mixup / cutmix
