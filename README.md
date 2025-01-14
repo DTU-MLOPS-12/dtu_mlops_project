@@ -191,3 +191,59 @@ This project comes with a few different scripts, each with their own options:
 ### `train.py`
 
 ### `visualize.py`
+
+
+### Dataset
+
+- Download validation dataset
+```bash
+docker run --rm --name experiment1 -e HUGGING_FACE_HUB_TOKEN=add_token -v $(pwd)/data/processed:/data/processed/ -v $(pwd)/reports:/reports data:latest process-splits --splits validation --buffer-size 1000 --batch-size 1000
+```
+
+- Download train dataset
+```bash
+docker run --rm --name experiment1 -e HUGGING_FACE_HUB_TOKEN=add_token -v $(pwd)/data/processed:/data/processed/ -v $(pwd)/reports:/reports data:latest process-splits --splits train --buffer-size 10000 --batch-size 1000
+```
+
+- Test run using timm
+```bash
+python src/dtu_mlops_project/timm/train.py --config src/dtu_mlops_project/mobilenetv4_conv_small_test.yaml --data-dir data/processed/timm-imagenet-1k-wds-subset --dataset ImageFolder --train-split train --val-split validation --device cpu --num-classes 3 --epochs 1
+```
+
+
+### GCP
+
+- Login
+```bash
+gcloud auth login
+gcloud auth application-default login
+```
+
+- Projects list
+```bash
+gcloud projects list
+```
+
+- Config project with dtu-mlops PROJECT_ID
+```bash
+gcloud config set project <project-id>
+```
+
+
+### DVC
+- Initialized DVC repository.
+```bash
+dvc init
+```
+
+- Add remote storage and support for object versioning
+```bash
+dvc remote add -d remote_storage gs://mlops_grp_12_data_bucket_public/
+git add .dvc/config
+```
+
+- Support for object versioning
+```bash
+dvc remote modify remote_storage version_aware true
+```
+
