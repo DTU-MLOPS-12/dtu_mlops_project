@@ -68,8 +68,7 @@ def api_predict(image_file: fastapi.UploadFile):
         raise fastapi.HTTPException(
             status_code=400,
             detail=(
-                f"Got an invalid file type: {image_file.content_type}. "
-                f"Acceptable file types are: {IMAGE_MIME_TYPES}"
+                f"Got an invalid file type: {image_file.content_type}. Acceptable file types are: {IMAGE_MIME_TYPES}"
             ),
         )
 
@@ -79,7 +78,7 @@ def api_predict(image_file: fastapi.UploadFile):
         image = image.convert(mode="RGB")
 
     probs, classes = dummy_model(image)
-    logger.debug(f"Dummy model computed probabilities: '{probs}' " f"with corresponding class indices: '{classes}'")
+    logger.debug(f"Dummy model computed probabilities: '{probs}' with corresponding class indices: '{classes}'")
 
     return HTTP_200_OK | {
         "probabilities": probs,
