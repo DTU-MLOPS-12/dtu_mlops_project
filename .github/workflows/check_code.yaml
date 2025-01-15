@@ -27,5 +27,19 @@ jobs:
 
       - name: Ruff check
         run: |
-          ruff check src/dtu_mlops_project/
+          ruff check src/dtu_mlops_project/ --fix
           echo "Ruff check completed."
+
+      - name: Ruff format
+        run: |
+          ruff format src/dtu_mlops_project/
+          echo "Code formatting with Ruff is complete."
+
+      - name: Commit and push changes
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add src/dtu_mlops_project/
+          git commit -m "Apply Ruff fixes and formatting"
+          git push origin ${{ github.head_ref }}
