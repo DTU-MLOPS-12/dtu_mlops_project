@@ -805,6 +805,7 @@ def main(
                     log_wandb=args.log_wandb and has_wandb,
                 )
 
+
             if eval_metrics is not None:
                 latest_metric = eval_metrics[eval_metric]
             else:
@@ -813,7 +814,7 @@ def main(
             if saver is not None:
                 # save proper checkpoint with eval metric
                 best_metric, best_epoch = saver.save_checkpoint(epoch, metric=latest_metric)
-
+                
             if lr_scheduler is not None:
                 # step LR for next epoch
                 lr_scheduler.step(epoch + 1, latest_metric)
@@ -985,6 +986,12 @@ def train_one_epoch(
 
                 # Log the training loss to W&B after every log_interval
                 if args.log_wandb and has_wandb:
+
+                    # add a plot of the input images
+                    images = wandb.Image(input[:5], caption="Train Input Images")
+                    wandb.log({"images": images})
+
+                    # log the training loss
                     wandb.log({
                         "train_loss": loss_now,
                         "train_loss_avg": loss_avg,
