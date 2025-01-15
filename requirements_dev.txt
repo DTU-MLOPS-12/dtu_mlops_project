@@ -8,6 +8,7 @@ pre-commit==4.0.1
 pytest==8.3.4
 coverage==7.6.10
 httpx==0.28.1
+locust==2.32.6
 
 # linting
 ruff==0.9.1

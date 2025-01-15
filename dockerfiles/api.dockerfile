@@ -7,11 +7,14 @@ RUN apt update && \
 
 WORKDIR /
 
-COPY requirements.txt .
+COPY deps/requirements_api.txt requirements.txt
 COPY pyproject.toml .
-COPY src/dtu_mlops_project/ .
+COPY src/dtu_mlops_project/api.py .
+COPY src/dtu_mlops_project/model.py .
 
+RUN touch __init__.py
 RUN pip install -r requirements.txt --no-cache-dir
-RUN pip install . --no-deps --no-cache-dir
 
-ENTRYPOINT ["uvicorn", "src/dtu_mlops_project/api:app", "--host", "0.0.0.0", "--port", "8000"]
+EXPOSE 8000
+
+ENTRYPOINT ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -273,3 +273,35 @@ git commit -m "First datasets"
 git tag -a "v1.0" -m "data v1.0"
 dvc push
 ```
+
+## Building and pushing an image to the artifact registry
+
+To build an OCI image using `docker`, simply run the following from the root directory of the project:
+
+```sh
+docker build -f dockerfiles/<service-name>.dockerfile . -t <tag-name>:<version-name>
+```
+where `<service-name>` is the name of the service container to build (`api`, `train`, etc.),
+`<tag-name>` is the name of the tag and the `<version-name>` is the name of the version 
+of the image, i.e. `latest`, `dev` `1.0.0`. While the `<service-name>` and the `<tag-name>`
+can be different, it is easier if they are the same, so one can tell which dockerfile is 
+used to create a given image.
+
+Now, we create a tag and upload it to our artifact registry on GCP:
+
+```sh
+docker tag <tag-name> europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/<tag-name>:<version-name>
+docker push europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/<tag-name>:<version-name>
+```
+
+### Make life easier with `docker compose`
+
+You can also use `docker compose` to build and run multiple containers at once.
+From the project root directory, simply run:
+
+```shell
+docker compose up -d
+```
+
+Now, `docker` will build or fetch all images required to run the specified services and
+subsequently start them.

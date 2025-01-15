@@ -1,0 +1,23 @@
+services:
+  api:
+    image: dtu_mlops_project/api:dev
+    build:
+      context: .
+      dockerfile: dockerfiles/api.dockerfile
+    ports:
+      - "8000:8000"
+    profiles: [api, web]
+
+  data:
+    image: dtu_mlops_project/data:dev
+    build:
+      context: .
+      dockerfile: dockerfiles/data.dockerfile
+    profiles: [train, data]
+
+  train:
+    image: dtu_mlops_project/train:dev
+    build:
+      context: .
+      dockerfile: dockerfiles/train.dockerfile
+    profiles: [train]
