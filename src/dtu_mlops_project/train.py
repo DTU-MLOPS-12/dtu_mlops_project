@@ -66,7 +66,6 @@ has_compile = hasattr(torch, 'compile')
 
 _logger = logging.getLogger('train')
 
-
 # Helper function to convert key=value list into a dictionary
 def parse_key_value_pair(pair: str) -> dict[str, str]:
     return dict(kv.split('=') for kv in pair)
@@ -250,11 +249,10 @@ def main(
     if config:
         with open(config) as f:
             cfg = yaml.safe_load(f)
-
             args_dict = {key:value for key,value in cfg.items()}
 
-    parsed_args = { param.name: ctx.params.get(param.name) for param in ctx.command.params if ctx.params.get(param.name) != param.default and ctx.params.get(param.name) != ()}
-    non_parsed_args = { param.name: ctx.params.get(param.name) for param in ctx.command.params if ctx.params.get(param.name) == param.default or ctx.params.get(param.name) == ()}
+    parsed_args = {param.name: ctx.params.get(param.name) for param in ctx.command.params if ctx.params.get(param.name) != param.default and ctx.params.get(param.name) != ()}
+    non_parsed_args = {param.name: ctx.params.get(param.name) for param in ctx.command.params if ctx.params.get(param.name) == param.default or ctx.params.get(param.name) == ()}
 
     for key, value in non_parsed_args.items():
         if key not in args_dict:
