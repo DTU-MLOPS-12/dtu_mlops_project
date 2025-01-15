@@ -239,7 +239,7 @@ def main(
     tta: int = typer.Option(0, help="Test/inference time augmentation factor (default: 0)"),
     use_multi_epochs_loader: bool = typer.Option(False, help="Use multi-epochs-loader to save time at the beginning of every epoch"),
     log_wandb: bool = typer.Option(False, help="Log training and validation metrics to wandb"),
-    wandb_project: str = typer.Option(None, help="Wandb project name"),
+    wandb_project: str = typer.Option("mlops_project", help="Wandb project name"),
     wandb_tags: list[str] = typer.Option([], help="Wandb tags"),
     wandb_resume_id: str = typer.Option("", help="If resuming a run, the id of the run in wandb"),
     ctx: typer.Context = typer.Option(None, hidden=True),  # Hidden argument for context
@@ -983,6 +983,15 @@ def train_one_epoch(
                     f'Data: {data_time_m.val:.3f} ({data_time_m.avg:.3f})'
                 )
 
+                # Log the training loss to W&B after every log_interval
+                if args.log_wandb and has_wandb:
+                    wandb.log({
+                        "train_loss": loss_now,
+                        "train_loss_avg": loss_avg,
+                        "train_lr": lr,
+                        "train_samples_per_sec": update_sample_count / update_time_m.val,
+                    })
+
                 if args.save_images and output_dir:
                     torchvision.utils.save_image(
                         input,
@@ -1082,6 +1091,17 @@ def validate(
                     f'Acc@1: {top1_m.val:>7.3f} ({top1_m.avg:>7.3f})  '
                     f'Acc@5: {top5_m.val:>7.3f} ({top5_m.avg:>7.3f})'
                 )
+
+                # Log the validation loss to W&B after every log_interval
+                if args.log_wandb and has_wandb:
+                    wandb.log({
+                        "val_loss": losses_m.val,
+                        "val_loss_avg": losses_m.avg,
+                        "val_acc1": top1_m.val,
+                        "val_acc1_avg": top1_m.avg,
+                        "val_acc5": top5_m.val,
+                        "val_acc5_avg": top5_m.avg,
+                    })
 
     metrics = OrderedDict([('loss', losses_m.avg), ('top1', top1_m.avg), ('top5', top5_m.avg)])
 
