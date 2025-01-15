@@ -230,7 +230,9 @@ gcloud config set project <project-id>
 ```
 
 
+
 ### DVC Setup with Public Remote Storage
+
 - Initialized DVC repository.
 ```bash
 dvc init
@@ -246,6 +248,7 @@ git add .dvc/config
 ```bash
 dvc remote modify remote_storage version_aware true
 ```
+
 - Remove Public action prevention from the bucket 
 ```bash
 gcloud storage buckets update gs://mlops_grp_12_data_bucket_public/ --no-public-access-prevention

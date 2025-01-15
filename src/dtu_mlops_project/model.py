@@ -3,8 +3,8 @@ import typing
 
 import timm
 import torch
-from torch import nn
 import typer
+from torch import nn
 
 app = typer.Typer()
 
@@ -16,14 +16,14 @@ def get_dummy_model() -> typing.Callable:
 
     :returns: A callable which can run the initialized model.
     """
-    model_name = 'mobilenetv4_conv_small.e2400_r224_in1k'
+    model_name = "mobilenetv4_conv_small.e2400_r224_in1k"
     mobilenetv4_model = timm.create_model(model_name, pretrained=True)
     mobilenetv4_model = mobilenetv4_model.eval()
 
     data_config = timm.data.resolve_model_data_config(mobilenetv4_model)
     transforms = timm.data.create_transform(**data_config, is_training=False)
 
-    def _run_model(image, k: int = 5) -> typing.Tuple:
+    def _run_model(image, k: int = 5) -> tuple:
         """
         Runs the model on an image object with and computes the top 'k'
         probabilities and their associated class indices.
@@ -78,6 +78,5 @@ def model_info() -> None:
     print(f"Output shape: {output.shape}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app()
-
