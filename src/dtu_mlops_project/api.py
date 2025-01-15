@@ -5,7 +5,11 @@ import fastapi
 from loguru import logger
 from PIL import Image
 
-from . import model
+try:
+    import model
+except (ImportError, ModuleNotFoundError):
+    from . import model
+
 
 dummy_model = model.get_dummy_model()
 
