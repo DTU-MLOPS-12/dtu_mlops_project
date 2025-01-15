@@ -818,7 +818,7 @@ def main(
                 if has_wandb and args.log_wandb:
                     artifact = wandb.Artifact('model', type='model', description='Best model checkpoint')
                     artifact.add_file(os.path.join(output_dir, 'model_best.pth.tar'))
-                    wandb.log_artifact(artifact, aliases=['best', 'epoch-{}'.format(epoch)])
+                    wandb.log_artifact(artifact, aliases=['best', f'epoch-{epoch}'])
 
             if lr_scheduler is not None:
                 # step LR for next epoch
