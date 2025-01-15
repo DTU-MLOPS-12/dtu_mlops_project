@@ -1,16 +1,13 @@
 import json
 import os
-from datasets import load_dataset, DatasetDict, load_from_disk, Dataset
-import matplotlib.pyplot as plt
-from PIL import Image
 import random
 from pathlib import Path
 from typing import Optional, Union
-from typing import Annotated
+import matplotlib.pyplot as plt
 import typer
-from typing import List, Optional
-from pathlib import Path
 from loguru import logger
+from PIL import Image
+from datasets import Dataset, DatasetDict, load_dataset
 
 app = typer.Typer()
 
@@ -182,7 +179,7 @@ def process_dataset_split(
 @app.command()
 # Process multiple dataset splits
 def process_splits(
-    splits: List[str] = typer.Option(
+    splits: list[str] = typer.Option(
         ["train", "validation"], 
         help="Dataset splits to process"
     ),
