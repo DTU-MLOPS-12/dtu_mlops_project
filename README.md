@@ -230,7 +230,7 @@ gcloud config set project <project-id>
 ```
 
 
-### DVC
+### DVC Setup with Public Remote Storage
 - Initialized DVC repository.
 ```bash
 dvc init
@@ -246,4 +246,27 @@ git add .dvc/config
 ```bash
 dvc remote modify remote_storage version_aware true
 ```
+- Remove Public action prevention from the bucket 
+```bash
+gcloud storage buckets update gs://mlops_grp_12_data_bucket_public/ --no-public-access-prevention
+```
 
+- Make the bucket public using the below command
+```bash
+gcloud storage buckets add-iam-policy-binding gs://mlops_grp_12_data_bucket_public/ --member=allUsers --role=roles/storage.objectViewer
+```
+
+- Verify login 
+```bash
+gcloud auth application-default login
+```
+
+- Add processed data
+```bash
+dvc add data/processed/timm-imagenet-1k-wds-subset/
+git add data/processed/timm-imagenet-1k-wds-subset.dvc
+git add data/processed/.gitignore
+git commit -m "First datasets"
+git tag -a "v1.0" -m "data v1.0"
+dvc push
+```
