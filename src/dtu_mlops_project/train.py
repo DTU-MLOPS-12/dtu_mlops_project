@@ -21,9 +21,6 @@ import json
 import logging
 import os
 import time
-import typer
-from typing import List, Dict, Optional
-from types import SimpleNamespace
 from collections import OrderedDict
 from contextlib import suppress
 from datetime import datetime
@@ -33,17 +30,15 @@ import torch
 import torch.nn as nn
 import torchvision.utils
 import yaml
-
-from torch.nn.parallel import DistributedDataParallel as NativeDDP
-
 from timm import utils
-from timm.data import create_dataset, create_loader, resolve_data_config, Mixup, FastCollateMixup, AugMixDataset
+from timm.data import AugMixDataset, FastCollateMixup, Mixup, create_dataset, create_loader, resolve_data_config
 from timm.layers import convert_splitbn_model, convert_sync_batchnorm, set_fast_norm
-from timm.loss import JsdCrossEntropy, SoftTargetCrossEntropy, BinaryCrossEntropy, LabelSmoothingCrossEntropy
-from timm.models import create_model, safe_model_name, resume_checkpoint, load_checkpoint, model_parameters
+from timm.loss import BinaryCrossEntropy, JsdCrossEntropy, LabelSmoothingCrossEntropy, SoftTargetCrossEntropy
+from timm.models import create_model, load_checkpoint, model_parameters, resume_checkpoint, safe_model_name
 from timm.optim import create_optimizer_v2, optimizer_kwargs
 from timm.scheduler import create_scheduler_v2, scheduler_kwargs
 from timm.utils import ApexScaler, NativeScaler
+from torch.nn.parallel import DistributedDataParallel as NativeDDP
 
 try:
     from apex import amp
@@ -59,215 +54,217 @@ has_wandb = True
 try:
     from functorch.compile import memory_efficient_fusion
     has_functorch = True
-except ImportError as e:
+except ImportError:
     has_functorch = False
 
-has_compile = hasattr(torch, 'compile')
+has_compile = hasattr(torch, "compile")
 
-_logger = logging.getLogger('train')
+_logger = logging.getLogger("train")
 
-app = typer.Typer()
+# The first arg parser parses out only the --config argument, this argument is used to
+# load a yaml file containing key-values that override the defaults for the main parser below
+config_parser = parser = argparse.ArgumentParser(description="Training Config", add_help=False)
+parser.add_argument("-c", "--config", default="", type=str, metavar="FILE", help="YAML config file specifying default arguments")
 
-# Helper function to convert key=value list into a dictionary
-def parse_key_value_pair(pair: str) -> Dict[str, str]:
-    return dict(kv.split('=') for kv in pair)
+parser = argparse.ArgumentParser(description="PyTorch ImageNet Training")
 
-@app.command()
-def main(
-    # Config
-    config: str = typer.Option(None, "--config", "-c", help="YAML config file specifying default arguments"),
+# Dataset parameters
+group = parser.add_argument_group("Dataset parameters")
+# Keep this argument outside the dataset group because it is positional.
+parser.add_argument("data", nargs="?", metavar="DIR", const=None, help="path to dataset (positional is *deprecated*, use --data-dir)")
+parser.add_argument("--data-dir", metavar="DIR", help="path to dataset (root dir)")
+parser.add_argument("--dataset", metavar="NAME", default="", help='dataset type + name ("<type>/<name>") (default: ImageFolder or ImageTar if empty)')
+group.add_argument("--train-split", metavar="NAME", default="train", help="dataset train split (default: train)")
+group.add_argument("--val-split", metavar="NAME", default="validation", help="dataset validation split (default: validation)")
+parser.add_argument("--train-num-samples",default=None,type=int,metavar="N",help="Manually specify num samples in train split, for IterableDatasets.")
+parser.add_argument("--val-num-samples", default=None, type=int, metavar="N", help="Manually specify num samples in validation split, for IterableDatasets.")
+group.add_argument("--dataset-download", action="store_true", default=False, help="Allow download of dataset for torch/ and tfds/ datasets that support it.")
+group.add_argument("--class-map", default="", type=str, metavar="FILENAME", help='path to class to idx mapping file (default: "")')
+group.add_argument("--input-img-mode", default=None, type=str, help="Dataset image conversion mode for input images.")
+group.add_argument("--input-key", default=None, type=str, help="Dataset key for input images.")
+group.add_argument("--target-key", default=None, type=str, help="Dataset key for target labels.")
+group.add_argument("--dataset-trust-remote-code", action="store_true", default=False, help="Allow huggingface dataset import to execute code downloaded from the dataset's repo.")
 
-    # Dataset parameters
-    data: str = typer.Option(None, help='path to dataset (positional is *deprecated*, use --data-dir)'),
-    data_dir: str = typer.Option(None, help="Path to dataset (root dir)"),
-    dataset: str = typer.Option("", help="Dataset type + name ('<type>/<name>')"),
-    train_split: str = typer.Option("train", help="Dataset train split (default: train)"),
-    val_split: str = typer.Option("validation", help="Dataset validation split (default: validation)"),
-    train_num_samples: int = typer.Option(None, help="Number of samples in train split for IterableDatasets"),
-    val_num_samples: int = typer.Option(None, help="Number of samples in validation split for IterableDatasets"),
-    dataset_download: bool = typer.Option(False, help="Allow download of dataset"),
-    class_map: str = typer.Option('', help="Path to class-to-index mapping file"),
-    input_img_mode: str = typer.Option(None, help="Dataset image conversion mode"),
-    input_key: str = typer.Option(None, help="Dataset key for input images"),
-    target_key: str = typer.Option(None, help="Dataset key for target labels"),
-    dataset_trust_remote_code: bool = typer.Option(False, help="Allow remote code execution for dataset import"),
+# Model parameters
+group = parser.add_argument_group("Model parameters")
+group.add_argument("--model", default="resnet50", type=str, metavar="MODEL", help='Name of model to train (default: "resnet50")')
+group.add_argument("--pretrained", action="store_true", default=False, help="Start with pretrained version of specified network (if avail)")
+group.add_argument("--pretrained-path", default=None, type=str, help="Load this checkpoint as if they were the pretrained weights (with adaptation).")
+group.add_argument("--initial-checkpoint", default="", type=str, metavar="PATH", help="Load this checkpoint into model after initialization (default: none)")
+group.add_argument("--resume", default="", type=str, metavar="PATH", help="Resume full model and optimizer state from checkpoint (default: none)")
+group.add_argument("--no-resume-opt", action="store_true", default=False, help="prevent resume of optimizer state when resuming model")
+group.add_argument("--num-classes", type=int, default=None, metavar="N", help="number of label classes (Model default if None)")
+group.add_argument("--gp", default=None, type=str, metavar="POOL", help="Global pool type, one of (fast, avg, max, avgmax, avgmaxc). Model default if None.")
+group.add_argument("--img-size", type=int, default=None, metavar="N", help="Image size (default: None => model default)")
+group.add_argument("--in-chans", type=int, default=None, metavar="N", help="Image input channels (default: None => 3)")
+group.add_argument("--input-size", default=None, nargs=3, type=int, metavar="N N N", help="Input all image dimensions (d h w, e.g. --input-size 3 224 224), uses model default if empty")
+group.add_argument("--crop-pct", default=None, type=float, metavar="N", help="Input image center crop percent (for validation only)")
+group.add_argument("--mean", type=float, nargs="+", default=None, metavar="MEAN", help="Override mean pixel value of dataset")
+group.add_argument("--std", type=float, nargs="+", default=None, metavar="STD", help="Override std deviation of dataset")
+group.add_argument("--interpolation", default="", type=str, metavar="NAME", help="Image resize interpolation type (overrides model)")
+group.add_argument("-b", "--batch-size", type=int, default=128, metavar="N", help="Input batch size for training (default: 128)")
+group.add_argument("-vb", "--validation-batch-size", type=int, default=None, metavar="N", help="Validation batch size override (default: None)")
+group.add_argument("--channels-last", action="store_true", default=False, help="Use channels_last memory layout")
+group.add_argument("--fuser", default="", type=str, help="Select jit fuser. One of ('', 'te', 'old', 'nvfuser')")
+group.add_argument("--grad-accum-steps", type=int, default=1, metavar="N", help="The number of steps to accumulate gradients (default: 1)")
+group.add_argument("--grad-checkpointing", action="store_true", default=False, help="Enable gradient checkpointing through model blocks/stages")
+group.add_argument("--fast-norm", default=False, action="store_true", help="enable experimental fast-norm")
+group.add_argument("--model-kwargs", nargs="*", default={}, action=utils.ParseKwargs)
+group.add_argument("--head-init-scale", default=None, type=float, help="Head initialization scale")
+group.add_argument("--head-init-bias", default=None, type=float, help="Head initialization bias value")
+group.add_argument("--torchcompile-mode", type=str, default=None, help="torch.compile mode (default: None).")
 
-    # Model parameters
-    model: str = typer.Option("resnet50", help="Name of model to train (default: resnet50)"),
-    pretrained: bool = typer.Option(False, help="Use pretrained version of specified network"),
-    pretrained_path: str = typer.Option(None, help="Path to pretrained weights"),
-    initial_checkpoint: str = typer.Option('', help="Load checkpoint after initialization"),
-    resume: str = typer.Option('', help="Resume model and optimizer state from checkpoint"),
-    no_resume_opt: bool = typer.Option(False, help="Prevent resuming optimizer state"),
-    num_classes: int = typer.Option(None, help="Number of label classes"),
-    gp: str = typer.Option(None, help="Global pool type"),
-    img_size: int = typer.Option(None, help="Image size"),
-    in_chans: int = typer.Option(None, help="Image input channels"),
-    input_size: Optional[List[int]] = typer.Option(None, help="Input dimensions (d h w)"),
-    crop_pct: float = typer.Option(None, help="Input image center crop percent"),
-    mean: List[float] = typer.Option(None, help="Override mean pixel value of dataset"),
-    std: List[float] = typer.Option(None, help="Override std deviation of dataset"),
-    interpolation: str = typer.Option("", help="Image resize interpolation type"),
-    batch_size: int = typer.Option(128, "-b", help="Batch size for training"),
-    validation_batch_size: int = typer.Option(None, "-vb", help="Validation batch size override"),
-    channels_last: bool = typer.Option(False, help="Use channels_last memory layout"),
-    fuser: str = typer.Option("", help="Select JIT fuser"),
-    grad_accum_steps: int = typer.Option(1, help="Number of steps to accumulate gradients"),
-    grad_checkpointing: bool = typer.Option(False, help="Enable gradient checkpointing"),
-    fast_norm: bool = typer.Option(False, help="Enable experimental fast normalization"),
-    model_kwargs: List[str] = typer.Option([], help="Additional model kwargs in key=value format"),
-    head_init_scale: float = typer.Option(None, help="Head initialization scale"),
-    head_init_bias: float = typer.Option(None, help="Head initialization bias value"),
-    torchcompile_mode: str = typer.Option(None, help="Torch.compile mode"),
+# scripting / codegen
+scripting_group = group.add_mutually_exclusive_group()
+scripting_group.add_argument("--torchscript", dest="torchscript", action="store_true", help="torch.jit.script the full model")
+scripting_group.add_argument("--torchcompile", nargs="?", type=str, default=None, const="inductor", help="Enable compilation w/ specified backend (default: inductor).")
 
-    # scripting / codegen
-    torchscript: bool = typer.Option(False, "--torchscript", help="torch.jit.script the full model"),
-    torchcompile: str = typer.Option(None, "--torchcompile", show_default=False, help="Enable compilation w/ specified backend (default: inductor)."),
+# Device & distributed
+group = parser.add_argument_group("Device parameters")
+group.add_argument("--device", default="cuda", type=str, help="Device (accelerator) to use.")
+group.add_argument("--amp", action="store_true", default=False, help="use NVIDIA Apex AMP or Native AMP for mixed precision training")
+group.add_argument("--amp-dtype", default="float16", type=str, help="lower precision AMP dtype (default: float16)")
+group.add_argument("--amp-impl", default="native", type=str, help='AMP impl to use, "native" or "apex" (default: native)')
+group.add_argument("--model-dtype", default=None, type=str, help="Model dtype override (non-AMP) (default: float32)")
+group.add_argument("--no-ddp-bb", action="store_true", default=False, help="Force broadcast buffers for native DDP to off.")
+group.add_argument("--synchronize-step", action="store_true", default=False, help="torch.cuda.synchronize() end of each step")
+group.add_argument("--local_rank", default=0, type=int)
+parser.add_argument("--device-modules", default=None, type=str, nargs="+", help="Python imports for device backend modules.")
 
-    # Device & distributed
-    device: str = typer.Option("cuda", help="Device to use"),
-    amp: bool = typer.Option(False, help="Use AMP for mixed precision training"),
-    amp_dtype: str = typer.Option("float16", help="AMP dtype"),
-    amp_impl: str = typer.Option("native", help="AMP implementation (native/apex)"),
-    model_dtype: str = typer.Option(None, help="Model dtype override"),
-    no_ddp_bb: bool = typer.Option(False, help="Disable broadcast buffers in DDP"),
-    synchronize_step: bool = typer.Option(False, help="Synchronize CUDA at the end of each step"),
-    local_rank: int = typer.Option(0, help="Local rank for distributed training"),
-    device_modules: List[str] = typer.Option(None, help="Python imports for device backend modules"),
+# Optimizer parameters
+group = parser.add_argument_group("Optimizer parameters")
+group.add_argument("--opt", default="sgd", type=str, metavar="OPTIMIZER", help='Optimizer (default: "sgd")')
+group.add_argument("--opt-eps", default=None, type=float, metavar="EPSILON", help="Optimizer Epsilon (default: None, use opt default)")
+group.add_argument("--opt-betas", default=None, type=float, nargs="+", metavar="BETA", help="Optimizer Betas (default: None, use opt default)")
+group.add_argument("--momentum", type=float, default=0.9, metavar="M", help="Optimizer momentum (default: 0.9)")
+group.add_argument("--weight-decay", type=float, default=2e-5, help="weight decay (default: 2e-5)")
+group.add_argument("--clip-grad", type=float, default=None, metavar="NORM", help="Clip gradient norm (default: None, no clipping)")
+group.add_argument("--clip-mode", type=str, default="norm", help='Gradient clipping mode. One of ("norm", "value", "agc")')
+group.add_argument("--layer-decay", type=float, default=None, help="layer-wise learning rate decay (default: None)")
+group.add_argument("--opt-kwargs", nargs="*", default={}, action=utils.ParseKwargs)
 
-    # Optimizer parameters
-    opt: str = typer.Option("sgd", help="Optimizer (default: sgd)"),
-    opt_eps: float = typer.Option(None, help="Optimizer epsilon"),
-    opt_betas: List[float] = typer.Option(None, help="Optimizer betas"),
-    momentum: float = typer.Option(0.9, help="Optimizer momentum"),
-    weight_decay: float = typer.Option(2e-5, help="Weight decay"),
-    clip_grad: float = typer.Option(None, help="Clip gradient norm"),
-    clip_mode: str = typer.Option("norm", help="Gradient clipping mode"),
-    layer_decay: float = typer.Option(None, help="Layer-wise learning rate decay"),
-    opt_kwargs: List[str] = typer.Option([], help="Additional optimizer kwargs in key=value format"),
+# Learning rate schedule parameters
+group = parser.add_argument_group("Learning rate schedule parameters")
+group.add_argument("--sched", type=str, default="cosine", metavar="SCHEDULER", help='LR scheduler (default: "cosine"')
+group.add_argument("--sched-on-updates", action="store_true", default=False, help="Apply LR scheduler step on update instead of epoch end.")
+group.add_argument("--lr", type=float, default=None, metavar="LR", help="learning rate, overrides lr-base if set (default: None)")
+group.add_argument("--lr-base", type=float, default=0.1, metavar="LR", help="base learning rate: lr = lr_base * global_batch_size / base_size")
+group.add_argument("--lr-base-size", type=int, default=256, metavar="DIV", help="base learning rate batch size (divisor, default: 256).")
+group.add_argument("--lr-base-scale", type=str, default="", metavar="SCALE", help='base learning rate vs batch_size scaling ("linear", "sqrt", based on opt if empty)')
+group.add_argument("--lr-noise", type=float, nargs="+", default=None, metavar="pct, pct", help="learning rate noise on/off epoch percentages")
+group.add_argument("--lr-noise-pct", type=float, default=0.67, metavar="PERCENT", help="learning rate noise limit percent (default: 0.67)")
+group.add_argument("--lr-noise-std", type=float, default=1.0, metavar="STDDEV", help="learning rate noise std-dev (default: 1.0)")
+group.add_argument("--lr-cycle-mul", type=float, default=1.0, metavar="MULT", help="learning rate cycle len multiplier (default: 1.0)")
+group.add_argument("--lr-cycle-decay", type=float, default=0.5, metavar="MULT", help="amount to decay each learning rate cycle (default: 0.5)")
+group.add_argument("--lr-cycle-limit", type=int, default=1, metavar="N", help="learning rate cycle limit, cycles enabled if > 1")
+group.add_argument("--lr-k-decay", type=float, default=1.0, help="learning rate k-decay for cosine/poly (default: 1.0)")
+group.add_argument("--warmup-lr", type=float, default=1e-5, metavar="LR", help="warmup learning rate (default: 1e-5)")
+group.add_argument("--min-lr", type=float, default=0, metavar="LR", help="lower lr bound for cyclic schedulers that hit 0 (default: 0)")
+group.add_argument("--epochs", type=int, default=300, metavar="N", help="number of epochs to train (default: 300)")
+group.add_argument("--epoch-repeats", type=float, default=0.0, metavar="N", help="epoch repeat multiplier (number of times to repeat dataset epoch per train epoch).")
+group.add_argument("--start-epoch", default=None, type=int, metavar="N", help="manual epoch number (useful on restarts)")
+group.add_argument("--decay-milestones", default=[90, 180, 270], type=int, nargs="+", metavar="MILESTONES", help="list of decay epoch indices for multistep lr. must be increasing")
+group.add_argument("--decay-epochs", type=float, default=90, metavar="N", help="epoch interval to decay LR")
+group.add_argument("--warmup-epochs", type=int, default=5, metavar="N", help="epochs to warmup LR, if scheduler supports")
+group.add_argument("--warmup-prefix", action="store_true", default=False, help="Exclude warmup period from decay schedule.")
+group.add_argument("--cooldown-epochs", type=int, default=0, metavar="N", help="epochs to cooldown LR at min_lr, after cyclic schedule ends")
+group.add_argument("--patience-epochs", type=int, default=10, metavar="N", help="patience epochs for Plateau LR scheduler (default: 10)")
+group.add_argument("--decay-rate", "--dr", type=float, default=0.1, metavar="RATE", help="LR decay rate (default: 0.1)")
 
-    # Learning rate schedule parameters
-    sched: str = typer.Option("cosine", help='LR scheduler (default: "cosine")'),
-    sched_on_updates: bool = typer.Option(False, help="Apply LR scheduler step on update instead of epoch end."),
-    lr: float = typer.Option(None, help="Learning rate, overrides lr-base if set (default: None)"),
-    lr_base: float = typer.Option(0.1, help="Base learning rate: lr = lr_base * global_batch_size / base_size"),
-    lr_base_size: int = typer.Option(256, help="Base learning rate batch size (divisor, default: 256)."),
-    lr_base_scale: str = typer.Option("", help='Base learning rate vs batch_size scaling ("linear", "sqrt", based on opt if empty)'),
-    lr_noise: List[float] = typer.Option(None, help="Learning rate noise on/off epoch percentages"),
-    lr_noise_pct: float = typer.Option(0.67, help="Learning rate noise limit percent (default: 0.67)"),
-    lr_noise_std: float = typer.Option(1.0, help="Learning rate noise std-dev (default: 1.0)"),
-    lr_cycle_mul: float = typer.Option(1.0, help="Learning rate cycle len multiplier (default: 1.0)"),
-    lr_cycle_decay: float = typer.Option(0.5, help="Amount to decay each learning rate cycle (default: 0.5)"),
-    lr_cycle_limit: int = typer.Option(1, help="Learning rate cycle limit, cycles enabled if > 1"),
-    lr_k_decay: float = typer.Option(1.0, help="Learning rate k-decay for cosine/poly (default: 1.0)"),
-    warmup_lr: float = typer.Option(1e-5, help="Warmup learning rate (default: 1e-5)"),
-    min_lr: float = typer.Option(0, help="Lower LR bound for cyclic schedulers that hit 0 (default: 0)"),
-    epochs: int = typer.Option(300, help="Number of epochs to train (default: 300)"),
-    epoch_repeats: float = typer.Option(0.0, help="Epoch repeat multiplier (number of times to repeat dataset epoch per train epoch)."),
-    start_epoch: int = typer.Option(None, help="Manual epoch number (useful on restarts)"),
-    decay_milestones: List[int] = typer.Option([90, 180, 270], help="List of decay epoch indices for multistep LR. Must be increasing"),
-    decay_epochs: float = typer.Option(90, help="Epoch interval to decay LR"),
-    warmup_epochs: int = typer.Option(5, help="Epochs to warmup LR, if scheduler supports"),
-    warmup_prefix: bool = typer.Option(False, help="Exclude warmup period from decay schedule."),
-    cooldown_epochs: int = typer.Option(0, help="Epochs to cooldown LR at min_lr, after cyclic schedule ends"),
-    patience_epochs: int = typer.Option(10, help="Patience epochs for Plateau LR scheduler (default: 10)"),
-    decay_rate: float = typer.Option(0.1, help="LR decay rate (default: 0.1)"),
+# Augmentation & regularization parameters
+group = parser.add_argument_group("Augmentation and regularization parameters")
+group.add_argument("--no-aug", action="store_true", default=False, help="Disable all training augmentation, override other train aug args")
+group.add_argument("--train-crop-mode", type=str, default=None, help="Crop-mode in train")
+group.add_argument("--scale", type=float, nargs="+", default=[0.08, 1.0], metavar="PCT", help="Random resize scale (default: 0.08 1.0)")
+group.add_argument("--ratio", type=float, nargs="+", default=[3.0 / 4.0, 4.0 / 3.0], metavar="RATIO", help="Random resize aspect ratio (default: 0.75 1.33)")
+group.add_argument("--hflip", type=float, default=0.5, help="Horizontal flip training aug probability")
+group.add_argument("--vflip", type=float, default=0.0, help="Vertical flip training aug probability")
+group.add_argument("--color-jitter", type=float, default=0.4, metavar="PCT", help="Color jitter factor (default: 0.4)")
+group.add_argument("--color-jitter-prob", type=float, default=None, metavar="PCT", help="Probability of applying any color jitter.")
+group.add_argument("--grayscale-prob", type=float, default=None, metavar="PCT", help="Probability of applying random grayscale conversion.")
+group.add_argument("--gaussian-blur-prob", type=float, default=None, metavar="PCT", help="Probability of applying gaussian blur.")
+group.add_argument("--aa", type=str, default=None, metavar="NAME", help='Use AutoAugment policy. "v0" or "original". (default: None)')
+group.add_argument("--aug-repeats", type=float, default=0, help="Number of augmentation repetitions (distributed training only) (default: 0)")
+group.add_argument("--aug-splits", type=int, default=0, help="Number of augmentation splits (default: 0, valid: 0 or >=2)")
+group.add_argument("--jsd-loss", action="store_true", default=False, help="Enable Jensen-Shannon Divergence + CE loss. Use with `--aug-splits`.")
+group.add_argument("--bce-loss", action="store_true", default=False, help="Enable BCE loss w/ Mixup/CutMix use.")
+group.add_argument("--bce-sum", action="store_true", default=False, help="Sum over classes when using BCE loss.")
+group.add_argument("--bce-target-thresh", type=float, default=None, help="Threshold for binarizing softened BCE targets (default: None, disabled).")
+group.add_argument("--bce-pos-weight", type=float, default=None, help="Positive weighting for BCE loss.")
+group.add_argument("--reprob", type=float, default=0.0, metavar="PCT", help="Random erase prob (default: 0.)")
+group.add_argument("--remode", type=str, default="pixel", help='Random erase mode (default: "pixel")')
+group.add_argument("--recount", type=int, default=1, help="Random erase count (default: 1)")
+group.add_argument("--resplit", action="store_true", default=False, help="Do not random erase first (clean) augmentation split")
+group.add_argument("--mixup", type=float, default=0.0, help="mixup alpha, mixup enabled if > 0. (default: 0.)")
+group.add_argument("--cutmix", type=float, default=0.0, help="cutmix alpha, cutmix enabled if > 0. (default: 0.)")
+group.add_argument("--cutmix-minmax", type=float, nargs="+", default=None, help="cutmix min/max ratio, overrides alpha and enables cutmix if set (default: None)")
+group.add_argument("--mixup-prob", type=float, default=1.0, help="Probability of performing mixup or cutmix when either/both is enabled")
+group.add_argument("--mixup-switch-prob", type=float, default=0.5, help="Probability of switching to cutmix when both mixup and cutmix enabled")
+group.add_argument("--mixup-mode", type=str, default="batch", help='How to apply mixup/cutmix params. Per "batch", "pair", or "elem"')
+group.add_argument("--mixup-off-epoch", default=0, type=int, metavar="N", help="Turn off mixup after this epoch, disabled if 0 (default: 0)")
+group.add_argument("--smoothing", type=float, default=0.1, help="Label smoothing (default: 0.1)")
+group.add_argument("--train-interpolation", type=str, default="random", help='Training interpolation (random, bilinear, bicubic default: "random")')
+group.add_argument("--drop", type=float, default=0.0, metavar="PCT", help="Dropout rate (default: 0.)")
+group.add_argument("--drop-connect", type=float, default=None, metavar="PCT", help="Drop connect rate, DEPRECATED, use drop-path (default: None)")
+group.add_argument("--drop-path", type=float, default=None, metavar="PCT", help="Drop path rate (default: None)")
+group.add_argument("--drop-block", type=float, default=None, metavar="PCT", help="Drop block rate (default: None)")
 
-    # Augmentation & regularization parameters
-    no_aug: bool = typer.Option(False, help="Disable all training augmentation, override other train aug args"),
-    train_crop_mode: str = typer.Option(None, help="Crop-mode in train"),
-    scale: List[float] = typer.Option([0.08, 1.0], help="Random resize scale (default: 0.08 1.0)"),
-    ratio: List[float] = typer.Option([3. / 4., 4. / 3.], help="Random resize aspect ratio (default: 0.75 1.33)"),
-    hflip: float = typer.Option(0.5, help="Horizontal flip training aug probability"),
-    vflip: float = typer.Option(0.0, help="Vertical flip training aug probability"),
-    color_jitter: float = typer.Option(0.4, help="Color jitter factor (default: 0.4)"),
-    color_jitter_prob: float = typer.Option(None, help="Probability of applying any color jitter."),
-    grayscale_prob: float = typer.Option(None, help="Probability of applying random grayscale conversion."),
-    gaussian_blur_prob: float = typer.Option(None, help="Probability of applying gaussian blur."),
-    aa: str = typer.Option(None, help='Use AutoAugment policy. "v0" or "original". (default: None)'),
-    aug_repeats: float = typer.Option(0, help="Number of augmentation repetitions (distributed training only) (default: 0)"),
-    aug_splits: int = typer.Option(0, help="Number of augmentation splits (default: 0, valid: 0 or >=2)"),
-    jsd_loss: bool = typer.Option(False, help="Enable Jensen-Shannon Divergence + CE loss. Use with `--aug-splits`."),
-    bce_loss: bool = typer.Option(False, help="Enable BCE loss w/ Mixup/CutMix use."),
-    bce_sum: bool = typer.Option(False, help="Sum over classes when using BCE loss."),
-    bce_target_thresh: float = typer.Option(None, help="Threshold for binarizing softened BCE targets (default: None, disabled)."),
-    bce_pos_weight: float = typer.Option(None, help="Positive weighting for BCE loss."),
-    reprob: float = typer.Option(0.0, help="Random erase prob (default: 0.)"),
-    remode: str = typer.Option("pixel", help='Random erase mode (default: "pixel")'),
-    recount: int = typer.Option(1, help="Random erase count (default: 1)"),
-    resplit: bool = typer.Option(False, help="Do not random erase first (clean) augmentation split"),
-    mixup: float = typer.Option(0.0, help="Mixup alpha, mixup enabled if > 0. (default: 0.)"),
-    cutmix: float = typer.Option(0.0, help="Cutmix alpha, cutmix enabled if > 0. (default: 0.)"),
-    cutmix_minmax: List[float] = typer.Option(None, help="Cutmix min/max ratio, overrides alpha and enables cutmix if set (default: None)"),
-    mixup_prob: float = typer.Option(1.0, help="Probability of performing mixup or cutmix when either/both is enabled"),
-    mixup_switch_prob: float = typer.Option(0.5, help="Probability of switching to cutmix when both mixup and cutmix enabled"),
-    mixup_mode: str = typer.Option("batch", help='How to apply mixup/cutmix params. Per "batch", "pair", or "elem"'),
-    mixup_off_epoch: int = typer.Option(0, help="Turn off mixup after this epoch, disabled if 0 (default: 0)"),
-    smoothing: float = typer.Option(0.1, help="Label smoothing (default: 0.1)"),
-    train_interpolation: str = typer.Option("random", help='Training interpolation (random, bilinear, bicubic default: "random")'),
-    drop: float = typer.Option(0.0, help="Dropout rate (default: 0.)"),
-    drop_connect: float = typer.Option(None, help="Drop connect rate, DEPRECATED, use drop-path (default: None)"),
-    drop_path: float = typer.Option(None, help="Drop path rate (default: None)"),
-    drop_block: float = typer.Option(None, help="Drop block rate (default: None)"),
+# Batch norm parameters (only works with gen_efficientnet based models currently)
+group = parser.add_argument_group("Batch norm parameters", "Only works with gen_efficientnet based models currently.")
+group.add_argument("--bn-momentum", type=float, default=None, help="BatchNorm momentum override (if not None)")
+group.add_argument("--bn-eps", type=float, default=None, help="BatchNorm epsilon override (if not None)")
+group.add_argument("--sync-bn", action="store_true", help="Enable NVIDIA Apex or Torch synchronized BatchNorm.")
+group.add_argument("--dist-bn", type=str, default="reduce", help='Distribute BatchNorm stats between nodes after each epoch ("broadcast", "reduce", or "")')
+group.add_argument("--split-bn", action="store_true", help="Enable separate BN layers per augmentation split.")
 
-    # Batch norm parameters (only works with gen_efficientnet based models currently)
-    bn_momentum: float = typer.Option(None, help="BatchNorm momentum override (if not None)"),
-    bn_eps: float = typer.Option(None, help="BatchNorm epsilon override (if not None)"),
-    sync_bn: bool = typer.Option(False, help="Enable NVIDIA Apex or Torch synchronized BatchNorm."),
-    dist_bn: str = typer.Option("reduce", help='Distribute BatchNorm stats between nodes ("broadcast", "reduce", or "")'),
-    split_bn: bool = typer.Option(False, help="Enable separate BN layers per augmentation split"),
+# Model Exponential Moving Average
+group = parser.add_argument_group("Model exponential moving average parameters")
+group.add_argument("--model-ema", action="store_true", default=False, help="Enable tracking moving average of model weights.")
+group.add_argument("--model-ema-force-cpu", action="store_true", default=False, help="Force ema to be tracked on CPU, rank=0 node only. Disables EMA validation.")
+group.add_argument("--model-ema-decay", type=float, default=0.9998, help="Decay factor for model weights moving average (default: 0.9998)")
+group.add_argument("--model-ema-warmup", action="store_true", help="Enable warmup for model EMA decay.")
 
-    # Model Exponential Moving Average
-    model_ema: bool = typer.Option(False, help="Enable tracking moving average of model weights."),
-    model_ema_force_cpu: bool = typer.Option(False, help="Force EMA to be tracked on CPU, rank=0 node only."),
-    model_ema_decay: float = typer.Option(0.9998, help="Decay factor for model weights moving average (default: 0.9998)"),
-    model_ema_warmup: bool = typer.Option(False, help="Enable warmup for model EMA decay"),
+# Misc
+group = parser.add_argument_group("Miscellaneous parameters")
+group.add_argument("--seed", type=int, default=42, metavar="S", help="random seed (default: 42)")
+group.add_argument("--worker-seeding", type=str, default="all", help="worker seed mode (default: all)")
+group.add_argument("--log-interval", type=int, default=50, metavar="N", help="how many batches to wait before logging training status")
+group.add_argument("--recovery-interval", type=int, default=0, metavar="N", help="how many batches to wait before writing recovery checkpoint")
+group.add_argument("--checkpoint-hist", type=int, default=10, metavar="N", help="number of checkpoints to keep (default: 10)")
+group.add_argument("-j", "--workers", type=int, default=4, metavar="N", help="how many training processes to use (default: 4)")
+group.add_argument("--save-images", action="store_true", default=False, help="save images of input batches every log interval for debugging")
+group.add_argument("--pin-mem", action="store_true", default=False, help="Pin CPU memory in DataLoader for more efficient (sometimes) transfer to GPU.")
+group.add_argument("--no-prefetcher", action="store_true", default=False, help="disable fast prefetcher")
+group.add_argument("--output", default="", type=str, metavar="PATH", help="path to output folder (default: none, current dir)")
+group.add_argument("--experiment", default="", type=str, metavar="NAME", help="name of train experiment, name of sub-folder for output")
+group.add_argument("--eval-metric", default="top1", type=str, metavar="EVAL_METRIC", help='Best metric (default: "top1"')
+group.add_argument("--tta", type=int, default=0, metavar="N", help="Test/inference time augmentation (oversampling) factor. 0=None (default: 0)")
+group.add_argument("--use-multi-epochs-loader", action="store_true", default=False, help="use the multi-epochs-loader to save time at the beginning of every epoch")
+group.add_argument("--log-wandb", action="store_true", default=False, help="log training and validation metrics to wandb")
+group.add_argument("--wandb-project", default=None, type=str, help="wandb project name")
+group.add_argument("--wandb-tags", default=[], type=str, nargs="+", help="wandb tags")
+group.add_argument("--wandb-resume-id", default="", type=str, metavar="ID", help="If resuming a run, the id of the run in wandb")
 
-    # Misc
-    seed: int = typer.Option(42, help="Random seed (default: 42)"),
-    worker_seeding: str = typer.Option("all", help="Worker seed mode (default: all)"),
-    log_interval: int = typer.Option(50, help="Number of batches to wait before logging training status"),
-    recovery_interval: int = typer.Option(0, help="Number of batches to wait before writing recovery checkpoint"),
-    checkpoint_hist: int = typer.Option(10, help="Number of checkpoints to keep (default: 10)"),
-    workers: int = typer.Option(4, help="Number of training processes to use (default: 4)"),
-    save_images: bool = typer.Option(False, help="Save images of input batches every log interval for debugging"),
-    pin_mem: bool = typer.Option(False, help="Pin CPU memory in DataLoader for more efficient transfer to GPU."),
-    no_prefetcher: bool = typer.Option(False, help="Disable fast prefetcher"),
-    output: str = typer.Option("", help="Path to output folder (default: current dir)"),
-    experiment: str = typer.Option("", help="Name of train experiment, sub-folder for output"),
-    eval_metric: str = typer.Option("top1", help="Best metric (default: 'top1')"),
-    tta: int = typer.Option(0, help="Test/inference time augmentation factor (default: 0)"),
-    use_multi_epochs_loader: bool = typer.Option(False, help="Use multi-epochs-loader to save time at the beginning of every epoch"),
-    log_wandb: bool = typer.Option(False, help="Log training and validation metrics to wandb"),
-    wandb_project: str = typer.Option(None, help="Wandb project name"),
-    wandb_tags: List[str] = typer.Option([], help="Wandb tags"),
-    wandb_resume_id: str = typer.Option("", help="If resuming a run, the id of the run in wandb"),
-    ):
-
-    # Initialize an empty dictionary for arguments
-    args_dict = {}
-
-    # If there's a config file, load it and update the defaults
-    if config:
-        with open(config, 'r') as f:
+def _parse_args():
+    # Do we have a config file to parse?
+    args_config, remaining = config_parser.parse_known_args()
+    if args_config.config:
+        with open(args_config.config) as f:
             cfg = yaml.safe_load(f)
-            args_dict.update(cfg)
+            parser.set_defaults(**cfg)
 
-    # Capture the command-line arguments
-    for key, value in locals().items():
-        # Add them to the args_dict
-        if key != "config":
-            args_dict[key] = value
+    # The main arg parser parses the rest of the args, the usual
+    # defaults will have been overridden if config file specified.
+    args = parser.parse_args(remaining)
 
-    # Cache the arguments as a text string to save them later
-    args_text = yaml.safe_dump(args_dict, default_flow_style=False)
+    # Cache the args as a text string to save them in the output dir later
+    args_text = yaml.safe_dump(args.__dict__, default_flow_style=False)
+    return args, args_text
 
-    args = SimpleNamespace(**args_dict)
 
-    args.model_kwargs = {key:value for kv in args.model_kwargs for key, value in [kv.split('=')]}
-    args.opt_kwargs = {key:value for kv in args.opt_kwargs for key, value in [kv.split('=')]}
-
+def main():
     utils.setup_default_logging()
+    args, args_text = _parse_args()
 
     if args.device_modules:
         for module in args.device_modules:
@@ -827,7 +824,7 @@ def main(
 
     if best_metric is not None:
         # log best metric as tracked by checkpoint saver
-        _logger.info('*** Best metric: {0} (epoch {1})'.format(best_metric, best_epoch))
+        _logger.info(f'*** Best metric: {best_metric} (epoch {best_epoch})')
 
     if utils.is_primary(args):
         # for parsable results display, dump top-10 summaries to avoid excess console spam
@@ -1084,4 +1081,4 @@ def validate(
     return metrics
 
 if __name__ == '__main__':
-    app()
+    main()
