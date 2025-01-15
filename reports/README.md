@@ -255,7 +255,9 @@ Practices implementing code quality and format are crucial in larger projects as
 >
 > Answer:
 
-We made use of both branches and PRs in our project. 
+We made use of both branches and PRs in our project. Each group member had to checkout a new branch when adding feature that they could work when contributing to the GitHub repository. We only allowed changes on main branch for documentational changes (markdown-files) and the group was instructed to not develop any code on the main-branch. To merge a feature branch into main, each team member have to create a pull requests (PRs) which were code reviewed by at least one other team member before merging. This why of working helped the group to ensure code quality and enhanced collaboratuon and discussion of changes. 
+
+Branches and PRs helped our group keeping version control by isolating new features into specific branches. This helped us also to ensure code quality as all PRs was checked using `ruff` and tested running a test suite with `pytest` of all implemented tests in the `tests` folder.
 
 ### Question 10
 
