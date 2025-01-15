@@ -40,10 +40,11 @@ jobs:
       - name: Commit and push changes
         if: ${{ github.event_name == 'pull_request' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAT: ${{ secrets.PAT }}
         run: |
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
+          git remote set-url origin https://x-access-token:${PAT}@github.com/DTU-MLOPS-12/dtu_mlops_project.git
           git add src/dtu_mlops_project/
           git commit -m "Apply Ruff fixes and formatting"
-          git push origin ${{ github.head_ref }}
+          git push origin HEAD:${{ github.head_ref }}
