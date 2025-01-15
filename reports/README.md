@@ -143,7 +143,7 @@ s233489, jonnil, s091969, s233480
 >
 > Answer:
 
---- question 3 fill here ---
+The third-party framework TIMM (PyTorch Image Models) was used in our project. We used functionality from the package to access a wide variety of pre-trained models and their associated utilities. By during this, we could quickly experiment with different architectures and fine-tune the predefined model for our specific task.
 
 ## Coding environment
 
@@ -163,7 +163,16 @@ s233489, jonnil, s091969, s233480
 >
 > Answer:
 
---- question 4 fill here ---
+`Pip` package manager was used for managing our dependencies. The list of dependencies was manually maintained in the `requirements.txt` and `requirements_dev.txt` files. Assuming that Python 12 and `pip`, to get a complete copy of our development environment, one would have to clone the repository and run the following commands:
+
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+pip install -r requirements.txt
+pip install -r requirements_dev.txt
+```
+
+This will ensures that all packages used on their specific versions are installed which is replicating the exact environment.
 
 ### Question 5
 
