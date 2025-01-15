@@ -188,7 +188,8 @@ This will ensures that all packages in their specific versions are installed, he
 >
 > Answer:
 
---- question 5 fill here ---
+Using the cookiecutter template from the ![template repository](https://github.com/SkafteNicki/mlops_template), we have 
+filled out the `src`, `data`, and `tests` folders specific to our project. We have removed the `notebook` folder as we did not use Jupyter Notebooks in our project. Additionally, we have added more GitHub workflows in `.github/workflows` and configurations in the `configs` folder. Lastly, we have added files for building and deploying in cloud to ... 
 
 ### Question 6
 
@@ -203,7 +204,9 @@ This will ensures that all packages in their specific versions are installed, he
 >
 > Answer:
 
---- question 6 fill here ---
+We used `ruff` for checking our code quality and format. `ruff` was used for both linting and formatting our source codebase runned as a workflow for each pull request with GitHub Actions. Specific rules in `ruff` was applied from `isort`, `Pyflake`, and `Pyupgrade`. For typing we used ... and for documentation ...
+
+Practices implementing code quality and format are crucial in larger projects as they help enhance code consistency and readability. Furtermore, it can help to keep compliance with specific style guides like `PEP 8` for large codebases. This can make it easier for team members to understand and contribute to larger projects where it can be hard to maintain good code quality.
 
 ## Version control
 
