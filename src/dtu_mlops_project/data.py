@@ -3,12 +3,10 @@ import os
 import random
 from pathlib import Path
 from typing import Optional, Union
-
 import matplotlib.pyplot as plt
 import typer
 from loguru import logger
 from PIL import Image
-
 from datasets import Dataset, DatasetDict, load_dataset
 
 app = typer.Typer()
