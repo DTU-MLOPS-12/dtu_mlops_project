@@ -1,4 +1,4 @@
-name: Check code with Ruff
+name: Check, format and fix the code with Ruff
 
 on:
   pull_request:
