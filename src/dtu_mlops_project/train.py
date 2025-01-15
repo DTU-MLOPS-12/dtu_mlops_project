@@ -814,7 +814,12 @@ def main(
             if saver is not None:
                 # save proper checkpoint with eval metric
                 best_metric, best_epoch = saver.save_checkpoint(epoch, metric=latest_metric)
-                
+
+                if has_wandb and args.log_wandb:
+                    artifact = wandb.Artifact('model', type='model', description='Best model checkpoint')
+                    artifact.add_file(os.path.join(output_dir, 'model_best.pth.tar'))
+                    wandb.log_artifact(artifact, aliases=['best', 'epoch-{}'.format(epoch)])
+
             if lr_scheduler is not None:
                 # step LR for next epoch
                 lr_scheduler.step(epoch + 1, latest_metric)
