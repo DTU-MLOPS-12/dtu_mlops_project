@@ -8,7 +8,10 @@ on:
 jobs:
   testrunner:
     name: "Run the test suite"
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ["ubuntu-latest", "macos-latest"]
     defaults:
       run:
         shell: bash -el {0}
@@ -23,10 +26,11 @@ jobs:
           python-version: 3.12
           cache: 'pip'
 
-      - uses: conda-incubator/setup-miniconda@v3
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          activate_environment: dtu_mlops_project
+          activate-environment: dtu_mlops_project
           python-version: 3.12 
           channels: conda-forge
 
