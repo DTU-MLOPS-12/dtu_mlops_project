@@ -8,7 +8,10 @@ on:
 jobs:
   testrunner:
     name: "Run the test suite"
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ["ubuntu-latest", "macos-latest"]
     defaults:
       run:
         shell: bash -el {0}
