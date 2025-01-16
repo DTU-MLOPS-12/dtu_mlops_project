@@ -44,9 +44,10 @@ jobs:
 
       - name: Build images
         run: |
-          docker build -f dockerfiles/api.dockerfile . -t ${{ env.GAR_LOCATION }}api:${{ env.TAG }}
-          docker build -f dockerfiles/data.dockerfile . -t ${{ env.GAR_LOCATION }}data:${{ env.TAG }}
-          docker build -f dockerfiles/train.dockerfile . -t ${{ env.GAR_LOCATION }}train:${{ env.TAG }}
+          for dockerfile in dockerfiles/*.dockerfile; do
+            image_name=$(basename $dockerfile .dockerfile)
+            docker build -f $dockerfile . -t ${{ env.GAR_LOCATION }}$image_name:${{ env.TAG }}
+          done
 
       - name: Upload to Artifact Registry
         run: |
