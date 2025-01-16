@@ -46,7 +46,7 @@ jobs:
         run: |
           docker build -f dockerfiles/api.dockerfile . -t ${{ env.GAR_LOCATION }}api:${{ env.TAG }}
           docker build -f dockerfiles/data.dockerfile . -t ${{ env.GAR_LOCATION }}data:${{ env.TAG }}
-          docker build -f dockerfiles/train.dockerfile . -t ${{ env.GAR_LOCATION }}train:${{ env.TAG }}
+          docker build --secret id=GCP_SA_KEY_DVC -f dockerfiles/train.dockerfile . -t ${{ env.GAR_LOCATION }}train:${{ env.TAG }}
 
       - name: Upload to Artifact Registry
         run: |
