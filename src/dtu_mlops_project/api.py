@@ -1,17 +1,58 @@
+import functools
 from contextlib import asynccontextmanager
 from http import HTTPStatus
+import json
+import typing
 
 import fastapi
+import torch
+import timm
 from loguru import logger
 from PIL import Image
 
-try:
-    import model
-except (ImportError, ModuleNotFoundError):
-    from . import model
+
+@functools.cache
+def get_labels() -> dict:
+    """
+    Loads and caches the labels for the corresponding class indices.
+    """
+    with open("src/dtu_mlops_project/imagenet-simple-labels.json") as f:
+        labels = json.load(f)
+    return labels
 
 
-dummy_model = model.get_dummy_model()
+@functools.cache
+def get_dummy_model() -> typing.Callable:
+    """
+    Initializes a 'dummy' model ('mobilenetv4') for temporary use.
+
+    :returns: A callable which can run the initialized model.
+    """
+    model_name = "mobilenetv4_conv_small.e2400_r224_in1k"
+    mobilenetv4_model = timm.create_model(model_name, pretrained=True)
+    mobilenetv4_model = mobilenetv4_model.eval()
+
+    data_config = timm.data.resolve_model_data_config(mobilenetv4_model)
+    transforms = timm.data.create_transform(**data_config, is_training=False)
+
+    def _run_model(image, k: int = 5) -> tuple:
+        """
+        Runs the model on an image object with and computes the top 'k'
+        probabilities and their associated class indices.
+
+        :param image: The image to run the model on.
+        :param k: The number of classes to return.
+        :returns: a tuple of top 'k' class indices and their probabilities.
+        """
+        output = mobilenetv4_model(transforms(image).unsqueeze(0))
+
+        probabilities, class_indices = torch.topk(output.softmax(dim=1) * 100, k=k)
+        return probabilities, class_indices
+
+    return _run_model
+
+
+dummy_model = get_dummy_model()
 
 IMAGE_MIME_TYPES = ("image/jpeg", "image/png", "image/svg", "image/svg+xml")
 
@@ -80,7 +121,11 @@ def api_predict(image_file: fastapi.UploadFile):
     probs, classes = dummy_model(image)
     logger.debug(f"Dummy model computed probabilities: '{probs}' with corresponding class indices: '{classes}'")
 
+    labels = get_labels()
+
+    results = {labels[clz.item()]: prob.item() for prob, clz in zip(probs[0], classes[0])}
+    logger.debug(f"Final results: '{results}'")
+
     return HTTP_200_OK | {
-        "probabilities": probs,
-        "classification_indices": classes,
+        "probabilities": results,
     }
