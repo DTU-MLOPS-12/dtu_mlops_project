@@ -46,5 +46,9 @@ jobs:
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
           git add src/dtu_mlops_project/
-          git commit -m "Apply Ruff fixes and formatting"
-          git push origin ${{ github.head_ref }}
+          if ! git diff --cached --quiet; then
+            git commit -m "Apply Ruff fixes and formatting"
+            git push origin ${{ github.head_ref }}
+          else
+            echo "No changes to commit."
+          fi
