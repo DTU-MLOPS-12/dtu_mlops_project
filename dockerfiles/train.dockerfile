@@ -1,7 +1,7 @@
 # Export credentials (test locally)
 # export GCP_SA_KEY_DVC=$(cat gcloud_credentials_base64.txt)
 
-# Build with secrets locally
+# Build with secret
 # docker build --secret id=GCP_SA_KEY_DVC -f dockerfiles/train.dockerfile -t train:latest .
 
 # Debug
@@ -27,18 +27,19 @@ RUN apt update && \
 COPY requirements.txt requirements.txt
 COPY pyproject.toml pyproject.toml
 COPY src/ src/
-RUN mkdir -p /data
 
 WORKDIR /
 RUN pip install -r requirements.txt --no-cache-dir
 RUN pip install . --no-deps --no-cache-dir
+RUN mkdir -p /data/processed
+
 
 # Add gcloud auth step using GitHub secret
 RUN --mount=type=secret,id=GCP_SA_KEY_DVC,mode=0444 \
     cat /run/secrets/GCP_SA_KEY_DVC | tr -d '\n' | base64 -d > /tmp/gcloud-credentials.json && \
     chmod 400 /tmp/gcloud-credentials.json && \
     gcloud auth activate-service-account --key-file=/tmp/gcloud-credentials.json && \
-    gsutil -m cp -r gs://mlops_grp_12_data_bucket_public/data /data && \
+    gsutil -m cp -r gs://mlops_grp_12_data_bucket_public/data/processed/timm-imagenet-1k-wds-subset /data/processed/ && \
     rm -f /tmp/gcloud-credentials.json
 
 ENTRYPOINT ["python", "-u", "src/dtu_mlops_project/train.py"]
