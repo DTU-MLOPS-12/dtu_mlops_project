@@ -26,7 +26,8 @@ jobs:
           python-version: 3.12
           cache: 'pip'
 
-      - uses: conda-incubator/setup-miniconda@v3
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           activate-environment: dtu_mlops_project
