@@ -1,15 +1,13 @@
 name: Build docker images and push to Google Artifact Registry
 
 on:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
+  release:
+    types: [published]
 
 env:
   LOCATION: europe
   REPO: default-container-repository
-  TAG: ${{ github.event.release.tag_name }}
+  TAG: latest # ${{ github.event.release.tag_name }}
   PROJECT_ID: dtu-mlops-447711
   GAR_LOCATION: europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/
 
@@ -39,7 +37,7 @@ jobs:
         run: |
           docker build -f dockerfiles/api.dockerfile . -t ${{ env.GAR_LOCATION }}api:${{ env.TAG }}
           docker build -f dockerfiles/data.dockerfile . -t ${{ env.GAR_LOCATION }}data:${{ env.TAG }}
-          docker build -f dockerfiles/train.dockerfile . -t $${{ env.GAR_LOCATION }}train:${{ env.TAG }}
+          docker build -f dockerfiles/train.dockerfile . -t ${{ env.GAR_LOCATION }}train:${{ env.TAG }}
 
       - name: Upload to Artifact Registry
         run: |
