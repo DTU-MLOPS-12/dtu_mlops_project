@@ -241,7 +241,7 @@ group.add_argument("--eval-metric", default="top1", type=str, metavar="EVAL_METR
 group.add_argument("--tta", type=int, default=0, metavar="N", help="Test/inference time augmentation (oversampling) factor. 0=None (default: 0)")
 group.add_argument("--use-multi-epochs-loader", action="store_true", default=False, help="use the multi-epochs-loader to save time at the beginning of every epoch")
 group.add_argument("--log-wandb", action="store_true", default=False, help="log training and validation metrics to wandb")
-group.add_argument("--wandb-project", default=None, type=str, help="wandb project name")
+group.add_argument("--wandb-project", default="mlops_project", type=str, help="wandb project name")
 group.add_argument("--wandb-tags", default=[], type=str, nargs="+", help="wandb tags")
 group.add_argument("--wandb-resume-id", default="", type=str, metavar="ID", help="If resuming a run, the id of the run in wandb")
 
@@ -989,13 +989,17 @@ def train_one_epoch(
                     images = wandb.Image(input[:5], caption="Train Input Images")
                     wandb.log({"images": images})
 
-                    # log the training loss
+                    # log the training loss to wandb
                     wandb.log({
                         "train_loss": loss_now,
                         "train_loss_avg": loss_avg,
                         "train_lr": lr,
                         "train_samples_per_sec": update_sample_count / update_time_m.val,
                     })
+
+                    # add a plot of histogram of the gradients
+                    grads = torch.cat([p.grad.flatten() for p in model.parameters() if p.grad is not None], 0)
+                    wandb.log({"gradients": wandb.Histogram(grads)})
 
                 if args.save_images and output_dir:
                     torchvision.utils.save_image(
