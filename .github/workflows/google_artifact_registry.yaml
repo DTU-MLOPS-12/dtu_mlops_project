@@ -49,3 +49,7 @@ jobs:
           docker push ${{ env.GAR_LOCATION }}data:${{ env.TAG }}
           docker push ${{ env.GAR_LOCATION }}train:${{ env.TAG }}
 
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy fastapi-app --image ${{ env.GAR_LOCATION }}api:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated
+
