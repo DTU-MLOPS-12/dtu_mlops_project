@@ -29,7 +29,7 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          activate_environment: dtu_mlops_project
+          activate-environment: dtu_mlops_project
           python-version: 3.12 
           channels: conda-forge
 
