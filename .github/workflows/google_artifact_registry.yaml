@@ -1,0 +1,49 @@
+name: Build docker images and push to Google Artifact Registry
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  LOCATION: europe
+  REPO: default-container-repository
+  TAG: ${{ github.event.release.tag_name }}
+  PROJECT_ID: dtu-mlops-447711
+  GAR_LOCATION: europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/
+
+jobs:
+  build-images:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+
+      - name: Setup GCP SDK
+        uses: "google-github-actions/setup-gcloud@v1"
+
+      - name: Use gcloud CLI
+        run: gcloud info
+
+      - name: Docker authentication
+        run: |
+          gcloud auth configure-docker ${{ env.LOCATION }}-docker.pkg.dev --quiet
+
+      - name: Build images
+        run: |
+          docker build -f dockerfiles/api.dockerfile . -t ${{ env.GAR_LOCATION }}api:${{ env.TAG }}
+          docker build -f dockerfiles/data.dockerfile . -t ${{ env.GAR_LOCATION }}data:${{ env.TAG }}
+          docker build -f dockerfiles/train.dockerfile . -t $${{ env.GAR_LOCATION }}train:${{ env.TAG }}
+
+      - name: Upload to Artifact Registry
+        run: |
+          docker push ${{ env.GAR_LOCATION }}api:${{ env.TAG }}
+          docker push ${{ env.GAR_LOCATION }}data:${{ env.TAG }}
+          docker push ${{ env.GAR_LOCATION }}train:${{ env.TAG }}
+
