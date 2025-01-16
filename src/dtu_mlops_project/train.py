@@ -26,6 +26,8 @@ from contextlib import suppress
 from datetime import datetime
 from functools import partial
 
+import matplotlib.pyplot as plt
+from sklearn.metrics import RocCurveDisplay
 import torch
 import torch.nn as nn
 import torchvision.utils
@@ -884,6 +886,8 @@ def train_one_epoch(
     data_start_time = update_start_time = time.time()
     optimizer.zero_grad()
     update_sample_count = 0
+
+    preds, targets = [], []
     for batch_idx, (input, target) in enumerate(loader):
         last_batch = batch_idx == last_batch_idx
         need_update = last_batch or (batch_idx + 1) % accum_steps == 0
@@ -948,6 +952,7 @@ def train_one_epoch(
 
         num_updates += 1
         optimizer.zero_grad()
+        y_pred = model(input)
         if model_ema is not None:
             model_ema.update(model, step=num_updates)
 
@@ -959,6 +964,10 @@ def train_one_epoch(
         time_now = time.time()
         update_time_m.update(time.time() - update_start_time)
         update_start_time = time_now
+
+        # Collect predictions and targets for ROC curve
+        preds.append(y_pred.detach().cpu())
+        targets.append(target.detach().cpu())
 
         if update_idx % args.log_interval == 0:
             lrl = [param_group['lr'] for param_group in optimizer.param_groups]
@@ -997,9 +1006,9 @@ def train_one_epoch(
                         "train_samples_per_sec": update_sample_count / update_time_m.val,
                     })
 
-                    # add a plot of histogram of the gradients
-                    grads = torch.cat([p.grad.flatten() for p in model.parameters() if p.grad is not None], 0)
-                    wandb.log({"gradients": wandb.Histogram(grads)})
+                    # TODO: add a plot of histogram of the gradients
+                    #gradients = torch.cat([p.grad.view(-1) for p in model.parameters() if p.grad is not None])
+                    #wandb.log({"gradients": wandb.Histogram(gradients)})
 
                 if args.save_images and output_dir:
                     torchvision.utils.save_image(
@@ -1019,6 +1028,25 @@ def train_one_epoch(
         update_sample_count = 0
         data_start_time = time.time()
         # end for
+    
+    # after the epoch ends, log the ROC curves
+    preds = torch.cat(preds, 0)
+    targets = torch.cat(targets, 0)
+
+    for class_id in range(10):
+        one_hot = torch.zeros_like(targets)
+        one_hot[targets == class_id] = 1
+        _ = RocCurveDisplay.from_predictions(
+            one_hot,
+            preds[:, class_id],
+            name=f"ROC curve for {class_id}",
+            plot_chance_level=(class_id == 2),
+        )
+
+    # log the ROC curves to wandb
+    wandb.log({"roc": plt})
+    plt.close()  # Close the plot to avoid memory leaks and overlapping figures
+
 
     if hasattr(optimizer, 'sync_lookahead'):
         optimizer.sync_lookahead()
