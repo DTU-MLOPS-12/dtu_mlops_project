@@ -4,7 +4,7 @@ amp_dtype: float16
 amp_impl: native
 aug_repeats: 0
 aug_splits: 0
-batch_size: 10
+batch_size: 64
 bce_loss: false
 bce_pos_weight: null
 bce_sum: false
@@ -95,6 +95,7 @@ no_ddp_bb: false
 no_prefetcher: false
 no_resume_opt: false
 num_classes: null
+infer_classcount: true
 opt: adamw
 opt_betas:
 - 0.6
@@ -104,7 +105,7 @@ opt_kwargs: {}
 output: ''
 patience_epochs: 10
 pin_mem: false
-pretrained: false
+pretrained: true # Start from the pretrained version of the model
 pretrained_path: null
 ratio:
 - 0.75
