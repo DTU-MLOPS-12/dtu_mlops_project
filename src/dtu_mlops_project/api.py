@@ -16,7 +16,7 @@ def get_labels() -> dict:
     """
     Loads and caches the labels for the corresponding class indices.
     """
-    with open("src/dtu_mlops_project/imagenet-simple-labels.json", "r") as f:
+    with open("src/dtu_mlops_project/imagenet-simple-labels.json") as f:
         labels = json.load(f)
     return labels
 
@@ -123,10 +123,7 @@ def api_predict(image_file: fastapi.UploadFile):
 
     labels = get_labels()
 
-    results = {
-        labels[clz.item()]: prob.item()
-        for prob, clz in zip(probs[0], classes[0])
-    }
+    results = {labels[clz.item()]: prob.item() for prob, clz in zip(probs[0], classes[0])}
     logger.debug(f"Final results: '{results}'")
 
     return HTTP_200_OK | {
