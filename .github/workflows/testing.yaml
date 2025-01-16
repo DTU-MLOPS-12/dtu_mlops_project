@@ -1,7 +1,7 @@
 name: Run the test suite with pytest
 
 on:
-  push:
+  pull_request:
     path:
       - '**.py'
 
