@@ -27,6 +27,8 @@ from contextlib import suppress
 from datetime import datetime
 from functools import partial
 
+import matplotlib.pyplot as plt
+from sklearn.metrics import RocCurveDisplay
 import torch
 import torch.nn as nn
 import torchvision.utils
@@ -579,32 +581,13 @@ group.add_argument(
     help="Pin CPU memory in DataLoader for more efficient (sometimes) transfer to GPU.",
 )
 group.add_argument("--no-prefetcher", action="store_true", default=False, help="disable fast prefetcher")
-group.add_argument(
-    "--output", default="", type=str, metavar="PATH", help="path to output folder (default: none, current dir)"
-)
-group.add_argument(
-    "--experiment", default="", type=str, metavar="NAME", help="name of train experiment, name of sub-folder for output"
-)
-group.add_argument(
-    "--eval-metric", default="top1", type=str, metavar="EVAL_METRIC", help='Best metric (default: "top1"'
-)
-group.add_argument(
-    "--tta",
-    type=int,
-    default=0,
-    metavar="N",
-    help="Test/inference time augmentation (oversampling) factor. 0=None (default: 0)",
-)
-group.add_argument(
-    "--use-multi-epochs-loader",
-    action="store_true",
-    default=False,
-    help="use the multi-epochs-loader to save time at the beginning of every epoch",
-)
-group.add_argument(
-    "--log-wandb", action="store_true", default=False, help="log training and validation metrics to wandb"
-)
-group.add_argument("--wandb-project", default=None, type=str, help="wandb project name")
+group.add_argument("--output", default="", type=str, metavar="PATH", help="path to output folder (default: none, current dir)")
+group.add_argument("--experiment", default="", type=str, metavar="NAME", help="name of train experiment, name of sub-folder for output")
+group.add_argument("--eval-metric", default="top1", type=str, metavar="EVAL_METRIC", help='Best metric (default: "top1"')
+group.add_argument("--tta", type=int, default=0, metavar="N", help="Test/inference time augmentation (oversampling) factor. 0=None (default: 0)")
+group.add_argument("--use-multi-epochs-loader", action="store_true", default=False, help="use the multi-epochs-loader to save time at the beginning of every epoch")
+group.add_argument("--log-wandb", action="store_true", default=False, help="log training and validation metrics to wandb")
+group.add_argument("--wandb-project", default="mlops_project", type=str, help="wandb project name")
 group.add_argument("--wandb-tags", default=[], type=str, nargs="+", help="wandb tags")
 group.add_argument(
     "--wandb-resume-id", default="", type=str, metavar="ID", help="If resuming a run, the id of the run in wandb"
@@ -1168,6 +1151,7 @@ def main():
                     log_wandb=args.log_wandb and has_wandb,
                 )
 
+
             if eval_metrics is not None:
                 latest_metric = eval_metrics[eval_metric]
             else:
@@ -1176,6 +1160,11 @@ def main():
             if saver is not None:
                 # save proper checkpoint with eval metric
                 best_metric, best_epoch = saver.save_checkpoint(epoch, metric=latest_metric)
+
+                if has_wandb and args.log_wandb:
+                    artifact = wandb.Artifact('model', type='model', description='Best model checkpoint')
+                    artifact.add_file(os.path.join(output_dir, 'model_best.pth.tar'))
+                    wandb.log_artifact(artifact, aliases=['best', f'epoch-{epoch}'])
 
             if lr_scheduler is not None:
                 # step LR for next epoch
@@ -1248,6 +1237,8 @@ def train_one_epoch(
     data_start_time = update_start_time = time.time()
     optimizer.zero_grad()
     update_sample_count = 0
+
+    preds, targets = [], []
     for batch_idx, (input, target) in enumerate(loader):
         last_batch = batch_idx == last_batch_idx
         need_update = last_batch or (batch_idx + 1) % accum_steps == 0
@@ -1311,7 +1302,12 @@ def train_one_epoch(
             continue
 
         num_updates += 1
+
+        # Save the gradients before doing zero_grad
+        gradients = torch.cat([p.grad.cpu().view(-1) for p in model.parameters() if p.grad.cpu() is not None])
+
         optimizer.zero_grad()
+        y_pred = model(input)
         if model_ema is not None:
             model_ema.update(model, step=num_updates)
 
@@ -1323,6 +1319,10 @@ def train_one_epoch(
         time_now = time.time()
         update_time_m.update(time.time() - update_start_time)
         update_start_time = time_now
+
+        # Collect predictions and targets for ROC curve
+        preds.append(y_pred.detach().cpu())
+        targets.append(target.detach().cpu())
 
         if update_idx % args.log_interval == 0:
             lrl = [param_group["lr"] for param_group in optimizer.param_groups]
@@ -1346,6 +1346,42 @@ def train_one_epoch(
                     f"Data: {data_time_m.val:.3f} ({data_time_m.avg:.3f})"
                 )
 
+                # Log the training loss to W&B after every log_interval
+                if args.log_wandb and has_wandb:
+
+                    # add a plot of the input images
+                    images = wandb.Image(input[:5], caption="Train Input Images")
+                    wandb.log({"images": images})
+
+                    # log the training loss to wandb
+                    wandb.log({
+                        "train_loss": loss_now,
+                        "train_loss_avg": loss_avg,
+                        "train_lr": lr,
+                        "train_samples_per_sec": update_sample_count / update_time_m.val,
+                    })
+
+                    # Log the gradients 
+                    wandb.log({"gradients": wandb.Histogram(gradients)})
+
+                # Log the training loss to W&B after every log_interval
+                if args.log_wandb and has_wandb:
+
+                    # add a plot of the input images
+                    images = wandb.Image(input[:5], caption="Train Input Images")
+                    wandb.log({"images": images})
+
+                    # log the training loss to wandb
+                    wandb.log({
+                        "train_loss": loss_now,
+                        "train_loss_avg": loss_avg,
+                        "train_lr": lr,
+                        "train_samples_per_sec": update_sample_count / update_time_m.val,
+                    })
+
+                    # Log the gradients 
+                    wandb.log({"gradients": wandb.Histogram(gradients)})
+
                 if args.save_images and output_dir:
                     torchvision.utils.save_image(
                         input, os.path.join(output_dir, "train-batch-%d.jpg" % batch_idx), padding=0, normalize=True
@@ -1360,8 +1396,28 @@ def train_one_epoch(
         update_sample_count = 0
         data_start_time = time.time()
         # end for
+    
+    # after the epoch ends, log the ROC curves
+    preds = torch.cat(preds, 0)
+    targets = torch.cat(targets, 0)
 
-    if hasattr(optimizer, "sync_lookahead"):
+    for class_id in range(args.num_classes):
+        one_hot = torch.zeros_like(targets)
+        one_hot[targets == class_id] = 1
+
+        plot = RocCurveDisplay.from_predictions(
+            one_hot,
+            preds[:, class_id],
+            name=f"ROC curve for {class_id}",
+            plot_chance_level=True,
+        )
+
+        # Save the plot as an image in memory
+        plt.gcf()  # Get the current figure
+        wandb.log({f"roc_class_{class_id}_epoch_{epoch}": wandb.Image(plt.gcf())})
+        plt.close()  # Close the plot to avoid memory leaks and overlapping figures
+
+    if hasattr(optimizer, 'sync_lookahead'):
         optimizer.sync_lookahead()
 
     loss_avg = losses_m.avg
@@ -1435,10 +1491,22 @@ def validate(
                     f"Acc@5: {top5_m.val:>7.3f} ({top5_m.avg:>7.3f})"
                 )
 
-    metrics = OrderedDict([("loss", losses_m.avg), ("top1", top1_m.avg), ("top5", top5_m.avg)])
+                # Log the validation loss to W&B after every log_interval
+                if args.log_wandb and has_wandb:
+                    wandb.log({
+                        "val_loss": losses_m.val,
+                        "val_loss_avg": losses_m.avg,
+                        "val_acc1": top1_m.val,
+                        "val_acc1_avg": top1_m.avg,
+                        "val_acc5": top5_m.val,
+                        "val_acc5_avg": top5_m.avg,
+                    })
+
+    metrics = OrderedDict([('loss', losses_m.avg), ('top1', top1_m.avg), ('top5', top5_m.avg)])
 
     return metrics
 
 
 if __name__ == "__main__":
     main()
+    
