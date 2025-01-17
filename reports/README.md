@@ -367,7 +367,11 @@ Given this, any experiment could be reproduced by re-running the training with a
 >
 > Answer:
 
---- question 15 fill here ---
+In this project, we developed several docker images that was build to containerize our deployment. First of all we have one dockerfile for building and running data collection and preperation of the TIMM dataset. Another dockerfile handles the build and running of training our model. Then we have one dockerfile for building and running the backend utilizing FastApi, while another dockerfile is for building and running the frontend utilizing Streamlit.
+
+The Docker images was runned with Vertex AI and Cloud Run after they have been builded and uploaded to the artifact registry on Google Cloud Platform. E.g. a run of the training docker image was leveraged with the command: ...
+
+The link to the training dockerfile is: <weblink>
 
 ### Question 16
 
@@ -382,7 +386,8 @@ Given this, any experiment could be reproduced by re-running the training with a
 >
 > Answer:
 
---- question 16 fill here ---
+The groups debugging methods varied among group members. Print statements used quickly can be used to trace the flow of the code and identify issues. Others also used more advanced tools like interactive debugging sessions (run and debug) in Visual Studio Code. ...
+
 
 ## Working in the cloud
 
