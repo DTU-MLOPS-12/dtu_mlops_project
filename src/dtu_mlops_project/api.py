@@ -100,6 +100,8 @@ def api_predict(image_file: fastapi.UploadFile):
     API endpoint that receives an image file an runs the dummy
     model through it.
     """
+    logger.debug(f"Received an image file with MIME type: '{image_file.content_type}'")
+
     if image_file.content_type not in IMAGE_MIME_TYPES:
         logger.error(
             "Received an image file of with the wrong MIME type - "
@@ -112,7 +114,6 @@ def api_predict(image_file: fastapi.UploadFile):
                 f"Got an invalid file type: {image_file.content_type}. Acceptable file types are: {IMAGE_MIME_TYPES}"
             ),
         )
-
     image = Image.open(image_file.file)
     if image.mode != "RGB":
         logger.debug("Image is not in RGB mode. Performing conversion")
