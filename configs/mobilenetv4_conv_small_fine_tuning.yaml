@@ -4,7 +4,7 @@ amp_dtype: float16
 amp_impl: native
 aug_repeats: 0
 aug_splits: 0
-batch_size: 64
+batch_size: 128
 bce_loss: false
 bce_pos_weight: null
 bce_sum: false
@@ -22,9 +22,9 @@ cooldown_epochs: 0
 crop_pct: null
 cutmix: 0.0
 cutmix_minmax: null
-data: data/processed/
+data: /data/processed/timm-imagenet-1k-wds-subset/
 data_dir: null
-dataset: ''
+dataset: ImageFolder
 dataset_download: false
 decay_epochs: 90
 decay_milestones:
@@ -105,7 +105,7 @@ opt_kwargs: {}
 output: ''
 patience_epochs: 10
 pin_mem: false
-pretrained: true # Start from the pretrained version of the model
+pretrained: false
 pretrained_path: null
 ratio:
 - 0.75
@@ -147,4 +147,4 @@ warmup_lr: 0.0
 warmup_prefix: true
 weight_decay: 0.06
 worker_seeding: all
-workers: 8
+workers: 1
