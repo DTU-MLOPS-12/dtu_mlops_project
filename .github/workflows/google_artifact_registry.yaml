@@ -48,17 +48,20 @@ jobs:
         run: |
           for dockerfile in dockerfiles/*.dockerfile; do
             image_name=$(basename $dockerfile .dockerfile)
-            docker build --secret id=GCP_SA_KEY_DVC -f $dockerfile . -t ${{ env.GAR_LOCATION }}$image_name:${{ env.TAG }}
+            docker build --secret id=GCP_SA_KEY_DVC -f $dockerfile . -t ${{ env.GAR_LOCATION }}$image_name:${{ env.TAG }} &
           done
+          wait
 
       - name: Upload to Artifact Registry
         run: |
           for dockerfile in dockerfiles/*.dockerfile; do
             image_name=$(basename $dockerfile .dockerfile)
-            docker push ${{ env.GAR_LOCATION }}$image_name:${{ env.TAG }}
+            docker push ${{ env.GAR_LOCATION }}$image_name:${{ env.TAG }} &
           done
+          wait
 
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy fastapi-app --image ${{ env.GAR_LOCATION }}api:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated
-          gcloud run deploy streamlit-app --image ${{ env.GAR_LOCATION }}frontend:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated
+          gcloud run deploy fastapi-app --image ${{ env.GAR_LOCATION }}api:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated &
+          gcloud run deploy streamlit-app --image ${{ env.GAR_LOCATION }}frontend:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated &
+          wait
