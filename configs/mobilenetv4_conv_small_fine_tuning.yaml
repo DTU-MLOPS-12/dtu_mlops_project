@@ -64,7 +64,7 @@ jsd_loss: false
 layer_decay: null
 local_rank: 0
 log_interval: 50
-log_wandb: false
+log_wandb: true
 lr: null
 lr_base: 0.002
 lr_base_scale: ''
