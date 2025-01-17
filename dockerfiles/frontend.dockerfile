@@ -9,10 +9,10 @@ RUN mkdir /app
 
 WORKDIR /app
 
-COPY deps/requirements_frontend.txt /app/requirements_dev.txt
+COPY deps/requirements_frontend.txt /app/requirements_frontend.txt
 COPY src/dtu_mlops_project/frontend.py /app/frontend.py
 
-RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip pip install -r /app/requirements_frontend.txt
 
 EXPOSE 8000
 
