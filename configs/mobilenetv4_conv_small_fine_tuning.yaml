@@ -105,7 +105,7 @@ opt_kwargs: {}
 output: ''
 patience_epochs: 10
 pin_mem: false
-pretrained: true # Start from the pretrained version of the model
+pretrained: false
 pretrained_path: null
 ratio:
 - 0.75
