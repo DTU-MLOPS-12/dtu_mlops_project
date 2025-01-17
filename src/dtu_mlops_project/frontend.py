@@ -32,7 +32,8 @@ def about_model(backend):
 def classify_image(image, mime_type, backend):
     """Send the image to the backend for classification."""
     predict_url = f"{backend}/api/predict/"
-    files = {"image": ("uploaded_image", image, mime_type)}
+    #files = {"image": ("uploaded_image", image, mime_type)}
+    files = {'image_file': open(image.name, 'rb')}
     response = requests.post(predict_url, files=files, timeout=10)
     if response.status_code == 200:
         return response.json()
@@ -90,15 +91,14 @@ def main() -> None:
         result = classify_image(image, mime_type, backend=backend)
 
         if result is not None:
-            prediction = result["prediction"]
             probabilities = result["probabilities"]
 
-            # show the image and prediction
-            st.image(image, caption="Uploaded Image")
-            st.write("Prediction:", prediction)
+            # Results
+            st.header("Results")
+            st.write("Prediction Probabilities:")
 
-            # make a nice bar chart
-            data = {"Class": [f"Class {i}" for i in range(10)], "Probability": probabilities}
+            # Bar Chart
+            data = {"Class": list(probabilities.keys()), "Probability": list(probabilities.values())}
             df = pd.DataFrame(data)
             df.set_index("Class", inplace=True)
             st.bar_chart(df, y="Probability")
