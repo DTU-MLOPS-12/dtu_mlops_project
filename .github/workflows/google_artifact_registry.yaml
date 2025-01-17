@@ -14,6 +14,7 @@ env:
   TAG: latest # ${{ github.event.release.tag_name }}
   PROJECT_ID: dtu-mlops-447711
   GAR_LOCATION: europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/
+  BACKEND_URL: https://fastapi-app-ypqrr5d7oa-ez.a.run.app/
 
 jobs:
   build-images:
@@ -63,5 +64,5 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy fastapi-app --image ${{ env.GAR_LOCATION }}api:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated &
-          gcloud run deploy streamlit-app --image ${{ env.GAR_LOCATION }}frontend:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated --set-env-vars BACKEND="https://fastapi-app-840739092468.europe-west4.run.app" &
+          gcloud run deploy streamlit-app --image ${{ env.GAR_LOCATION }}frontend:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated --set-env-vars BACKEND="${{ env.BACKEND_URL }}" &
           wait
