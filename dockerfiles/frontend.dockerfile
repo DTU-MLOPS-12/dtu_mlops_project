@@ -5,13 +5,11 @@ RUN apt update && \
     apt install --no-install-recommends -y build-essential gcc git && \
     apt clean && rm -rf /var/lib/apt/lists/*
 
+RUN mkdir /app
+
 WORKDIR /app
 
-COPY deps/requirements_frontend.txt requirements.txt
-COPY pyproject.toml .
-COPY src/dtu_mlops_project/frontend.py .
-
-COPY requirements_dev.txt /app/requirements_dev.txt
+COPY deps/requirements_frontend.txt /app/requirements_dev.txt
 COPY frontend.py /app/frontend.py
 
 RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements.txt
