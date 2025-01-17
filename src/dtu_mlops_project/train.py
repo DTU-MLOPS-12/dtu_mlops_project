@@ -901,6 +901,12 @@ def main():
         trust_remote_code=args.dataset_trust_remote_code,
     )
 
+    # Retrieve the mapping of class labels to class names
+    if 'reader' in vars(dataset_train):
+        idx_to_class = {value:key for key,value in dataset_train.reader.class_to_idx.items()}
+    else:
+        idx_to_class = None
+
     if args.val_split:
         dataset_eval = create_dataset(
             args.dataset,
@@ -1137,6 +1143,7 @@ def main():
                 model_ema=model_ema,
                 mixup_fn=mixup_fn,
                 num_updates_total=num_epochs * updates_per_epoch,
+                idx_to_class=idx_to_class,
             )
 
             if args.distributed and args.dist_bn in ("broadcast", "reduce"):
@@ -1244,6 +1251,7 @@ def train_one_epoch(
     model_ema=None,
     mixup_fn=None,
     num_updates_total=None,
+    idx_to_class=None,
 ):
     if args.mixup_off_epoch and epoch >= args.mixup_off_epoch:
         if args.prefetcher and loader.mixup_enabled:
@@ -1336,7 +1344,10 @@ def train_one_epoch(
         num_updates += 1
 
         # Save the gradients before doing zero_grad
-        gradients = torch.cat([p.grad.cpu().flatten() for p in model.parameters() if p.grad.cpu() is not None])
+        gradients = torch.cat([
+            p.grad.cpu().flatten() for p in model.parameters() 
+            if p.grad is not None and torch.isfinite(p.grad).all().item()
+        ])
 
         optimizer.zero_grad()
         y_pred = model(input)
@@ -1423,6 +1434,8 @@ def train_one_epoch(
 
         handles, labels = [], []
         for class_id in range(args.num_classes):
+
+            class_name = idx_to_class[class_id] if idx_to_class is not None else idx_to_class
             # Create one-hot encoding for the current class
             one_hot = torch.zeros_like(targets)
             one_hot[targets == class_id] = 1
@@ -1431,20 +1444,20 @@ def train_one_epoch(
             roc_display = RocCurveDisplay.from_predictions(
                 one_hot.cpu().numpy(),
                 preds[:, class_id].cpu().numpy(),
-                name=f"Class {class_id}",
+                name=f"Class {class_name}",
                 ax=ax,  # Add to the current axes
                 plot_chance_level=False,
             )
             # Collect the handle and label for the legend
             handles.append(roc_display.line_)
-            labels.append(f"Class {class_id}")
+            labels.append(f"Class {class_name}")
 
         plt.title("ROC Curves for All Classes")
         plt.xlabel("False Positive Rate")
         plt.ylabel("True Positive Rate")
-
+        
         # Add the chance level line separately
-        (chance_level_line,) = ax.plot([0, 1], [0, 1], "k--", label="Random")
+        chance_level_line, = ax.plot([0, 1], [0, 1], 'k--', label="Random")
         handles.append(chance_level_line)
         labels.append("Random")
 
