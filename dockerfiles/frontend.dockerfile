@@ -1,3 +1,4 @@
+# Base image
 FROM python:3.12-slim
 
 RUN apt update && \
@@ -8,10 +9,10 @@ RUN mkdir /app
 
 WORKDIR /app
 
-COPY requirements_frontend.txt /app/requirements_frontend.txt
+COPY requirements_dev.txt /app/requirements_dev.txt
 COPY frontend.py /app/frontend.py
 
-RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements_frontend.txt
+RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements_dev.txt
 
 EXPOSE 8000
 
