@@ -7,6 +7,7 @@ import requests
 import streamlit as st
 from google.cloud import run_v2
 
+
 @st.cache_resource
 def get_backend_url():
     """Get the URL of the backend service."""
@@ -18,6 +19,7 @@ def get_backend_url():
             return service.uri
     return os.environ.get("BACKEND", None)
 
+
 def about_model(backend):
     """Send a request to the backend to get information about the model."""
     about_url = f"{backend}/about/"
@@ -25,6 +27,7 @@ def about_model(backend):
     if response.status_code == 200:
         return response.json()
     return None
+
 
 def classify_image(image, mime_type, backend):
     """Send the image to the backend for classification."""
@@ -34,6 +37,7 @@ def classify_image(image, mime_type, backend):
     if response.status_code == 200:
         return response.json()
     return None
+
 
 def main() -> None:
     """Main function of the Streamlit frontend."""
@@ -54,7 +58,7 @@ def main() -> None:
     st.header("Model Used")
     model_info = about_model(backend)
     if model_info is not None:
-        st.write(model_info['model_name'])
+        st.write(model_info["model_name"])
     else:
         st.write("Failed to get model information")
 
@@ -68,18 +72,18 @@ def main() -> None:
 
     # File Uploader
     st.header("Upload an Image")
-    uploaded_file = st.file_uploader("Choose an image...", type=["jpeg","png","svg","svg+xml"])
+    uploaded_file = st.file_uploader("Choose an image...", type=["jpeg", "png", "svg", "svg+xml"])
 
     if uploaded_file is not None:
         # Get the MIME type of the uploaded file
         mime_type, _ = mimetypes.guess_type(uploaded_file.name)
-        
+
         # Check if the MIME type is in the accepted types
         if mime_type not in ["image/jpeg", "image/png", "image/svg+xml"]:
             st.write("Invalid file type! Please upload an image of type JPEG, PNG, or SVG.")
 
         image = Image.open(uploaded_file)
-        st.image(image, caption='Uploaded Image', use_container_width=True)
+        st.image(image, caption="Uploaded Image", use_container_width=True)
         st.write("Classifying...")
 
         image = uploaded_file.read()
@@ -100,7 +104,7 @@ def main() -> None:
             st.bar_chart(df, y="Probability")
         else:
             st.write("Failed to classify the image")
-    
+
     # Resources
     st.header("Resources")
     st.write("""
