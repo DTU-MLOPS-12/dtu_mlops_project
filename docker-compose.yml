@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/api.dockerfile
+    environment:
+      - WANDB_API_KEY=${WANDB_API_KEY}
     ports:
       - "8000:8000"
     profiles: [api, web]

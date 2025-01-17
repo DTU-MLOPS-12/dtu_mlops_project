@@ -167,6 +167,8 @@ prediction*.json
 corruptmnist_v1/
 corruptmnist_v2/
 corruptedmnist/
+artifacts/
+wandb/
 
 # vscode
 .vscode/

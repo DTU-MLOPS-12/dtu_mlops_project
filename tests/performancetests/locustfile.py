@@ -48,5 +48,6 @@ class ApiUser(HttpUser):
         """
         Task simulating a user requesting inference for an image.
         """
-        with open(_get_test_image(), 'rb') as image_file:
-            self.client.post("/api/predict/", files={'image_file': image_file})
+        test_image = _get_test_image()
+        with open(test_image, 'rb') as image_file:
+            self.client.post("/api/predict/", files={'image_file': (test_image, image_file, "image/png")})
