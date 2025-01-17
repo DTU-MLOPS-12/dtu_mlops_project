@@ -5,10 +5,10 @@ import requests
 import streamlit as st
 from google.cloud import run_v2
 
-
+@st.cache_resource
 def get_backend_url():
     """Get the URL of the backend service."""
-    parent = "projects/my-personal-mlops-project/locations/europe-west1"
+    parent = "projects/dtu-mlops/locations/europe-west4"
     client = run_v2.ServicesClient()
     services = client.list_services(parent=parent)
     for service in services:
