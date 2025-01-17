@@ -19,7 +19,7 @@ def get_backend_url():
 
 def classify_image(image, backend):
     """Send the image to the backend for classification."""
-    predict_url = f"{backend}/predict"
+    predict_url = f"{backend}/api/predict"
     response = requests.post(predict_url, files={"image": image}, timeout=10)
     if response.status_code == 200:
         return response.json()
@@ -35,7 +35,7 @@ def main() -> None:
 
     st.title("Image Classification")
 
-    uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
+    uploaded_file = st.file_uploader("Upload an image", type=["jpeg","png","svg","svg+xml"])
 
     if uploaded_file is not None:
         image = uploaded_file.read()
