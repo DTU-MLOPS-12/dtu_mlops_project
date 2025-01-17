@@ -32,8 +32,8 @@ def about_model(backend):
 def classify_image(image, backend):
     """Send the image to the backend for classification."""
     predict_url = f"{backend}/api/predict/"
-    # files = {"image": ("uploaded_image", image, mime_type)}
-    files = {"image_file": open(image.name, "rb")}
+    files = {"image_file": ("uploaded_image", image, image.type)}
+    #files = {"image_file": open(image.name, "rb")}
     response = requests.post(predict_url, files=files, timeout=10)
     if response.status_code == 200:
         return response.json()
@@ -43,7 +43,7 @@ def classify_image(image, backend):
 def main() -> None:
     """Main function of the Streamlit frontend."""
     backend = get_backend_url()
-    if backend is None:
+    if not backend:
         msg = "Backend service not found"
         raise ValueError(msg)
 
