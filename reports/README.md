@@ -404,7 +404,14 @@ The groups debugging methods varied among group members. Print statements used q
 >
 > Answer:
 
---- question 17 fill here ---
+We used the following GCP services in our project:
+
+1. Compute Engine: Used for running virtual machines to handle various computational machine learning training tasks.
+2. Cloud Storage: Utilized for storing large datasets and model artifacts using DVC.
+3. Artifact Registry: Used for storing and managing Docker images.
+4. Vertex AI: Leveraged for training and deploying machine learning models.
+5. Cloud Run: Deployed our containerized applications for scalable and managed serverless execution e.g. Frontend and Backend utilizing FASTApi.
+8. Cloud Monitoring: Implemented to monitor the performance and health of our deployed applications.
 
 ### Question 18
 
@@ -419,7 +426,7 @@ The groups debugging methods varied among group members. Print statements used q
 >
 > Answer:
 
---- question 18 fill here ---
+We used the Compute Engine to run our training and inference tasks. We utilized instances with NVIDIA Tesla P4 GPU to accelerate our model training process. The virtual machines were started using custom Docker containers that included all necessary dependencies and code for our project. This setup allowed us to leverage the computational power of the GPUs, ensuring efficient and faster training times for our machine learning models.
 
 ### Question 19
 
