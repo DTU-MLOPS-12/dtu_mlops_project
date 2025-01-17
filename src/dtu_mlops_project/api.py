@@ -158,6 +158,8 @@ def check_image(image_file: fastapi.UploadFile):
 
     :param image_file: image file to check.
     """
+    logger.debug(f"Received an image file with MIME type: '{image_file.content_type}'")
+
     if image_file.content_type not in IMAGE_MIME_TYPES:
         logger.error(
             "Received an image file of with the wrong MIME type - "
