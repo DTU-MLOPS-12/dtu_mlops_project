@@ -1,5 +1,6 @@
 import os
 
+import mimetypes
 import pandas as pd
 from PIL import Image
 import requests
@@ -25,10 +26,11 @@ def about_model(backend):
         return response.json()
     return None
 
-def classify_image(image, backend):
+def classify_image(image, mime_type, backend):
     """Send the image to the backend for classification."""
     predict_url = f"{backend}/api/predict/"
-    response = requests.post(predict_url, files={"image": image}, timeout=10)
+    files = {"image": ("uploaded_image", image, mime_type)}
+    response = requests.post(predict_url, files=files, timeout=10)
     if response.status_code == 200:
         return response.json()
     return None
@@ -69,12 +71,19 @@ def main() -> None:
     uploaded_file = st.file_uploader("Choose an image...", type=["jpeg","png","svg","svg+xml"])
 
     if uploaded_file is not None:
+        # Get the MIME type of the uploaded file
+        mime_type, _ = mimetypes.guess_type(uploaded_file.name)
+        
+        # Check if the MIME type is in the accepted types
+        if mime_type not in ["image/jpeg", "image/png", "image/svg+xml"]:
+            st.write("Invalid file type! Please upload an image of type JPEG, PNG, or SVG.")
+
         image = Image.open(uploaded_file)
-        st.image(image, caption='Uploaded Image', use_column_width=True)
+        st.image(image, caption='Uploaded Image', use_container_width=True)
         st.write("Classifying...")
 
         image = uploaded_file.read()
-        result = classify_image(image, backend=backend)
+        result = classify_image(image, mime_type, backend=backend)
 
         if result is not None:
             prediction = result["prediction"]
