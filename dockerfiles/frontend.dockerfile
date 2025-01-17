@@ -10,7 +10,7 @@ RUN mkdir /app
 WORKDIR /app
 
 COPY deps/requirements_frontend.txt /app/requirements_dev.txt
-COPY frontend.py /app/frontend.py
+COPY src/dtu_mlops_project/frontend.py /app/frontend.py
 
 RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements.txt
 
