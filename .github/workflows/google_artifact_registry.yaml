@@ -61,3 +61,4 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy fastapi-app --image ${{ env.GAR_LOCATION }}api:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated
+          gcloud run deploy streamlit-app --image ${{ env.GAR_LOCATION }}frontend:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated
