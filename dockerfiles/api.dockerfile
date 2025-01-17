@@ -11,7 +11,6 @@ COPY deps/requirements_api.txt requirements.txt
 COPY pyproject.toml .
 COPY src/dtu_mlops_project/api.py .
 
-RUN touch __init__.py
 RUN pip install -r requirements.txt --no-cache-dir
 
 EXPOSE 8000
