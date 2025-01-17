@@ -60,13 +60,13 @@ will check the repositories and the code to verify your answers.
 * [ ] Do a bit of code typing and remember to document essential parts of your code (M7)
 * [ ] Setup version control for your data or part of your data (M8)
 * [ ] Add command line interfaces and project commands to your code where it makes sense (M9)
-* [ ] Construct one or multiple docker files for your code (M10)
+* [x] Construct one or multiple docker files for your code (M10)
 * [ ] Build the docker files locally and make sure they work as intended (M10)
 * [ ] Write one or multiple configurations files for your experiments (M11)
 * [ ] Used Hydra to load the configurations and manage your hyperparameters (M11)
 * [ ] Use profiling to optimize your code (M12)
 * [ ] Use logging to log important events in your code (M14)
-* [ ] Use Weights & Biases to log training progress and other important metrics/artifacts in your code (M14)
+* [x] Use Weights & Biases to log training progress and other important metrics/artifacts in your code (M14)
 * [ ] Consider running a hyperparameter optimization sweep (M14)
 * [ ] Use PyTorch-lightning (if applicable) to reduce the amount of boilerplate in your code (M15)
 
@@ -314,7 +314,8 @@ Lastly, we have a workflow that builds our Docker images and pushes them to the 
 >
 > Answer:
 
---- question 12 fill here ---
+We used config files for training our models to ensure reproducibility. These config files were adapted from the ones provided by Ross Wightman, the creator of the TIMM library (found here: https://gist.github.com/rwightman/f6705cb65c03daeebca8aa129b1b94ad). As an example, a config file can be provided to our training script as follows:
+`python3 src/dtu_mlops_project/train.py --config configs/mobilenetv4_conv_small_fine_tuning.yaml`
 
 ### Question 13
 
@@ -329,7 +330,12 @@ Lastly, we have a workflow that builds our Docker images and pushes them to the 
 >
 > Answer:
 
---- question 13 fill here ---
+A successful training run of a TIMM model outputs to a directory a set files containing
+* The config file
+* Training run statistics per epoch (loss, accuracy etc.)
+* The final output model
+
+Given this, any experiment could be reproduced by re-running the training with a given config file.
 
 ### Question 14
 
