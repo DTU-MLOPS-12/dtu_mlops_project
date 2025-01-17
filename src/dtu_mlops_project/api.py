@@ -84,12 +84,12 @@ def get_wandb_model(version: str = "latest"):
     :returns: a loaded and initialized model.
     """
     wandb_model_checkpoint = download_wandb_model(version)
-    num_classes = wandb_model_checkpoint['args'].num_classes
+    num_classes = wandb_model_checkpoint["args"].num_classes
 
     model_name = "mobilenetv4_conv_small.e2400_r224_in1k"
     mobilenetv4_model = timm.create_model(model_name, num_classes=num_classes)
 
-    mobilenetv4_model.load_state_dict(wandb_model_checkpoint['state_dict'])
+    mobilenetv4_model.load_state_dict(wandb_model_checkpoint["state_dict"])
     mobilenetv4_model = mobilenetv4_model.eval()
 
     data_config = timm.data.resolve_model_data_config(mobilenetv4_model)
@@ -198,10 +198,7 @@ def compute_results(probs: torch.Tensor, classes: torch.Tensor) -> dict:
     :returns: a table relating class names to probabilities
     """
     labels = get_labels()
-    return {
-        labels[clz.item()]: prob.item()
-        for prob, clz in zip(probs[0], classes[0])
-    }
+    return {labels[clz.item()]: prob.item() for prob, clz in zip(probs[0], classes[0])}
 
 
 @app.post("/api/predict/")
