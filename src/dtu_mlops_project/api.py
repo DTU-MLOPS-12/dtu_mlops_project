@@ -12,8 +12,10 @@ import wandb
 from loguru import logger
 from PIL import Image
 
-
+# Allow loading weights using pickle
 torch.serialization.add_safe_globals([argparse.Namespace])
+
+MODEL_NAME = "dtu_mlops_project_grp_12/mlops_project/model"
 
 
 @functools.cache
@@ -58,6 +60,21 @@ def get_dummy_model() -> typing.Callable:
 
 
 @functools.cache
+def download_wandb_model(version: str = "latest") -> dict:
+    """
+    Downloads the model from W&B with a given version.
+
+    :param version: the version of the model to use.
+    :returns: A dictionary representing the model checkpoint.
+    """
+    run = wandb.init()
+    model_artifact = run.use_artifact(f"{MODEL_NAME}:{version}", type="model")
+    model_artifact.download()
+
+    return torch.load(model_artifact.file())
+
+
+@functools.cache
 def get_wandb_model(version: str = "latest"):
     """
     Downloads and initializes the model from W&B with a
@@ -66,11 +83,7 @@ def get_wandb_model(version: str = "latest"):
     :param version: the version of the model to use.
     :returns: a loaded and initialized model.
     """
-    run = wandb.init()
-    model_artifact = run.use_artifact(f"dtu_mlops_project_grp_12/mlops_project/model:{version}", type="model")
-    model_artifact.download()
-
-    wandb_model_checkpoint = torch.load(model_artifact.file())
+    wandb_model_checkpoint = download_wandb_model(version)
     num_classes = wandb_model_checkpoint['args'].num_classes
 
     model_name = "mobilenetv4_conv_small.e2400_r224_in1k"
@@ -134,11 +147,8 @@ def about():
     A small 'about' section
     """
     return HTTP_200_OK | {
-        "model_name": "mobilenetv4_conv_small.e2400_r224_in1k",
-        "base_model_url": "",
-        "repository_url": "https://github.com/HackTheOxidation/dtu_mlops_project",
-        "dataset_name": "",
-        "dataset_url": "",
+        "model_name": f"{MODEL_NAME}",
+        "repository_url": "https://github.com/DTU-MLOPS-12/dtu_mlops_project",
     }
 
 
