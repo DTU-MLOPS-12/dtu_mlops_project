@@ -902,8 +902,8 @@ def main():
     )
 
     # Retrieve the mapping of class labels to class names
-    if 'reader' in vars(dataset_train):
-        idx_to_class = {value:key for key,value in dataset_train.reader.class_to_idx.items()}
+    if "reader" in vars(dataset_train):
+        idx_to_class = {value: key for key, value in dataset_train.reader.class_to_idx.items()}
     else:
         idx_to_class = None
 
@@ -1344,10 +1344,13 @@ def train_one_epoch(
         num_updates += 1
 
         # Save the gradients before doing zero_grad
-        gradients = torch.cat([
-            p.grad.cpu().flatten() for p in model.parameters() 
-            if p.grad is not None and torch.isfinite(p.grad).all().item()
-        ])
+        gradients = torch.cat(
+            [
+                p.grad.cpu().flatten()
+                for p in model.parameters()
+                if p.grad is not None and torch.isfinite(p.grad).all().item()
+            ]
+        )
 
         optimizer.zero_grad()
         y_pred = model(input)
@@ -1434,7 +1437,6 @@ def train_one_epoch(
 
         handles, labels = [], []
         for class_id in range(args.num_classes):
-
             class_name = idx_to_class[class_id] if idx_to_class is not None else idx_to_class
             # Create one-hot encoding for the current class
             one_hot = torch.zeros_like(targets)
@@ -1455,9 +1457,9 @@ def train_one_epoch(
         plt.title("ROC Curves for All Classes")
         plt.xlabel("False Positive Rate")
         plt.ylabel("True Positive Rate")
-        
+
         # Add the chance level line separately
-        chance_level_line, = ax.plot([0, 1], [0, 1], 'k--', label="Random")
+        (chance_level_line,) = ax.plot([0, 1], [0, 1], "k--", label="Random")
         handles.append(chance_level_line)
         labels.append("Random")
 
