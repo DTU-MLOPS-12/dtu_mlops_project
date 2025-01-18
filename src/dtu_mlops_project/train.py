@@ -1437,7 +1437,7 @@ def train_one_epoch(
 
         handles, labels = [], []
         for class_id in range(args.num_classes):
-            class_name = idx_to_class[class_id] if idx_to_class is not None else idx_to_class
+            class_name = idx_to_class[class_id] if idx_to_class is not None else class_id
             # Create one-hot encoding for the current class
             one_hot = torch.zeros_like(targets)
             one_hot[targets == class_id] = 1
