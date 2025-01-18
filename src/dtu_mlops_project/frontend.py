@@ -33,7 +33,7 @@ def classify_image(image, backend):
     """Send the image to the backend for classification."""
     predict_url = f"{backend}/api/predict/"
     files = {"image_file": ("uploaded_image", image, image.type)}
-    #files = {"image_file": open(image.name, "rb")}
+    # files = {"image_file": open(image.name, "rb")}
     response = requests.post(predict_url, files=files, timeout=10)
     if response.status_code == 200:
         return response.json()
