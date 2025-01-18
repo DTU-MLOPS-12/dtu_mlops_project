@@ -36,11 +36,12 @@ def classify_image_model(image, backend, dummy_model):
     else:
         predict_url = f"{backend}/api/predict/"
     files = {"image_file": ("uploaded_image", image, image.type)}
-    #files = {"image_file": open(image.name, "rb")}
+    # files = {"image_file": open(image.name, "rb")}
     response = requests.post(predict_url, files=files, timeout=10)
     if response.status_code == 200:
         return response.json()
     return None
+
 
 def main() -> None:
     """Main function of the Streamlit frontend."""
@@ -75,7 +76,9 @@ def main() -> None:
 
     # Choose dummy model or Trained model
     st.header("Choose Model")
-    model_choice = st.selectbox("Select the model to use", ["Trained Model", "Dummy Model"], index=None, placeholder="Select model...")
+    model_choice = st.selectbox(
+        "Select the model to use", ["Trained Model", "Dummy Model"], index=None, placeholder="Select model..."
+    )
     if model_choice == "Dummy Model":
         dummy_model = True
     else:
@@ -115,7 +118,7 @@ def main() -> None:
                 st.bar_chart(df, y="Probability")
             else:
                 st.write("Failed to classify the image")
-            
+
     # Resources
     st.header("Resources")
     st.write("""
