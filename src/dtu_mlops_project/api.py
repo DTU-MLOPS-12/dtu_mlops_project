@@ -1,4 +1,5 @@
 import functools
+from google.cloud import secretmanager
 from contextlib import asynccontextmanager
 from http import HTTPStatus
 import json
@@ -9,6 +10,7 @@ import fastapi
 import torch
 import timm
 import wandb
+import os
 from loguru import logger
 from PIL import Image
 
@@ -16,6 +18,21 @@ from PIL import Image
 torch.serialization.add_safe_globals([argparse.Namespace])
 
 MODEL_NAME = "dtu_mlops_project_grp_12/mlops_project/model"
+
+
+def get_wandb_key(project_id: str, secret_id: str = "WANDB_API_KEY", version_id: str = "latest") -> str:
+    """
+    Fetches the W&B key from GCP Secret Manager.
+
+    :param project_id: GCP project ID.
+    :param secret_id: Secret name in Secret Manager.
+    :param version_id: Version of the secret (default is "latest").
+    :return: The W&B key as a string.
+    """
+    client = secretmanager.SecretManagerServiceClient()
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
+    response = client.access_secret_version(name=name)
+    return response.payload.data.decode("UTF-8")
 
 
 @functools.cache
@@ -67,6 +84,10 @@ def download_wandb_model(version: str = "latest") -> dict:
     :param version: the version of the model to use.
     :returns: A dictionary representing the model checkpoint.
     """
+    project_id = os.getenv("GCP_PROJECT_ID", "840739092468")
+    wandb_key = get_wandb_key(project_id)  # Fetch W&B key securely
+    wandb.login(key=wandb_key)
+
     run = wandb.init()
     model_artifact = run.use_artifact(f"{MODEL_NAME}:{version}", type="model")
     model_artifact.download()
