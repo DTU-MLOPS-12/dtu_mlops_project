@@ -84,9 +84,10 @@ def download_wandb_model(version: str = "latest") -> dict:
     :param version: the version of the model to use.
     :returns: A dictionary representing the model checkpoint.
     """
-    project_id = os.getenv("GCP_PROJECT_ID", "840739092468")
-    wandb_key = get_wandb_key(project_id)  # Fetch W&B key securely
-    wandb.login(key=wandb_key)
+    if not wandb.api.api_key:
+        project_id = os.getenv("GCP_PROJECT_ID", "840739092468")
+        wandb_key = get_wandb_key(project_id)  # Fetch W&B key securely
+        wandb.login(key=wandb_key)
 
     run = wandb.init()
     model_artifact = run.use_artifact(f"{MODEL_NAME}:{version}", type="model")
