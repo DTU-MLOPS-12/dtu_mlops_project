@@ -27,6 +27,7 @@ RUN apt update && \
 COPY requirements.txt requirements.txt
 COPY pyproject.toml pyproject.toml
 COPY src/ src/
+COPY configs/ configs/
 
 WORKDIR /
 RUN pip install -r requirements.txt --no-cache-dir
@@ -34,7 +35,7 @@ RUN pip install . --no-deps --no-cache-dir
 RUN mkdir -p /data/processed
 
 
-# Add gcloud auth step using GitHub secret
+# Add gcloud auth step using GitHub secret and copy dataset
 RUN --mount=type=secret,id=GCP_SA_KEY_DVC,mode=0444 \
     cat /run/secrets/GCP_SA_KEY_DVC | tr -d '\n' | base64 -d > /tmp/gcloud-credentials.json && \
     chmod 400 /tmp/gcloud-credentials.json && \
