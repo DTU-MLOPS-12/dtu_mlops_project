@@ -93,7 +93,7 @@ def download_wandb_model(version: str = "latest") -> dict:
     model_artifact = run.use_artifact(f"{MODEL_NAME}:{version}", type="model")
     model_artifact.download()
 
-    return torch.load(model_artifact.file())
+    return torch.load(model_artifact.file(), map_location="cpu")
 
 
 @functools.cache
