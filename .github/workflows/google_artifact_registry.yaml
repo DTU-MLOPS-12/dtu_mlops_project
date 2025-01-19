@@ -18,52 +18,52 @@ env:
   GCP_PROJECT_ID: 840739092468
 
 jobs:
-  build-images:
+  list-dockerfiles:
     runs-on: ubuntu-latest
+    outputs:
+      dockerfiles: ${{ steps.set-output.outputs.dockerfiles }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find Dockerfiles
+        id: set-output
+        run: |
+          files=$(find dockerfiles -name "*.dockerfile" -print0 | xargs -0 printf "%s,")
+          echo "dockerfiles=${files%,}" >> $GITHUB_OUTPUT
+
+  build-and-push:
+    needs: list-dockerfiles
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dockerfile: ${{ fromJson(needs.list-dockerfiles.outputs.dockerfiles) }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Authenticate to Google Cloud
-        id: auth
         uses: "google-github-actions/auth@v2"
         with:
           credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
 
-      - name: Set up GCP_SA_KEY_DVC
-        env:
-          GCP_SA_KEY_DVC: ${{ secrets.GCP_SA_KEY_DVC }}
-        run: echo "Setting up GCP_SA_KEY_DVC"
-
-      - name: Setup GCP SDK
-        uses: "google-github-actions/setup-gcloud@v2"
-
-      - name: Use gcloud CLI
-        run: gcloud info
-
-      - name: Docker authentication
+      - name: Build Docker image
         run: |
-          gcloud auth configure-docker ${{ env.LOCATION }}-docker.pkg.dev --quiet
+          image_name=$(basename ${{ matrix.dockerfile }} .dockerfile)
+          docker build --secret id=GCP_SA_KEY_DVC -f ${{ matrix.dockerfile }} . -t ${{ env.GAR_LOCATION }}$image_name:${{ env.TAG }}
 
-      - name: Build images
-        env:
-          GCP_SA_KEY_DVC: ${{ secrets.GCP_SA_KEY_DVC }}
+      - name: Push Docker image
         run: |
-          for dockerfile in dockerfiles/*.dockerfile; do
-            image_name=$(basename $dockerfile .dockerfile)
-            docker build --secret id=GCP_SA_KEY_DVC -f $dockerfile . -t ${{ env.GAR_LOCATION }}$image_name:${{ env.TAG }} &
-          done
-          wait
+          image_name=$(basename ${{ matrix.dockerfile }} .dockerfile)
+          docker push ${{ env.GAR_LOCATION }}$image_name:${{ env.TAG }}
 
-      - name: Upload to Artifact Registry
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy FastAPI App to Cloud Run
         run: |
-          for dockerfile in dockerfiles/*.dockerfile; do
-            image_name=$(basename $dockerfile .dockerfile)
-            docker push ${{ env.GAR_LOCATION }}$image_name:${{ env.TAG }} &
-          done
-          wait
+          gcloud run deploy fastapi-app --image ${{ env.GAR_LOCATION }}api:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated --set-env-vars GCP_PROJECT_ID="${{ env.GCP_PROJECT_ID }}"
 
-      - name: Deploy to Cloud Run
+      - name: Deploy Streamlit App to Cloud Run
         run: |
-          gcloud run deploy fastapi-app --image ${{ env.GAR_LOCATION }}api:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated --set-env-vars GCP_PROJECT_ID="${{ env.GCP_PROJECT_ID }}" &
-          gcloud run deploy streamlit-app --image ${{ env.GAR_LOCATION }}frontend:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated --set-env-vars BACKEND="${{ env.BACKEND_URL }}" &
-          wait
+          gcloud run deploy streamlit-app --image ${{ env.GAR_LOCATION }}frontend:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated --set-env-vars BACKEND="${{ env.BACKEND_URL }}"
