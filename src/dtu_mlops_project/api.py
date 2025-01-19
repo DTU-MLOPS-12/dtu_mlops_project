@@ -133,6 +133,22 @@ def get_wandb_model(version: str = "latest"):
 
     return _run_model
 
+def fetch_wandb_metadata() -> str:
+    """
+    Fetch metadata for the model from Weights & Biases.
+
+    :returns: Metadata information for the model.
+    """
+    if not wandb.api.api_key:
+        project_id = os.getenv("GCP_PROJECT_ID", "840739092468")
+        wandb_key = get_wandb_key(project_id)  # Fetch W&B key securely
+        wandb.login(key=wandb_key, anonymous="allow")
+
+    api = wandb.Api()
+    artifact = api.artifact(f"{MODEL_NAME}:latest", type="model")
+    model_name = artifact.metadata["model"]
+
+    return model_name
 
 dummy_model = get_dummy_model()
 wandb_model = get_wandb_model()
@@ -168,8 +184,9 @@ def about():
     """
     A small 'about' section
     """
+    model_name = fetch_wandb_metadata()
     return HTTP_200_OK | {
-        "model_name": f"{MODEL_NAME}",
+        "model_name": f"{model_name}",
         "repository_url": "https://github.com/DTU-MLOPS-12/dtu_mlops_project",
     }
 
