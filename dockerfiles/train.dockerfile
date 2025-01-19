@@ -33,7 +33,7 @@ WORKDIR /
 RUN pip install -r requirements.txt --no-cache-dir
 RUN pip install . --no-deps --no-cache-dir
 RUN mkdir -p /data/processed
-
+RUN mkdir /output
 
 # Add gcloud auth step using GitHub secret and copy dataset
 RUN --mount=type=secret,id=GCP_SA_KEY_DVC,mode=0444 \
