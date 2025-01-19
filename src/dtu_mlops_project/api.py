@@ -133,6 +133,7 @@ def get_wandb_model(version: str = "latest"):
 
     return _run_model
 
+
 def fetch_wandb_metadata() -> str:
     """
     Fetch metadata for the model from Weights & Biases.
@@ -149,6 +150,7 @@ def fetch_wandb_metadata() -> str:
     model_name = artifact.metadata["model"]
 
     return model_name
+
 
 dummy_model = get_dummy_model()
 wandb_model = get_wandb_model()
