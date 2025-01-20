@@ -10,18 +10,10 @@ on:
         description: "Config file"
         required: true
         default: "mobilenetv4_conv_small_fine_tuning"
-      tag:
-        description: "Tag for the container image"
-        required: true
-        default: "latest"
       epochs:
         description: "Number of epochs"
         required: false
         default: "1"
-      num_classes:
-        description: "Number of classes"
-        required: false
-        default: "3"
 
 env:
   LOCATION: europe
@@ -54,11 +46,11 @@ jobs:
             --args '[
               " src/dtu_mlops_project/train.py",
               "--config", "configs/${{ github.event.inputs.config }}.yaml",
-              "--num-classes", "${{ github.event.inputs.num_classes }}",
+              "--num-classes", "3",
               "--device", "cpu",
               "--epochs", "${{ github.event.inputs.epochs }}",
               "--wandb-project", "mlops_project"
             ]'
         env:
           WAND_API_KEY: ${{ secrets.WANDB_API_KEY }}
-          TAG: ${{ github.event.inputs.tag }}
+
