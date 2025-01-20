@@ -9,6 +9,12 @@
 
 FROM python:3.12-slim
 
+# Add ARG for build-time variables
+ARG WANDB_API_KEY
+
+# Set as environment variable
+ENV WANDB_API_KEY=$WANDB_API_KEY
+
 # Install system dependencies including Google Cloud SDK
 RUN apt update && \
     apt install --no-install-recommends -y \
