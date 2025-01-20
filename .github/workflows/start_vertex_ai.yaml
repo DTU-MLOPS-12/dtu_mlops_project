@@ -1,9 +1,6 @@
 name: Start Custom Vertex AI Training Job
 
 on:
-  push:
-    branches:
-      - feature/add-vertex-ai-job
   workflow_dispatch:
     inputs:
       job_name:
