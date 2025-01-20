@@ -475,7 +475,11 @@ We used the Compute Engine to run our training and inference tasks. We utilized 
 >
 > Answer:
 
---- question 22 fill here ---
+We managed to train our model in the cloud using Vertex AI. We did this by setting up a GitHub Actions workflow that automates the process of building and pushing our Docker image to Google Artifact Registry, and then starting a custom training job on Vertex AI.
+
+First, we created a Dockerfile to containerize our training script. We then configured a GitHub Actions workflow to authenticate with Google Cloud using service account credentials stored in GitHub Secrets. The workflow builds the Docker image, pushes it to the Artifact Registry, and made a custom jobs in Vertex UI with a `gcloud` create command to start the training job on Vertex AI.
+
+We chose Vertex AI because it provides a managed environment for training machine learning models, which simplifies the process of scaling and managing resources.
 
 ## Deployment
 
