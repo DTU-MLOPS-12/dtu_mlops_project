@@ -13,6 +13,7 @@ import wandb
 import os
 from loguru import logger
 from PIL import Image
+from prometheus_client import Counter, Histogram, Summary, make_asgi_app
 
 # Allow loading weights using pickle
 torch.serialization.add_safe_globals([argparse.Namespace])
@@ -139,6 +140,12 @@ wandb_model = get_wandb_model()
 
 IMAGE_MIME_TYPES = ("image/jpeg", "image/png", "image/svg", "image/svg+xml")
 
+# Metrics
+error_counter = Counter("prediction_error", "Number of prediction errors")
+request_counter = Counter("prediction_requests", "Number of prediction requests")
+request_latency = Histogram("prediction_latency_seconds", "Prediction latency in seconds")
+review_summary = Summary("review_length_summary", "Review length summary")
+
 
 @asynccontextmanager
 async def lifespan(app: fastapi.FastAPI):
@@ -149,6 +156,7 @@ async def lifespan(app: fastapi.FastAPI):
 
 # The FastAPI app object
 app = fastapi.FastAPI(lifespan=lifespan)
+app.mount("/metrics", make_asgi_app())
 
 # A base response for indicating OK requests.
 HTTP_200_OK = {"message": HTTPStatus.OK.phrase, "status-code": HTTPStatus.OK}
@@ -231,18 +239,30 @@ def api_predict(image_file: fastapi.UploadFile):
     API endpoint that receives an image file an runs the real
     model through it.
     """
-    check_image(image_file)
-    image = preprocess_image(image_file)
+    request_counter.inc() # Increment the request counter
+    with request_latency.time():
+        try:
+            check_image(image_file)
+            image = preprocess_image(image_file)
 
-    probs, classes = wandb_model(image)
-    logger.debug(f"Model computed probabilities: '{probs}' with corresponding class indices: '{classes}'")
+            # Record the size of the input image (in bytes)
+            review_summary.observe(len(image_file.file.read()))
+            image_file.file.seek(0)  # Reset file pointer after reading
 
-    results = compute_results(probs, classes)
-    logger.debug(f"Final results: '{results}'")
+            probs, classes = wandb_model(image)
+            logger.debug(f"Model computed probabilities: '{probs}' with corresponding class indices: '{classes}'")
 
-    return HTTP_200_OK | {
-        "probabilities": results,
-    }
+            results = compute_results(probs, classes)
+            logger.debug(f"Final results: '{results}'")
+
+            return HTTP_200_OK | {
+                "probabilities": results,
+            }
+        except Exception as e:
+            error_counter.inc()  # Increment the error counter
+            logger.error(f"Error processing the image: {str(e)}")
+            raise fastapi.HTTPException(status_code=500, detail="Internal server error")
+
 
 
 @app.post("/api/predict/dummy/")
@@ -263,3 +283,5 @@ def api_predict_dummy(image_file: fastapi.UploadFile):
     return HTTP_200_OK | {
         "probabilities": results,
     }
+
+
