@@ -65,4 +65,5 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy fastapi-app --image ${{ env.GAR_LOCATION }}api:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated --set-env-vars GCP_PROJECT_ID="${{ env.GCP_PROJECT_ID }}" &
+          gcloud run deploy fastapi-app-test --image ${{ env.GAR_LOCATION }}api:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated --set-env-vars GCP_PROJECT_ID="${{ env.GCP_PROJECT_ID }}" &
           wait
