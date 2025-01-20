@@ -44,7 +44,6 @@ jobs:
             --config=configs/vertex_ai_config_cpu.yaml \
             --command 'python' \
             --args='src/dtu_mlops_project/train.py,--config,configs/${{ github.event.inputs.config }}.yaml,--num-classes,3,--device,cpu,--epochs,${{ github.event.inputs.epochs }},--wandb-project,mlops_project'
-            --env-vars WANDB_API_KEY=${{ secrets.WANDB_API_KEY }}
 
         env:
           WAND_API_KEY: ${{ secrets.WANDB_API_KEY }}
