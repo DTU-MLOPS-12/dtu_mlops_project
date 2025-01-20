@@ -1,0 +1,17 @@
+# vertex_ai_config_cpu.yaml
+workerPoolSpecs:
+    machineSpec:
+        machineType: c2-standard-4 
+    replicaCount: 1
+    containerSpec:
+        imageUri: europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/train@sha256:24dfd4485ec5802c3cf6e4416e13f36acd09c167d2ca2777cdf581accc82b779 #europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/train:latest
+        env:
+          - name: WANDB_API_KEY
+            value: "${{ secrets.WANDB_API_KEY }}" 
+
+
+# CPU run command c2-standard-4 workers=1 (vCPU=4, Clock=3.1, RAM=16)
+# gcloud ai custom-jobs create --region=europe-west4 --display-name=c2-standard-4 --config=configs/vertex_ai_config_cpu.yaml --command='python' --args='src/dtu_mlops_project/train.py,--config,configs/mobilenetv4_conv_small_fine_tuning.yaml,--num-classes,3,--device,cpu,--epochs,1,--wandb-project,mlops_project'
+
+# link til status page
+# https://console.cloud.google.com/vertex-ai/training/custom-jobs?inv=1&invt=AbnWEQ&project=dtu-mlops-447711
