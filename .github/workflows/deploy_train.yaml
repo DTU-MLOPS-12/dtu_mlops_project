@@ -21,7 +21,7 @@ jobs:
   build-images:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       
       - name: Authenticate to Google Cloud
         id: auth
@@ -35,7 +35,7 @@ jobs:
         run: echo "Setting up GCP_SA_KEY_DVC"
 
       - name: Setup GCP SDK
-        uses: "google-github-actions/setup-gcloud@v4"
+        uses: "google-github-actions/setup-gcloud@v2"
 
       - name: Use gcloud CLI
         run: gcloud info
