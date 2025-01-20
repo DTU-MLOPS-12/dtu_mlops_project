@@ -7,7 +7,7 @@ workerPoolSpecs:
         imageUri: europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/train@sha256:24dfd4485ec5802c3cf6e4416e13f36acd09c167d2ca2777cdf581accc82b779 #europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/train:latest
         env:
           - name: WANDB_API_KEY
-            value: "${{ secrets.WANDB_API_KEY }}" 
+            value: ${{ secrets.WANDB_API_KEY }}
 
 
 # CPU run command c2-standard-4 workers=1 (vCPU=4, Clock=3.1, RAM=16)
