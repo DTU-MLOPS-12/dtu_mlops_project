@@ -13,10 +13,10 @@ on:
       epochs:
         description: "Number of epochs"
         required: false
-        default: "1"
+        default: "5"
 
 env:
-  LOCATION: europe
+  LOCATION: europe-west4
   GAR_LOCATION: europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/
   PROJECT_ID: dtu-mlops-447711
 
