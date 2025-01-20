@@ -135,7 +135,9 @@ def get_wandb_model(version: str = "latest"):
 
 
 dummy_model = get_dummy_model()
-wandb_model = get_wandb_model()
+production_model = get_wandb_model("prod")
+preproduction_model = get_wandb_model("preprod")
+
 
 IMAGE_MIME_TYPES = ("image/jpeg", "image/png", "image/svg", "image/svg+xml")
 
@@ -236,8 +238,28 @@ def api_predict(image_file: fastapi.UploadFile):
     check_image(image_file)
     image = preprocess_image(image_file)
 
-    probs, classes = wandb_model(image)
+    probs, classes = production_model(image)
     logger.debug(f"Model computed probabilities: '{probs}' with corresponding class indices: '{classes}'")
+
+    results = compute_results(probs, classes)
+    logger.debug(f"Final results: '{results}'")
+
+    return HTTP_200_OK | {
+        "probabilities": results,
+    }
+
+
+@app.post("/api/predict/preproduction/")
+def api_predict(image_file: fastapi.UploadFile):
+    """
+    API endpoint that receives an image file an runs the real
+    model through it.
+    """
+    check_image(image_file)
+    image = preprocess_image(image_file)
+
+    probs, classes = preproduction_model(image)
+    logger.debug(f"(Pre-production) Model computed probabilities: '{probs}' with corresponding class indices: '{classes}'")
 
     results = compute_results(probs, classes)
     logger.debug(f"Final results: '{results}'")
