@@ -43,7 +43,7 @@ class ApiUser(HttpUser):
         """
         self.client.get("/about/")
 
-    @task
+    @task(5)
     def post_api_predict(self) -> None:
         """
         Task simulating a user requesting inference for an image.
