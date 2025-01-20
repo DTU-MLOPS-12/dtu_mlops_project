@@ -45,10 +45,10 @@ jobs:
             --command 'python' \
             --args "src/dtu_mlops_project/train.py" \
                    "--config" "configs/${{ github.event.inputs.config }}.yaml" \
-                   "--num-classes" "3" \
-                   "--device" "cpu" \
-                   "--epochs" "${{ github.event.inputs.epochs }}" \
-                   "--wandb-project" "mlops_project"
+                   "--num-classes=3" \
+                   "--device=cpu" \
+                   "--epochs=${{ github.event.inputs.epochs }}" \
+                   "--wandb-project=mlops_project"
         env:
           WAND_API_KEY: ${{ secrets.WANDB_API_KEY }}
 
