@@ -41,7 +41,7 @@ jobs:
           gcloud ai custom-jobs create \
             --region ${{ env.LOCATION }} \
             --display-name=${{ github.event.inputs.job_name }} \
-            --config=configs/config_cpu.yaml \
+            --config=configs/vertex_ai_config_cpu.yaml \
             --command 'python' \
             --args='src/dtu_mlops_project/train.py,--config,configs/${{ github.event.inputs.config }}.yaml,--num-classes,3,--device,cpu,--epochs,${{ github.event.inputs.epochs }},--wandb-project,mlops_project'
 
