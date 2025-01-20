@@ -93,7 +93,7 @@ def download_wandb_model(version: str = "latest") -> dict:
     model_artifact = run.use_artifact(f"{MODEL_NAME}:{version}", type="model")
     model_artifact.download()
 
-    return torch.load(model_artifact.file())
+    return torch.load(model_artifact.file(), map_location="cpu")
 
 
 @functools.cache
@@ -168,8 +168,10 @@ def about():
     """
     A small 'about' section
     """
+    # TODO: Fetch the model name dynamically from W&B artifact registry in the future
+    model_name = "mobilenetv4_conv_small.e2400_r224_in1k"
     return HTTP_200_OK | {
-        "model_name": f"{MODEL_NAME}",
+        "model_name": f"{model_name}",
         "repository_url": "https://github.com/DTU-MLOPS-12/dtu_mlops_project",
     }
 
