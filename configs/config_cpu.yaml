@@ -6,5 +6,4 @@ workerPoolSpecs:
         imageUri: europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/train:${TAG}
         env:
         - name: WANDB_API_KEY
-          value: "${{ secrets.WANDB_API_KEY }}"
-
+          value: ${WANDB_API_KEY}

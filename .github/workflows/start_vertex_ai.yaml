@@ -6,10 +6,14 @@ on:
       job_name:
         description: "Name of the Vertex AI training job"
         required: true
-      device:
-        description: "CPU or GPU"
+      config:
+        description: "Config file"
         required: true
-        default: "cpu"
+        default: "mobilenetv4_conv_small_fine_tuning"
+      tag:
+        description: "Tag for the container image"
+        required: true
+        default: "latest"
       epochs:
         description: "Number of epochs"
         required: false
@@ -45,6 +49,16 @@ jobs:
           gcloud ai custom-jobs create \
             --region ${{ env.LOCATION }} \
             --display-name=${{ github.event.inputs.job_name }} \
-            --config=configs/config_${{ github.event.inputs.device }}.yaml \
-            --command 'python src/dtu_mlops_project/train.py' \
-            --args '["--epochs", "10"]'
+            --config=configs/config_cpu.yaml \
+            --command 'python' \
+            --args '[
+              " src/dtu_mlops_project/train.py",
+              "--config", "configs/${{ github.event.inputs.config }}.yaml",
+              "--num-classes", "${{ github.event.inputs.num_classes }}",
+              "--device", "cpu",
+              "--epochs", "${{ github.event.inputs.epochs }}",
+              "--wandb-project", "mlops_project"
+            ]'
+        env:
+          WAND_API_KEY: ${{ secrets.WANDB_API_KEY }}
+          TAG: ${{ github.event.inputs.tag }}
