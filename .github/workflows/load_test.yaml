@@ -32,6 +32,20 @@ jobs:
           python-version: 3.12 
           channels: conda-forge
 
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: "google-github-actions/auth@v2"
+        with:
+          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+
+      - name: Set up GCP_SA_KEY_DVC
+        env:
+          GCP_SA_KEY_DVC: ${{ secrets.GCP_SA_KEY_DVC }}
+        run: echo "Setting up GCP_SA_KEY_DVC"
+
+      - name: Setup GCP SDK
+        uses: "google-github-actions/setup-gcloud@v2"
+
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
