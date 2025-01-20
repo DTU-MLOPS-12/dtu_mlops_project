@@ -10,6 +10,7 @@ WORKDIR /
 COPY deps/requirements_api.txt requirements.txt
 COPY pyproject.toml .
 COPY src/dtu_mlops_project/api.py .
+COPY src/dtu_mlops_project/imagenet-simple-labels.json ./src/dtu_mlops_project/
 
 RUN pip install -r requirements.txt --no-cache-dir
 

@@ -29,13 +29,16 @@ def about_model(backend):
     return None
 
 
-def classify_image_model(image, backend, dummy_model):
+def classify_image_model(image, mime_type, backend, dummy_model):
     """Send the image to the backend for classification."""
     if dummy_model:
         predict_url = f"{backend}/api/predict/dummy/"
     else:
         predict_url = f"{backend}/api/predict/"
-    files = {"image_file": ("uploaded_image", image, image.type)}
+    image.seek(0)
+    files = {
+        "image_file": (image.name, image, mime_type),
+    }
     # files = {"image_file": open(image.name, "rb")}
     response = requests.post(predict_url, files=files, timeout=10)
     if response.status_code == 200:
@@ -102,7 +105,7 @@ def main() -> None:
             st.image(image, caption="Uploaded Image", use_container_width=True)
             st.write("Classifying...")
 
-            result = classify_image_model(uploaded_file, backend=backend, dummy_model=dummy_model)
+            result = classify_image_model(uploaded_file, mime_type=mime_type, backend=backend, dummy_model=dummy_model)
 
             if result is not None:
                 probabilities = result["probabilities"]
