@@ -59,7 +59,7 @@ will check the repositories and the code to verify your answers.
 * [x] Remember to comply with good coding practices (`pep8`) while doing the project (M7)
 * [x] Do a bit of code typing and remember to document essential parts of your code (M7)
 * [x] Setup version control for your data or part of your data (M8)
-* [ ] Add command line interfaces and project commands to your code where it makes sense (M9)
+* [x] Add command line interfaces and project commands to your code where it makes sense (M9)
 * [x] Construct one or multiple docker files for your code (M10)
 * [x] Build the docker files locally and make sure they work as intended (M10)
 * [ ] Write one or multiple configurations files for your experiments (M11)
@@ -104,11 +104,11 @@ will check the repositories and the code to verify your answers.
 
 ### Extra
 
-* [ ] Write some documentation for your application (M32)
+* [x] Write some documentation for your application (M32)
 * [ ] Publish the documentation to GitHub Pages (M32)
 * [ ] Revisit your initial project description. Did the project turn out as you wanted?
 * [ ] Create an architectural diagram over your MLOps pipeline
-* [ ] Make sure all group members have an understanding about all parts of the project
+* [x] Make sure all group members have an understanding about all parts of the project
 * [ ] Uploaded all your code to GitHub
 
 ## Group information
@@ -226,6 +226,9 @@ Practices implementing code quality and format are crucial in larger projects as
 > Answer:
 
 --- question 7 fill here ---
+(TODO: update after implementing unit tests for `data.py` and `model.py`)
+
+Currently, we have implemented integration tests for the API service.
 
 ### Question 8
 
@@ -241,6 +244,10 @@ Practices implementing code quality and format are crucial in larger projects as
 > Answer:
 
 --- question 8 fill here ---
+
+Currently, for the API integration tests, the code coverage is 81%. Do note that this is an integration test and the purpose is 
+to test the functionality of the interface as a whole, because we're dealing with I/O. So, it is difficult to test in isolation,
+which would require a sophisticated mocking framework, but that would sort of ruin the purpose and turn it into a white box test. 
 
 ### Question 9
 
@@ -369,7 +376,7 @@ Given this, any experiment could be reproduced by re-running the training with a
 
 In this project, we developed several docker images that was build to containerize our deployment. First of all we have one dockerfile for building and running data collection and preperation of the TIMM dataset. Another dockerfile handles the build and running of training our model. Then we have one dockerfile for building and running the backend utilizing FastApi, while another dockerfile is for building and running the frontend utilizing Streamlit.
 
-The Docker images was runned with Vertex AI and Cloud Run after they have been builded and uploaded to the artifact registry on Google Cloud Platform. E.g. a run of the training docker image was leveraged with the command: ...
+The Docker images were ran with Vertex AI and Cloud Run after they have been builded and uploaded to the artifact registry on Google Cloud Platform. E.g. a run of the training docker image was leveraged with the command: ...
 
 The link to the training dockerfile is: <weblink>
 
@@ -411,7 +418,7 @@ We used the following GCP services in our project:
 3. Artifact Registry: Used for storing and managing Docker images.
 4. Vertex AI: Leveraged for training and deploying machine learning models.
 5. Cloud Run: Deployed our containerized applications for scalable and managed serverless execution e.g. Frontend and Backend utilizing FASTApi.
-8. Cloud Monitoring: Implemented to monitor the performance and health of our deployed applications.
+6. Cloud Monitoring: Implemented to monitor the performance and health of our deployed applications.
 
 ### Question 18
 
@@ -485,7 +492,12 @@ We used the Compute Engine to run our training and inference tasks. We utilized 
 >
 > Answer:
 
---- question 23 fill here ---
+We implemented a minimal usable REST API using the `fastapi` framework. Our API exposes a few different endpoints:
+
+- `/`: Root endpoint, merely for health-checks.
+- `/about/`: A small 'about'-endpoint with information about the model currently in use and the repository for the service code.
+- `/api/predict/`: The most important endpoint, which accepts an image file and provides inference using the current production model.
+- `/api/predict/dummy/`: Similar to the `/api/predict/`, except that a dummy model (pre-trained `mobilenetv4` from `timm`) is used for inference. This is primarily used for testing purposes.
 
 ### Question 24
 
@@ -501,6 +513,15 @@ We used the Compute Engine to run our training and inference tasks. We utilized 
 >
 > Answer:
 
+The API can be and has been deployed both locally and in the cloud; on a local machine, one has the option of either
+running the API directly or building the `api` image and running the service as an OCI container.
+
+In the cloud, the API service is always running in a container using docker. Deployment happens automatically upon
+the creation of a release tag using a GitHub action. This action uses `docker` to build, tag and push the API image
+to our Google Artifact registry (see `.github/workflows/deploy_api.yaml` for reference).
+
+Similar actions exists for the other services including `frontend`, `data` and `train`.
+
 --- question 24 fill here ---
 
 ### Question 25
@@ -515,6 +536,15 @@ We used the Compute Engine to run our training and inference tasks. We utilized 
 > *before the service crashed.*
 >
 > Answer:
+
+We made a few unit (integration) tests for our API obtaining a coverage of around 81%. The purpose of these tests are to verify the
+functionality of the service as a whole rather than testing the module as a unit in isolation.
+
+We made a simple `locustfile.py` using the locust framework for load testing, which tests the `/`, `/about/` and `/api/predict/` (using a dummy image).
+This can be run locally, but in order to obtain the most representative result from the users perspective, we deploy another API instance to a testing server
+with specs identical to the production environment and use a GitHub action to run the locust load test. Following our pipeline architecture, this action
+is intended to be triggered manually by our "human-in-the-loop" to load test a pre-production model after completing the training stage. This serves as
+a final quality control before pushing a new model to production.
 
 --- question 25 fill here ---
 
