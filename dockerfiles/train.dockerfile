@@ -15,6 +15,12 @@ ARG WANDB_API_KEY
 # Set as environment variable
 ENV WANDB_API_KEY=$WANDB_API_KEY
 
+# Add validation step
+RUN if [ -z "$WANDB_API_KEY" ]; then \
+    echo "WANDB_API_KEY is not set" && exit 1; \
+    else echo "WANDB_API_KEY is set"; \
+    fi
+    
 # Install system dependencies including Google Cloud SDK
 RUN apt update && \
     apt install --no-install-recommends -y \
