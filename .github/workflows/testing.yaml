@@ -43,5 +43,5 @@ jobs:
       - name: Run the tests
         run: |
           wandb login ${{ secrets.WANDB_API_KEY }}
-          coverage run -m pytest tests/
-
+          coverage run --data-file=coverage.report -m pytest tests/
+          coverage report --data-file=coverage.report -i
