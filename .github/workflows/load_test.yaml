@@ -48,8 +48,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
-          pip install -r requirements_dev.txt
+          pip install -r deps/requirements_loadtest.txt
 
       - name: Extract deployed model URL
         run: |
