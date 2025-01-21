@@ -307,7 +307,7 @@ Now, `docker` will build or fetch all images required to run the specified servi
 subsequently start them.
 
 
-#### MLOps pipeline overview
+### MLOps pipeline overview
 
 
 - Start Draw.io server locally
