@@ -1,5 +1,6 @@
 """
-This module is a utility script for uploading load testing results to W&B.
+This module is a utility script for uploading load testing results to W&B
+and presenting the results in a neat report.
 """
 
 import csv
@@ -21,10 +22,18 @@ today = date.today()
 
 @app.command()
 def upload_results(
-    result_stats: str = "./result_stats.csv",
-    result_failures: str = "./result_failures.csv",
-    result_exceptions: str = "./result_exceptions.csv",
-    result_stats_history: str = "./result_stats_history.csv",
+    result_stats: Annotated[
+        str, typer.Option("--result-stats", help="Path to the 'result_stats.csv' file")
+    ] = "./result_stats.csv",
+    result_failures: Annotated[
+        str, typer.Option("--result-failures", help="Path to the 'result_failures.csv' file")
+    ] = "./result_failures.csv",
+    result_exceptions: Annotated[
+        str, typer.Option("--result-exceptions", help="Path to the 'result_exceptions.csv' file")
+    ] = "./result_exceptions.csv",
+    result_stats_history: Annotated[
+        str, typer.Option("--result-stats-history", help="Path to the 'result_stats_history.csv' file")
+    ] = "./result_stats_history.csv",
 ) -> None:
     """
     Uploads the 4 .csv files containing the data from the results of the
@@ -49,20 +58,10 @@ def upload_results(
 
 
 @app.command()
-def create_report(
-    result_stats: str = "./result_stats.csv",
-    result_failures: str = "./result_failures.csv",
-    result_exceptions: str = "./result_exceptions.csv",
-    result_stats_history: str = "./result_stats_history.csv",
-) -> None:
+def create_report() -> None:
     """
     Creates a report in W&B covering the latest load test performed
     using locust.
-
-    :param result_stats: Path to the 'result_stats.csv' file
-    :param result_failures: Path to the 'result_failures.csv' file
-    :param result_exceptions: Path to the 'result_exceptions.csv' file
-    :param result_stats_history: Path to the 'result_stats_history.csv' file
     """
     loadtest_report = wr.Report(
         title=f"Locust load test results {today}",
