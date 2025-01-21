@@ -1,0 +1,9 @@
+name: Data Version Control Workflow with DVC
+
+on:
+  pull_request:
+    branches:
+    - main
+    paths:
+    - '**/*.dvc'
+    - '.dvc/**'
