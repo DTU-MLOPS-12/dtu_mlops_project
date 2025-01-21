@@ -78,7 +78,7 @@ will check the repositories and the code to verify your answers.
 * [x] Get some continuous integration running on the GitHub repository (M17)
 * [x] Add caching and multi-os/python/pytorch testing to your continuous integration (M17)
 * [x] Add a linting step to your continuous integration (M17)
-* [ ] Add pre-commit hooks to your version control setup (M18)
+* [x] Add pre-commit hooks to your version control setup (M18)
 * [ ] Add a continues workflow that triggers when data changes (M19)
 * [ ] Add a continues workflow that triggers when changes to the model registry is made (M19)
 * [x] Create a data storage in GCP Bucket for your data and link this with your data version control setup (M21)
@@ -526,7 +526,10 @@ to our Google Artifact registry (see `.github/workflows/deploy_api.yaml` for ref
 
 Similar actions exists for the other services including `frontend`, `data` and `train`.
 
---- question 24 fill here ---
+The API can be interacted with either programmatically, using e.g. `curl -X POST -F "image_file=@<image-file>.{.png,.svg,.jpeg} <url/to/endpoint>" `
+(note that the API expects content of the type `multipart/form-data` as specified by RFC 2388 with the form-field name `image_file`), 
+or graphically, either by using the auto-generated `/docs` endpoint or by using our dedicated frontend made with `streamlit` which is probably
+the most user-friendly option.
 
 ### Question 25
 
@@ -549,8 +552,6 @@ This can be run locally, but in order to obtain the most representative result f
 with specs identical to the production environment and use a GitHub action to run the locust load test. Following our pipeline architecture, this action
 is intended to be triggered manually by our "human-in-the-loop" to load test a pre-production model after completing the training stage. This serves as
 a final quality control before pushing a new model to production.
-
---- question 25 fill here ---
 
 ### Question 26
 
