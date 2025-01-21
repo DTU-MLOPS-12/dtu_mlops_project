@@ -505,7 +505,8 @@ We implemented a minimal usable REST API using the `fastapi` framework. Our API 
 - `/`: Root endpoint, merely for health-checks.
 - `/about/`: A small 'about'-endpoint with information about the model currently in use and the repository for the service code.
 - `/api/predict/`: The most important endpoint, which accepts an image file and provides inference using the current production model.
-- `/api/predict/dummy/`: Similar to the `/api/predict/`, except that a dummy model (pre-trained `mobilenetv4` from `timm`) is used for inference. This is primarily used for testing purposes.
+- `/api/predict/preproduction/`: Similar to the `/api/predict/`-endpoint, except that this uses the tagged `preprod`-model from W&B. This is intended for pre-release quality control for new models.
+- `/api/predict/dummy/`: Similar to the `/api/predict/`-endpoint, except that a dummy model (pre-trained `mobilenetv4` from `timm`) is used for inference. This is primarily used for testing purposes.
 
 ### Question 24
 
@@ -606,6 +607,12 @@ a final quality control before pushing a new model to production.
 > Answer:
 
 --- question 28 fill here ---
+
+We implemented a frontend for our API using `streamlit` to improve user-friendliness for end-users.
+The frontend provides an easy way to use all of the different models that the API exposes to perform
+inference on images with a few clicks.
+
+(TODO: Insert screenshot of frontend)
 
 ### Question 29
 
