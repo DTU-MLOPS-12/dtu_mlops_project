@@ -62,9 +62,9 @@ will check the repositories and the code to verify your answers.
 * [x] Add command line interfaces and project commands to your code where it makes sense (M9)
 * [x] Construct one or multiple docker files for your code (M10)
 * [x] Build the docker files locally and make sure they work as intended (M10)
-* [ ] Write one or multiple configurations files for your experiments (M11)
+* [x] Write one or multiple configurations files for your experiments (M11)
 * [ ] Used Hydra to load the configurations and manage your hyperparameters (M11)
-* [ ] Use profiling to optimize your code (M12)
+* [x] Use profiling to optimize your code (M12)
 * [x] Use logging to log important events in your code (M14)
 * [x] Use Weights & Biases to log training progress and other important metrics/artifacts in your code (M14)
 * [ ] Consider running a hyperparameter optimization sweep (M14)
@@ -78,8 +78,8 @@ will check the repositories and the code to verify your answers.
 * [x] Get some continuous integration running on the GitHub repository (M17)
 * [x] Add caching and multi-os/python/pytorch testing to your continuous integration (M17)
 * [x] Add a linting step to your continuous integration (M17)
-* [ ] Add pre-commit hooks to your version control setup (M18)
-* [ ] Add a continues workflow that triggers when data changes (M19)
+* [x] Add pre-commit hooks to your version control setup (M18)
+* [x] Add a continues workflow that triggers when data changes (M19)
 * [ ] Add a continues workflow that triggers when changes to the model registry is made (M19)
 * [x] Create a data storage in GCP Bucket for your data and link this with your data version control setup (M21)
 * [x] Create a trigger workflow for automatically building your docker images (M21)
@@ -144,6 +144,8 @@ s233489, jonnil, s091969, s233480
 > Answer:
 
 The third-party framework TIMM (PyTorch Image Models) was used in our project. We used functionality from the package to access a wide variety of pre-trained models and their associated utilities. By doing this, we could quickly experiment with different architectures and finetune a predefined model for our specific task.
+
+As a starting point, we used a pre-made `train.py` script from the TIMM codebase, which provides a very high level of parameter customization either through command-line arguments or via a configuration file specifying the desired parameters. This script was modified with additional functionality related to our MLOps pipeline. As an example, an option to automatically detect the number of classes in the input data was added, such that a change in the input data would automatically be handled in the model construction.
 
 ## Coding environment
 
@@ -262,9 +264,9 @@ which would require a sophisticated mocking framework, but that would sort of ru
 >
 > Answer:
 
-We made use of both branches and PRs in our project. Each group member had to checkout a new branch when adding feature that they could work when contributing to the GitHub repository. We only allowed changes on main branch for documentational changes (markdown-files) and the group was instructed to not develop any code on the main-branch. To merge a feature branch into main, each team member have to create a pull requests (PRs) which were code reviewed by at least one other team member before merging. This why of working helped the group to ensure code quality and enhanced collaboratuon and discussion of changes. 
+We made use of both branches and PRs in our project. Each group member had to checkout a new branch when working on features that they wanted to contribute to the GitHub repository. We only allowed changes on main branch for documentational changes (markdown-files) and the group was instructed to not develop any code on the main-branch. To merge a feature branch into main, each team member have to create pull requests (PRs) which were code reviewed by at least one other team member before merging. This way of working helped the group to ensure code quality and enhanced collaboration and discussion of changes. 
 
-Branches and PRs helped our group keeping version control by isolating new features into specific branches. This helped us also to ensure code quality as all PRs was checked using `ruff` and tested running a test suite with `pytest` of all implemented tests in the `tests` folder.
+Branches and PRs helped our group keeping version control by isolating new features into specific branches. This helped us also to ensure code quality as all PRs were checked using `ruff` and verified by running a test suite with `pytest` of all implemented tests in the `tests` folder.
 
 ### Question 10
 
@@ -342,7 +344,7 @@ A successful training run of a TIMM model outputs to a directory a set files con
 * Training run statistics per epoch (loss, accuracy etc.)
 * The final output model
 
-Given this, any experiment could be reproduced by re-running the training with a given config file.
+Given this, any experiment could be reproduced by re-running the training with a given config file. Furthermore, by logging the model training in Weights & Biases, we could access any previous model and its configuration. 
 
 ### Question 14
 
@@ -359,7 +361,11 @@ Given this, any experiment could be reproduced by re-running the training with a
 >
 > Answer:
 
---- question 14 fill here ---
+For all our experiments, we tracked several metrics related to the model training. These include:
+
+* training and validation loss/accuracy curves, which indicate if the model is learning from the data. These can also be useful for tuning hyperparameters such as the learning rate, as too high learning rates will often lead to noisy loss curves and the training getting stuck in local minima.
+* histogram of model gradients, which is useful to identify issues such as vanishing gradients.
+* ROC curves, which show how well the model is able to classify positive and negative examples. We opted to log a ROC curve for each training epoch that shows the per-class performance.
 
 ### Question 15
 
@@ -501,7 +507,8 @@ We implemented a minimal usable REST API using the `fastapi` framework. Our API 
 - `/`: Root endpoint, merely for health-checks.
 - `/about/`: A small 'about'-endpoint with information about the model currently in use and the repository for the service code.
 - `/api/predict/`: The most important endpoint, which accepts an image file and provides inference using the current production model.
-- `/api/predict/dummy/`: Similar to the `/api/predict/`, except that a dummy model (pre-trained `mobilenetv4` from `timm`) is used for inference. This is primarily used for testing purposes.
+- `/api/predict/preproduction/`: Similar to the `/api/predict/`-endpoint, except that this uses the tagged `preprod`-model from W&B. This is intended for pre-release quality control for new models.
+- `/api/predict/dummy/`: Similar to the `/api/predict/`-endpoint, except that a dummy model (pre-trained `mobilenetv4` from `timm`) is used for inference. This is primarily used for testing purposes.
 
 ### Question 24
 
@@ -526,7 +533,10 @@ to our Google Artifact registry (see `.github/workflows/deploy_api.yaml` for ref
 
 Similar actions exists for the other services including `frontend`, `data` and `train`.
 
---- question 24 fill here ---
+The API can be interacted with either programmatically, using e.g. `curl -X POST -F "image_file=@<image-file>.{.png,.svg,.jpeg} <url/to/endpoint>" `
+(note that the API expects content of the type `multipart/form-data` as specified by RFC 2388 with the form-field name `image_file`), 
+or graphically, either by using the auto-generated `/docs` endpoint or by using our dedicated frontend made with `streamlit` which is probably
+the most user-friendly option.
 
 ### Question 25
 
@@ -549,8 +559,6 @@ This can be run locally, but in order to obtain the most representative result f
 with specs identical to the production environment and use a GitHub action to run the locust load test. Following our pipeline architecture, this action
 is intended to be triggered manually by our "human-in-the-loop" to load test a pre-production model after completing the training stage. This serves as
 a final quality control before pushing a new model to production.
-
---- question 25 fill here ---
 
 ### Question 26
 
@@ -601,6 +609,12 @@ a final quality control before pushing a new model to production.
 > Answer:
 
 --- question 28 fill here ---
+
+We implemented a frontend for our API using `streamlit` to improve user-friendliness for end-users.
+The frontend provides an easy way to use all of the different models that the API exposes to perform
+inference on images with a few clicks.
+
+(TODO: Insert screenshot of frontend)
 
 ### Question 29
 

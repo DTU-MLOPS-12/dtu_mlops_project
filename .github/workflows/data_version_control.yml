@@ -1,0 +1,20 @@
+name: Data Version Control Workflow with DVC
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**/*.dvc'
+      - '.dvc/**'
+
+jobs:
+  detect-dvc-change:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Detect DVC changes
+        run: echo "change detected"
