@@ -367,6 +367,9 @@ For all our experiments, we tracked several metrics related to the model trainin
 * histogram of model gradients, which is useful to identify issues such as vanishing gradients.
 * ROC curves, which show how well the model is able to classify positive and negative examples. We opted to log a ROC curve for each training epoch that shows the per-class performance.
 
+![wandb figure 1](figures/wandb_1.png)
+![wandb figure 2](figures/wandb_2.png)
+
 ### Question 15
 
 > **Docker is an important tool for creating containerized applications. Explain how you used docker in your**
