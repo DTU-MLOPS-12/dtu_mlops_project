@@ -9,6 +9,7 @@ pytest==8.3.4
 coverage==7.6.10
 httpx==0.28.1
 locust==2.32.6
+wandb-workspaces==0.1.8
 
 # linting
 ruff==0.9.1
@@ -21,4 +22,3 @@ mkdocs==1.6.1
 mkdocs-material==9.5.49
 mkdocstrings-python==1.13.0
 Markdown==3.7
-
