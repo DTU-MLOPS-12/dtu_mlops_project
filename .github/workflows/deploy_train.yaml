@@ -47,11 +47,11 @@ jobs:
       - name: Build images
         env:
           GCP_SA_KEY_DVC: ${{ secrets.GCP_SA_KEY_DVC }}
-          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY_GRP_12 }}
         run: |
           for dockerfile in dockerfiles/*train.dockerfile; do
             image_name=$(basename $dockerfile .dockerfile)
-            docker build --build-arg WANDB_API_KEY="${{ secrets.WANDB_API_KEY }}" --secret id=GCP_SA_KEY_DVC -f $dockerfile . -t ${{ env.GAR_LOCATION }}$image_name:${{ env.TAG }} &
+            docker build --build-arg WANDB_API_KEY="${{ secrets.WANDB_API_KEY_GRP_12 }}" --secret id=GCP_SA_KEY_DVC -f $dockerfile . -t ${{ env.GAR_LOCATION }}$image_name:${{ env.TAG }} &
           done
           wait
 
