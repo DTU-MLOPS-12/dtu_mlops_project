@@ -262,9 +262,9 @@ which would require a sophisticated mocking framework, but that would sort of ru
 >
 > Answer:
 
-We made use of both branches and PRs in our project. Each group member had to checkout a new branch when adding feature that they could work when contributing to the GitHub repository. We only allowed changes on main branch for documentational changes (markdown-files) and the group was instructed to not develop any code on the main-branch. To merge a feature branch into main, each team member have to create a pull requests (PRs) which were code reviewed by at least one other team member before merging. This why of working helped the group to ensure code quality and enhanced collaboratuon and discussion of changes. 
+We made use of both branches and PRs in our project. Each group member had to checkout a new branch when working on features that they wanted to contribute to the GitHub repository. We only allowed changes on main branch for documentational changes (markdown-files) and the group was instructed to not develop any code on the main-branch. To merge a feature branch into main, each team member have to create pull requests (PRs) which were code reviewed by at least one other team member before merging. This way of working helped the group to ensure code quality and enhanced collaboration and discussion of changes. 
 
-Branches and PRs helped our group keeping version control by isolating new features into specific branches. This helped us also to ensure code quality as all PRs was checked using `ruff` and tested running a test suite with `pytest` of all implemented tests in the `tests` folder.
+Branches and PRs helped our group keeping version control by isolating new features into specific branches. This helped us also to ensure code quality as all PRs were checked using `ruff` and verified by running a test suite with `pytest` of all implemented tests in the `tests` folder.
 
 ### Question 10
 
@@ -359,7 +359,11 @@ Given this, any experiment could be reproduced by re-running the training with a
 >
 > Answer:
 
---- question 14 fill here ---
+For all our experiments, we tracked several metrics related to the model training. These include:
+
+* training and validation loss/accuracy curves, which indicate if the model is learning from the data. These can also be useful for tuning hyperparameters such as the learning rate, as too high learning rates will often lead to noisy loss curves and the training getting stuck in local minima.
+* histogram of model gradients, which is useful to identify issues such as vanishing gradients.
+* ROC curves, which show how well the model is able to classify positive and negative examples. We opted to log a ROC curve for each training epoch that shows the per-class performance.
 
 ### Question 15
 
