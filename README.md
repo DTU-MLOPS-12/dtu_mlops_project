@@ -305,3 +305,20 @@ docker compose up -d
 
 Now, `docker` will build or fetch all images required to run the specified services and
 subsequently start them.
+
+
+#### MLOps pipeline overview
+
+
+- Start Draw.io server locally
+```shell
+docker run -it --rm --name="draw" -p 8080:8080 -p 8443:8443 jgraph/drawio
+```
+
+- Service url `http://localhost:8080`
+
+- Open file path
+
+```shell
+reports/figures/mlops.drawio.png
+```
