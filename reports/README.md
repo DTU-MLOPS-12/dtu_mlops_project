@@ -145,6 +145,8 @@ s233489, jonnil, s091969, s233480
 
 The third-party framework TIMM (PyTorch Image Models) was used in our project. We used functionality from the package to access a wide variety of pre-trained models and their associated utilities. By doing this, we could quickly experiment with different architectures and finetune a predefined model for our specific task.
 
+As a starting point, we used a pre-made `train.py` script from the TIMM codebase, which provides a very high level of parameter customization either through command-line arguments or via a configuration file specifying the desired parameters. This script was modified with additional functionality related to our MLOps pipeline. As an example, an option to automatically detect the number of classes in the input data was added, such that a change in the input data would automatically be handled in the model construction.
+
 ## Coding environment
 
 > In the following section we are interested in learning more about you local development environment. This includes
@@ -342,7 +344,7 @@ A successful training run of a TIMM model outputs to a directory a set files con
 * Training run statistics per epoch (loss, accuracy etc.)
 * The final output model
 
-Given this, any experiment could be reproduced by re-running the training with a given config file.
+Given this, any experiment could be reproduced by re-running the training with a given config file. Furthermore, by logging the model training in Weights & Biases, we could access any previous model and its configuration. 
 
 ### Question 14
 
