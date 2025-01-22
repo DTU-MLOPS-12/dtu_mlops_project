@@ -1,4 +1,4 @@
-name: Data Version Control and Build Training Container
+name: 1. DVC and Training Pipeline
 
 on:
   pull_request:
