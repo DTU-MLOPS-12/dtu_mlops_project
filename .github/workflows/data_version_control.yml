@@ -90,12 +90,25 @@ jobs:
       - name: Set PR Number
         id: set_pr_number
         run: echo "export PR_NUMBER=${{ github.event.pull_request.number || github.event.issue.number }}" >> $GITHUB_ENV
+      - name: Echo current date
+        run: echo $PR_NUMBER
+
+      - name: Set PR Number
+        id: set_pr_number2
+        run: echo "PR_NUMBER2=${{ github.event.pull_request.number || github.event.issue.number }}" >> $GITHUB_ENV
+      - name: Echo current date
+        run: echo $PR_NUMBER2
+        
+      - name: Set current date as env variable
+        run: echo "NOW=$(date +'%Y-%m-%dT%H%M%S')" >> $GITHUB_ENV
+      - name: Echo current date
+        run: echo $NOW 
 
       - name: Start Vertex AI Training Job
         run: |
           gcloud ai custom-jobs create \
             --region ${{ env.LOCATION }} \
-            --display-name="PR-${PR_NUMBER}" \
+            --display-name="PR-${PR_NUMBER}${PR_NUMBER2}${NOW}" \
             --config=configs/vertex_ai_config_gpu.yaml \
             --command 'python' \
             --args='src/dtu_mlops_project/train.py,--config,configs/mobilenetv4_conv_small_fine_tuning.yaml,--epochs,30,--wandb-project,mlops_project'
