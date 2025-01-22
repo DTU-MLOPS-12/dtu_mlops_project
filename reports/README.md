@@ -451,7 +451,7 @@ We used the Compute Engine to run our training and inference tasks. We utilized 
 >
 > Answer:
 
---- question 19 fill here ---
+-Thomas
 
 ### Question 20
 
@@ -460,7 +460,7 @@ We used the Compute Engine to run our training and inference tasks. We utilized 
 >
 > Answer:
 
---- question 20 fill here ---
+-Nicolai
 
 ### Question 21
 
@@ -469,7 +469,7 @@ We used the Compute Engine to run our training and inference tasks. We utilized 
 >
 > Answer:
 
---- question 21 fill here ---
+-Nicolai
 
 ### Question 22
 
@@ -611,7 +611,7 @@ a final quality control before pushing a new model to production.
 >
 > Answer:
 
---- question 28 fill here ---
+-Nicolai
 
 We implemented a frontend for our API using `streamlit` to improve user-friendliness for end-users.
 The frontend provides an easy way to use all of the different models that the API exposes to perform
