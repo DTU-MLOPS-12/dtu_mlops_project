@@ -143,7 +143,7 @@ s233489, jonnil, s091969, s233480
 >
 > Answer:
 
-The third-party framework TIMM (PyTorch Image Models) [TIMM (PyTorch Image Models) from Huggingface](https://github.com/huggingface/pytorch-image-models) was used in our project. We used functionality from the package to access a wide variety of pre-trained models and their associated utilities. By doing this, we could quickly experiment with different architectures and finetune a predefined model for our specific task.
+The third-party framework [TIMM (PyTorch Image Models) from Huggingface](https://github.com/huggingface/pytorch-image-models) was used in our project. We used functionality from the package to access a wide variety of pre-trained models and their associated utilities. By doing this, we could quickly experiment with different architectures and finetune a predefined model for our specific task.
 
 As a starting point, we used a pre-made `train.py` script from the TIMM codebase, which provides a very high level of parameter customization either through command-line arguments or via a configuration file specifying the desired parameters. This script was modified with additional functionality related to our MLOps pipeline. As an example, an option to automatically detect the number of classes in the input data was added, such that a change in the input data would automatically be handled in the model construction.
 
@@ -191,7 +191,7 @@ This will ensures that all packages in their specific versions are installed, he
 > Answer:
 
 Using the cookiecutter template from the ![template repository](https://github.com/SkafteNicki/mlops_template), we have 
-filled out the `src`, `data`, and `tests` folders specific to our project. We have removed the `notebook` folder as we did not use Jupyter Notebooks in our project. Additionally, we have added more GitHub workflows in `.github/workflows` and configurations in the `configs` folder. Lastly, we have added files for building and deploying in cloud to ... 
+filled out the `src`, `data`, and `tests` folders specific to our project. We have removed the `notebook` and `models` folder as we did not use Jupyter Notebooks in our project and our models was stored at Weights and Baises Model Registry. Additionally, we have added more GitHub workflows in `.github/workflows`, configurations in the `configs` folder, and specific `deps` folder containing dependencies for specific code in the `src` used in our dockerfiles. Lastly, we have added files for building and deploying in cloud to ... 
 
 ### Question 6
 
