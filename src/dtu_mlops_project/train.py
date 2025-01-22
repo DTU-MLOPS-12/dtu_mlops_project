@@ -54,12 +54,14 @@ except ImportError:
 
 try:
     import wandb
+
     has_wandb = True
 except ImportError:
     has_wandb = False
 
 try:
     from functorch.compile import memory_efficient_fusion
+
     has_functorch = True
 except ImportError:
     has_functorch = False
@@ -619,10 +621,12 @@ group.add_argument(
     "--wandb-resume-id", default="", type=str, metavar="ID", help="If resuming a run, the id of the run in wandb"
 )
 
+
 def count_classes(data_dir: str) -> int:
     """Count the number of classes in the input data"""
     train_dir = data_dir + "/train"
     return len([d for d in os.listdir(train_dir) if os.path.isdir(os.path.join(train_dir, d))])
+
 
 def _parse_args():
     # Do we have a config file to parse?
@@ -639,6 +643,7 @@ def _parse_args():
     # Cache the args as a text string to save them in the output dir later
     args_text = yaml.safe_dump(args.__dict__, default_flow_style=False)
     return args, args_text
+
 
 def main():
     utils.setup_default_logging()
@@ -1233,6 +1238,7 @@ def main():
         )
         print(f"--result\n{json.dumps(display_results[-10:], indent=4)}")
 
+
 def train_one_epoch(
     epoch,
     model,
@@ -1479,6 +1485,7 @@ def train_one_epoch(
         loss_avg = utils.reduce_tensor(loss_avg, args.world_size).item()
     return OrderedDict([("loss", loss_avg)])
 
+
 def validate(
     model, loader, loss_fn, args, device=torch.device("cuda"), amp_autocast=suppress, model_dtype=None, log_suffix=""
 ):
@@ -1558,6 +1565,7 @@ def validate(
     metrics = OrderedDict([("loss", losses_m.avg), ("top1", top1_m.avg), ("top5", top5_m.avg)])
 
     return metrics
+
 
 if __name__ == "__main__":
     main()
