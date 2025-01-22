@@ -191,7 +191,9 @@ This will ensures that all packages in their specific versions are installed, he
 > Answer:
 
 Using the cookiecutter template from the ![template repository](https://github.com/SkafteNicki/mlops_template), we have 
-filled out the `src`, `data`, and `tests` folders specific to our project. We have removed the `notebook` and `models` folder as we did not use Jupyter Notebooks in our project and our models was stored at Weights and Baises Model Registry. Additionally, we have added more GitHub workflows in `.github/workflows`, configurations in the `configs` folder, and specific `deps` folder containing dependencies for specific code in the `src` used in our dockerfiles. Lastly, we have added files for building and deploying in cloud to ... 
+filled out the `src`, `data`, `configs`, `dockerfiles`, and `tests` folders specific to our project. We have removed the `notebook` and `models` folder as we did not use Jupyter Notebooks in our project and our models was stored at Weights and Baises Model Registry. Additionally, we have added GitHub workflows in `.github/workflows` for our CI/CD (continues integration and continues development) for building and deploying our project to cloud, data version control in `.dvc` folder, and a specific `deps` folder containing dependencies for specific code in the `src` used in our dockerfiles. 
+
+The main directories include `src`, `data`, `tests`, `configs`, and `.github/workflows`. The `src` directory contains the core codebase, including scripts for data processing, model training, and inference. The `data` directory is used for data storage and management, while the `tests` directory holds all unit and integration tests to ensure code quality and functionality. 
 
 ### Question 6
 
