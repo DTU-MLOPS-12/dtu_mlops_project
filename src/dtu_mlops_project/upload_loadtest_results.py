@@ -1,14 +1,11 @@
 """
-This module is a utility script for uploading load testing results to W&B
-and presenting the results in a neat report.
+This module is a utility script for uploading load testing results to W&B.
+
 """
 
-import csv
-import sys
 from datetime import date
 from typing import Annotated
 
-import pandas
 from loguru import logger
 import typer
 import wandb
@@ -55,18 +52,6 @@ def upload_results(
     loadtest_result_artifact.save()
 
     logger.info(f"Successfully uploaded artifact: 'locust-loadtest-{today}' to W&B.")
-
-
-@app.command()
-def create_report() -> None:
-    """
-    Creates a report in W&B covering the latest load test performed
-    using locust.
-    """
-    loadtest_report = wr.Report(
-        title=f"Locust load test results {today}",
-        description=f"Details about the locust load test result from {today}",
-    )
 
 
 if __name__ == "__main__":
