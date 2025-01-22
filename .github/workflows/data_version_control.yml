@@ -23,8 +23,7 @@ env:
   GAR_LOCATION: europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/
   BACKEND_URL: https://fastapi-app-ypqrr5d7oa-ez.a.run.app/
   GCP_PROJECT_ID: 840739092468
-  PR_NUMBER: ${{ github.event.pull_request.number }}
-  
+
 jobs:
   build-images:
     runs-on: ubuntu-latest
@@ -88,15 +87,16 @@ jobs:
         uses: "google-github-actions/setup-gcloud@v2"
         with:
           project_id: ${{ env.PROJECT_ID }}
-      
-      - name: Wait for 20 seconds
-        run: sleep 20
+           
+      - name: Set PR Number
+        id: set_pr_number
+        run: echo "export PR_NUMBER=${{ github.event.pull_request.number || github.event.issue.number }}" >> $GITHUB_ENV
 
       - name: Start Vertex AI Training Job
         run: |
           gcloud ai custom-jobs create \
             --region ${{ env.LOCATION }} \
-            --display-name="PR-${{ PR_NUMBER }}" \
+            --display-name="PR-${PR_NUMBER}" \
             --config=configs/vertex_ai_config_gpu.yaml \
             --command 'python' \
             --args='src/dtu_mlops_project/train.py,--config,configs/mobilenetv4_conv_small_fine_tuning.yaml,--epochs,30,--wandb-project,mlops_project'
