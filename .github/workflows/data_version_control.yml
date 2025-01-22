@@ -23,7 +23,7 @@ env:
   GAR_LOCATION: europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/
   BACKEND_URL: https://fastapi-app-ypqrr5d7oa-ez.a.run.app/
   GCP_PROJECT_ID: 840739092468
-  PR_NUMBER: ${{ github.event.number }}
+  PR_NUMBER: ${{ github.event.pull_request.number }}
   
 jobs:
   build-images:
