@@ -335,7 +335,7 @@ We used config files for training our models to ensure reproducibility. These co
 
 As an example, a config file can be provided to our training script as follows:
 ```bash
-python3 src/dtu_mlops_project/train.py --config configs/mobilenetv4_conv_small_fine_tuning.yaml`
+python3 src/dtu_mlops_project/train.py --config configs/mobilenetv4_conv_small_fine_tuning.yaml
 ```
 
 This command will execute the training process using the specified configuration file ensuring parameters are applied.
