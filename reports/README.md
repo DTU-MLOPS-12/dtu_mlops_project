@@ -59,12 +59,12 @@ will check the repositories and the code to verify your answers.
 * [x] Remember to comply with good coding practices (`pep8`) while doing the project (M7)
 * [x] Do a bit of code typing and remember to document essential parts of your code (M7)
 * [x] Setup version control for your data or part of your data (M8)
-* [ ] Add command line interfaces and project commands to your code where it makes sense (M9)
+* [x] Add command line interfaces and project commands to your code where it makes sense (M9)
 * [x] Construct one or multiple docker files for your code (M10)
 * [x] Build the docker files locally and make sure they work as intended (M10)
-* [ ] Write one or multiple configurations files for your experiments (M11)
+* [x] Write one or multiple configurations files for your experiments (M11)
 * [ ] Used Hydra to load the configurations and manage your hyperparameters (M11)
-* [ ] Use profiling to optimize your code (M12)
+* [x] Use profiling to optimize your code (M12)
 * [x] Use logging to log important events in your code (M14)
 * [x] Use Weights & Biases to log training progress and other important metrics/artifacts in your code (M14)
 * [ ] Consider running a hyperparameter optimization sweep (M14)
@@ -78,8 +78,8 @@ will check the repositories and the code to verify your answers.
 * [x] Get some continuous integration running on the GitHub repository (M17)
 * [x] Add caching and multi-os/python/pytorch testing to your continuous integration (M17)
 * [x] Add a linting step to your continuous integration (M17)
-* [ ] Add pre-commit hooks to your version control setup (M18)
-* [ ] Add a continues workflow that triggers when data changes (M19)
+* [x] Add pre-commit hooks to your version control setup (M18)
+* [x] Add a continues workflow that triggers when data changes (M19)
 * [ ] Add a continues workflow that triggers when changes to the model registry is made (M19)
 * [x] Create a data storage in GCP Bucket for your data and link this with your data version control setup (M21)
 * [x] Create a trigger workflow for automatically building your docker images (M21)
@@ -97,18 +97,18 @@ will check the repositories and the code to verify your answers.
 * [ ] Deploy to the cloud a drift detection API (M27)
 * [ ] Instrument your API with a couple of system metrics (M28)
 * [ ] Setup cloud monitoring of your instrumented application (M28)
-* [ ] Create one or more alert systems in GCP to alert you if your app is not behaving correctly (M28)
+* [x] Create one or more alert systems in GCP to alert you if your app is not behaving correctly (M28)
 * [ ] If applicable, optimize the performance of your data loading using distributed data loading (M29)
 * [ ] If applicable, optimize the performance of your training pipeline by using distributed training (M30)
 * [ ] Play around with quantization, compilation and pruning for you trained models to increase inference speed (M31)
 
 ### Extra
 
-* [ ] Write some documentation for your application (M32)
+* [x] Write some documentation for your application (M32)
 * [ ] Publish the documentation to GitHub Pages (M32)
 * [ ] Revisit your initial project description. Did the project turn out as you wanted?
 * [ ] Create an architectural diagram over your MLOps pipeline
-* [ ] Make sure all group members have an understanding about all parts of the project
+* [x] Make sure all group members have an understanding about all parts of the project
 * [ ] Uploaded all your code to GitHub
 
 ## Group information
@@ -144,6 +144,8 @@ s233489, jonnil, s091969, s233480
 > Answer:
 
 The third-party framework TIMM (PyTorch Image Models) was used in our project. We used functionality from the package to access a wide variety of pre-trained models and their associated utilities. By doing this, we could quickly experiment with different architectures and finetune a predefined model for our specific task.
+
+As a starting point, we used a pre-made `train.py` script from the TIMM codebase, which provides a very high level of parameter customization either through command-line arguments or via a configuration file specifying the desired parameters. This script was modified with additional functionality related to our MLOps pipeline. As an example, an option to automatically detect the number of classes in the input data was added, such that a change in the input data would automatically be handled in the model construction.
 
 ## Coding environment
 
@@ -226,6 +228,9 @@ Practices implementing code quality and format are crucial in larger projects as
 > Answer:
 
 --- question 7 fill here ---
+(TODO: update after implementing unit tests for `data.py` and `model.py`)
+
+Currently, we have implemented integration tests for the API service.
 
 ### Question 8
 
@@ -242,6 +247,10 @@ Practices implementing code quality and format are crucial in larger projects as
 
 --- question 8 fill here ---
 
+Currently, for the API integration tests, the code coverage is 81%. Do note that this is an integration test and the purpose is 
+to test the functionality of the interface as a whole, because we're dealing with I/O. So, it is difficult to test in isolation,
+which would require a sophisticated mocking framework, but that would sort of ruin the purpose and turn it into a white box test. 
+
 ### Question 9
 
 > **Did you workflow include using branches and pull requests? If yes, explain how. If not, explain how branches and**
@@ -255,9 +264,9 @@ Practices implementing code quality and format are crucial in larger projects as
 >
 > Answer:
 
-We made use of both branches and PRs in our project. Each group member had to checkout a new branch when adding feature that they could work when contributing to the GitHub repository. We only allowed changes on main branch for documentational changes (markdown-files) and the group was instructed to not develop any code on the main-branch. To merge a feature branch into main, each team member have to create a pull requests (PRs) which were code reviewed by at least one other team member before merging. This why of working helped the group to ensure code quality and enhanced collaboratuon and discussion of changes. 
+We made use of both branches and PRs in our project. Each group member had to checkout a new branch when working on features that they wanted to contribute to the GitHub repository. We only allowed changes on main branch for documentational changes (markdown-files) and the group was instructed to not develop any code on the main-branch. To merge a feature branch into main, each team member have to create pull requests (PRs) which were code reviewed by at least one other team member before merging. This way of working helped the group to ensure code quality and enhanced collaboration and discussion of changes. 
 
-Branches and PRs helped our group keeping version control by isolating new features into specific branches. This helped us also to ensure code quality as all PRs was checked using `ruff` and tested running a test suite with `pytest` of all implemented tests in the `tests` folder.
+Branches and PRs helped our group keeping version control by isolating new features into specific branches. This helped us also to ensure code quality as all PRs were checked using `ruff` and verified by running a test suite with `pytest` of all implemented tests in the `tests` folder.
 
 ### Question 10
 
@@ -335,7 +344,7 @@ A successful training run of a TIMM model outputs to a directory a set files con
 * Training run statistics per epoch (loss, accuracy etc.)
 * The final output model
 
-Given this, any experiment could be reproduced by re-running the training with a given config file.
+Given this, any experiment could be reproduced by re-running the training with a given config file. Furthermore, by logging the model training in Weights & Biases, we could access any previous model and its configuration. 
 
 ### Question 14
 
@@ -352,7 +361,14 @@ Given this, any experiment could be reproduced by re-running the training with a
 >
 > Answer:
 
---- question 14 fill here ---
+For all our experiments, we tracked several metrics related to the model training. These include:
+
+* training and validation loss/accuracy curves, which indicate if the model is learning from the data. These can also be useful for tuning hyperparameters such as the learning rate, as too high learning rates will often lead to noisy loss curves and the training getting stuck in local minima.
+* histogram of model gradients, which is useful to identify issues such as vanishing gradients.
+* ROC curves, which show how well the model is able to classify positive and negative examples. We opted to log a ROC curve for each training epoch that shows the per-class performance.
+
+![wandb figure 1](figures/wandb_1.png)
+![wandb figure 2](figures/wandb_2.png)
 
 ### Question 15
 
@@ -369,7 +385,7 @@ Given this, any experiment could be reproduced by re-running the training with a
 
 In this project, we developed several docker images that was build to containerize our deployment. First of all we have one dockerfile for building and running data collection and preperation of the TIMM dataset. Another dockerfile handles the build and running of training our model. Then we have one dockerfile for building and running the backend utilizing FastApi, while another dockerfile is for building and running the frontend utilizing Streamlit.
 
-The Docker images was runned with Vertex AI and Cloud Run after they have been builded and uploaded to the artifact registry on Google Cloud Platform. E.g. a run of the training docker image was leveraged with the command: ...
+The Docker images were ran with Vertex AI and Cloud Run after they have been builded and uploaded to the artifact registry on Google Cloud Platform. E.g. a run of the training docker image was leveraged with the command: ...
 
 The link to the training dockerfile is: <weblink>
 
@@ -411,7 +427,7 @@ We used the following GCP services in our project:
 3. Artifact Registry: Used for storing and managing Docker images.
 4. Vertex AI: Leveraged for training and deploying machine learning models.
 5. Cloud Run: Deployed our containerized applications for scalable and managed serverless execution e.g. Frontend and Backend utilizing FASTApi.
-8. Cloud Monitoring: Implemented to monitor the performance and health of our deployed applications.
+6. Cloud Monitoring: Implemented to monitor the performance and health of our deployed applications.
 
 ### Question 18
 
@@ -468,7 +484,11 @@ We used the Compute Engine to run our training and inference tasks. We utilized 
 >
 > Answer:
 
---- question 22 fill here ---
+We managed to train our model in the cloud using Vertex AI. We did this by setting up a GitHub Actions workflow that automates the process of building and pushing our Docker image to Google Artifact Registry, and then starting a custom training job on Vertex AI.
+
+First, we created a Dockerfile to containerize our training script. We then configured a GitHub Actions workflow to authenticate with Google Cloud using service account credentials stored in GitHub Secrets. The workflow builds the Docker image, pushes it to the Artifact Registry, and made a custom jobs in Vertex UI with a `gcloud` create command to start the training job on Vertex AI.
+
+We chose Vertex AI because it provides a managed environment for training machine learning models, which simplifies the process of scaling and managing resources.
 
 ## Deployment
 
@@ -485,7 +505,13 @@ We used the Compute Engine to run our training and inference tasks. We utilized 
 >
 > Answer:
 
---- question 23 fill here ---
+We implemented a minimal usable REST API using the `fastapi` framework. Our API exposes a few different endpoints:
+
+- `/`: Root endpoint, merely for health-checks.
+- `/about/`: A small 'about'-endpoint with information about the model currently in use and the repository for the service code.
+- `/api/predict/`: The most important endpoint, which accepts an image file and provides inference using the current production model.
+- `/api/predict/preproduction/`: Similar to the `/api/predict/`-endpoint, except that this uses the tagged `preprod`-model from W&B. This is intended for pre-release quality control for new models.
+- `/api/predict/dummy/`: Similar to the `/api/predict/`-endpoint, except that a dummy model (pre-trained `mobilenetv4` from `timm`) is used for inference. This is primarily used for testing purposes.
 
 ### Question 24
 
@@ -501,7 +527,19 @@ We used the Compute Engine to run our training and inference tasks. We utilized 
 >
 > Answer:
 
---- question 24 fill here ---
+The API can be and has been deployed both locally and in the cloud; on a local machine, one has the option of either
+running the API directly or building the `api` image and running the service as an OCI container.
+
+In the cloud, the API service is always running in a container using docker. Deployment happens automatically upon
+the creation of a release tag using a GitHub action. This action uses `docker` to build, tag and push the API image
+to our Google Artifact registry (see `.github/workflows/deploy_api.yaml` for reference).
+
+Similar actions exists for the other services including `frontend`, `data` and `train`.
+
+The API can be interacted with either programmatically, using e.g. `curl -X POST -F "image_file=@<image-file>.{.png,.svg,.jpeg} <url/to/endpoint>" `
+(note that the API expects content of the type `multipart/form-data` as specified by RFC 2388 with the form-field name `image_file`), 
+or graphically, either by using the auto-generated `/docs` endpoint or by using our dedicated frontend made with `streamlit` which is probably
+the most user-friendly option.
 
 ### Question 25
 
@@ -516,7 +554,14 @@ We used the Compute Engine to run our training and inference tasks. We utilized 
 >
 > Answer:
 
---- question 25 fill here ---
+We made a few unit (integration) tests for our API obtaining a coverage of around 81%. The purpose of these tests are to verify the
+functionality of the service as a whole rather than testing the module as a unit in isolation.
+
+We made a simple `locustfile.py` using the locust framework for load testing, which tests the `/`, `/about/` and `/api/predict/` (using a dummy image).
+This can be run locally, but in order to obtain the most representative result from the users perspective, we deploy another API instance to a testing server
+with specs identical to the production environment and use a GitHub action to run the locust load test. Following our pipeline architecture, this action
+is intended to be triggered manually by our "human-in-the-loop" to load test a pre-production model after completing the training stage. This serves as
+a final quality control before pushing a new model to production.
 
 ### Question 26
 
@@ -567,6 +612,12 @@ We used the Compute Engine to run our training and inference tasks. We utilized 
 > Answer:
 
 --- question 28 fill here ---
+
+We implemented a frontend for our API using `streamlit` to improve user-friendliness for end-users.
+The frontend provides an easy way to use all of the different models that the API exposes to perform
+inference on images with a few clicks.
+
+(TODO: Insert screenshot of frontend)
 
 ### Question 29
 

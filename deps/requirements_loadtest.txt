@@ -1,0 +1,6 @@
+# load testing
+httpx==0.28.1
+locust==2.32.6
+pillow==11.1.0
+python-multipart==0.0.20
+

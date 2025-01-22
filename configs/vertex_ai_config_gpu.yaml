@@ -1,0 +1,15 @@
+# vertex_ai_config_gpu.yaml
+workerPoolSpecs:
+    machineSpec:
+        machineType: n1-standard-4
+        acceleratorType: NVIDIA_TESLA_P4 # NVIDIA_TESLA_V100
+        acceleratorCount: 1
+    replicaCount: 1
+    containerSpec:
+        imageUri: europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/train:latest
+
+# GPU run command NVIDIA_TESLA_P4
+# gcloud ai custom-jobs create --region=europe-west4 --display-name=NVIDIA_TESLA_P4 --config=configs/vertex_ai_config_gpu.yaml --command='python' --args='src/dtu_mlops_project/train.py,--config,configs/mobilenetv4_conv_small_fine_tuning.yaml,--num-classes,3,--epochs,1,--wandb-project,mlops_project'
+
+# link til status page
+# https://console.cloud.google.com/vertex-ai/training/custom-jobs?inv=1&invt=AbnWEQ&project=dtu-mlops-447711        

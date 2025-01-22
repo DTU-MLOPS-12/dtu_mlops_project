@@ -1,0 +1,49 @@
+name: Start Custom Vertex AI Training Job
+
+on:
+  workflow_dispatch:
+    inputs:
+      job_name:
+        description: "Name of the Vertex AI training job"
+        required: true
+      config:
+        description: "Config file"
+        required: true
+        default: "mobilenetv4_conv_small_fine_tuning"
+      epochs:
+        description: "Number of epochs"
+        required: false
+        default: "5"
+
+env:
+  LOCATION: europe-west4
+  GAR_LOCATION: europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/
+  PROJECT_ID: dtu-mlops-447711
+
+jobs:
+  start-vertex-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: "google-github-actions/auth@v2"
+        with:
+          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+
+      - name: Set up Google Cloud SDK
+        uses: "google-github-actions/setup-gcloud@v2"
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Start Vertex AI Training Job
+        run: |
+          gcloud ai custom-jobs create \
+            --region ${{ env.LOCATION }} \
+            --display-name=${{ github.event.inputs.job_name }} \
+            --config=configs/vertex_ai_config_gpu.yaml \
+            --command 'python' \
+            --args='src/dtu_mlops_project/train.py,--config,configs/${{ github.event.inputs.config }}.yaml,--epochs,${{ github.event.inputs.epochs }},--wandb-project,mlops_project'
+        env:
+          WANDB_API_KEY: "${{ secrets.WANDB_API_KEY }}"
+

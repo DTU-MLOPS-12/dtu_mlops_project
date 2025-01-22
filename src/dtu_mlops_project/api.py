@@ -94,7 +94,7 @@ def download_wandb_model(version: str = "latest") -> dict:
     model_artifact = run.use_artifact(f"{MODEL_NAME}:{version}", type="model")
     model_artifact.download()
 
-    return torch.load(model_artifact.file())
+    return torch.load(model_artifact.file(), map_location="cpu")
 
 
 @functools.cache
@@ -136,7 +136,9 @@ def get_wandb_model(version: str = "latest"):
 
 
 dummy_model = get_dummy_model()
-wandb_model = get_wandb_model()
+production_model = get_wandb_model("prod")
+preproduction_model = get_wandb_model("preprod")
+
 
 IMAGE_MIME_TYPES = ("image/jpeg", "image/png", "image/svg", "image/svg+xml")
 
@@ -176,8 +178,10 @@ def about():
     """
     A small 'about' section
     """
+    # TODO: Fetch the model name dynamically from W&B artifact registry in the future
+    model_name = "mobilenetv4_conv_small.e2400_r224_in1k"
     return HTTP_200_OK | {
-        "model_name": f"{MODEL_NAME}",
+        "model_name": f"{model_name}",
         "repository_url": "https://github.com/DTU-MLOPS-12/dtu_mlops_project",
     }
 
@@ -249,8 +253,8 @@ def api_predict(image_file: fastapi.UploadFile):
             review_summary.observe(len(image_file.file.read()))
             image_file.file.seek(0)  # Reset file pointer after reading
 
-            probs, classes = wandb_model(image)
-            logger.debug(f"Model computed probabilities: '{probs}' with corresponding class indices: '{classes}'")
+    probs, classes = wandb_model(image)
+    logger.debug(f"Model computed probabilities: '{probs}' with corresponding class indices: '{classes}'")
 
             results = compute_results(probs, classes)
             logger.debug(f"Final results: '{results}'")
@@ -263,6 +267,48 @@ def api_predict(image_file: fastapi.UploadFile):
             logger.error(f"Error processing the image: {str(e)}")
             raise fastapi.HTTPException(status_code=500, detail="Internal server error")
 
+
+
+@app.post("/api/predict/preproduction/")
+def api_predict(image_file: fastapi.UploadFile):
+    """
+    API endpoint that receives an image file an runs the real
+    model through it.
+    """
+    check_image(image_file)
+    image = preprocess_image(image_file)
+
+    probs, classes = production_model(image)
+    logger.debug(f"Model computed probabilities: '{probs}' with corresponding class indices: '{classes}'")
+
+    results = compute_results(probs, classes)
+    logger.debug(f"Final results: '{results}'")
+
+    return HTTP_200_OK | {
+        "probabilities": results,
+    }
+
+
+@app.post("/api/predict/preproduction/")
+def api_predict(image_file: fastapi.UploadFile):
+    """
+    API endpoint that receives an image file an runs the real
+    model through it.
+    """
+    check_image(image_file)
+    image = preprocess_image(image_file)
+
+    probs, classes = preproduction_model(image)
+    logger.debug(
+        f"(Pre-production) Model computed probabilities: '{probs}' with corresponding class indices: '{classes}'"
+    )
+
+    results = compute_results(probs, classes)
+    logger.debug(f"Final results: '{results}'")
+
+    return HTTP_200_OK | {
+        "probabilities": results,
+    }
 
 
 @app.post("/api/predict/dummy/")

@@ -1,4 +1,4 @@
-name: Build docker images and push to Google Artifact Registry
+name: Build Data Container
 
 on:
   release:
@@ -48,7 +48,7 @@ jobs:
         env:
           GCP_SA_KEY_DVC: ${{ secrets.GCP_SA_KEY_DVC }}
         run: |
-          for dockerfile in dockerfiles/*.dockerfile; do
+          for dockerfile in dockerfiles/*data.dockerfile; do
             image_name=$(basename $dockerfile .dockerfile)
             docker build --secret id=GCP_SA_KEY_DVC -f $dockerfile . -t ${{ env.GAR_LOCATION }}$image_name:${{ env.TAG }} &
           done
@@ -56,14 +56,8 @@ jobs:
 
       - name: Upload to Artifact Registry
         run: |
-          for dockerfile in dockerfiles/*.dockerfile; do
+          for dockerfile in dockerfiles/*data.dockerfile; do
             image_name=$(basename $dockerfile .dockerfile)
             docker push ${{ env.GAR_LOCATION }}$image_name:${{ env.TAG }} &
           done
-          wait
-
-      - name: Deploy to Cloud Run
-        run: |
-          gcloud run deploy fastapi-app --image ${{ env.GAR_LOCATION }}api:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated --set-env-vars GCP_PROJECT_ID="${{ env.GCP_PROJECT_ID }}" &
-          gcloud run deploy streamlit-app --image ${{ env.GAR_LOCATION }}frontend:${{ env.TAG }} --platform managed --region europe-west4 --allow-unauthenticated --set-env-vars BACKEND="${{ env.BACKEND_URL }}" &
           wait

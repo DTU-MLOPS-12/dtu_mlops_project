@@ -905,7 +905,7 @@ def main():
     if "reader" in vars(dataset_train):
         idx_to_class = {value: key for key, value in dataset_train.reader.class_to_idx.items()}
     else:
-        idx_to_class = None
+        idx_to_class = {}
 
     if args.val_split:
         dataset_eval = create_dataset(
@@ -1251,7 +1251,7 @@ def train_one_epoch(
     model_ema=None,
     mixup_fn=None,
     num_updates_total=None,
-    idx_to_class=None,
+    idx_to_class={},
 ):
     if args.mixup_off_epoch and epoch >= args.mixup_off_epoch:
         if args.prefetcher and loader.mixup_enabled:
@@ -1437,7 +1437,7 @@ def train_one_epoch(
 
         handles, labels = [], []
         for class_id in range(args.num_classes):
-            class_name = idx_to_class[class_id] if idx_to_class is not None else class_id
+            class_name = idx_to_class.get(class_id, class_id)
             # Create one-hot encoding for the current class
             one_hot = torch.zeros_like(targets)
             one_hot[targets == class_id] = 1

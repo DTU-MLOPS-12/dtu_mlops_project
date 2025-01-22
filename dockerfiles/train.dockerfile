@@ -7,21 +7,36 @@
 # Debug
 # docker run -it --entrypoint bash train:latest
 
-FROM python:3.12-slim
+FROM nvidia/cuda:12.6.3-cudnn-runtime-ubuntu24.04
 
-# Install system dependencies including Google Cloud SDK
+# Add ARG for build-time variables
+ARG WANDB_API_KEY
+
+# Set as environment variable
+ENV WANDB_API_KEY=$WANDB_API_KEY
+
+# Install system dependencies including Google Cloud SDK and Python/pip
 RUN apt update && \
     apt install --no-install-recommends -y \
     build-essential \
     gcc \
     curl \
     gnupg \
-    lsb-release && \
+    lsb-release \
+    python3 \
+    python3-pip \
+    python3.12-venv \
+    python-is-python3 \
+    python3-full && \
     echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
     apt update && \
     apt install -y google-cloud-sdk && \
     apt clean && rm -rf /var/lib/apt/lists/*
+
+# Create and activate virtual environment
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy application files
 COPY requirements.txt requirements.txt
@@ -30,8 +45,7 @@ COPY src/ src/
 COPY configs/ configs/
 
 WORKDIR /
-RUN pip install -r requirements.txt --no-cache-dir
-RUN pip install . --no-deps --no-cache-dir
+RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 RUN mkdir -p /data/processed
 RUN mkdir /output
 

@@ -4,7 +4,7 @@ amp_dtype: float16
 amp_impl: native
 aug_repeats: 0
 aug_splits: 0
-batch_size: 128
+batch_size: 32
 bce_loss: false
 bce_pos_weight: null
 bce_sum: false
@@ -23,7 +23,7 @@ crop_pct: null
 cutmix: 0.0
 cutmix_minmax: null
 data: /data/processed/timm-imagenet-1k-wds-subset/
-data_dir: null
+data_dir: /data/processed/timm-imagenet-1k-wds-subset/
 dataset: ImageFolder
 dataset_download: false
 decay_epochs: 90
@@ -66,7 +66,7 @@ local_rank: 0
 log_interval: 50
 log_wandb: true
 lr: null
-lr_base: 0.002
+lr_base: 0.001
 lr_base_scale: ''
 lr_base_size: 4096
 lr_cycle_decay: 0.5

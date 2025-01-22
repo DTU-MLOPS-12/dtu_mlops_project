@@ -43,11 +43,12 @@ class ApiUser(HttpUser):
         """
         self.client.get("/about/")
 
-    @task
+    @task(5)
     def post_api_predict(self) -> None:
         """
         Task simulating a user requesting inference for an image.
         """
         test_image = _get_test_image()
         with open(test_image, 'rb') as image_file:
-            self.client.post("/api/predict/", files={'image_file': (test_image, image_file, "image/png")})
+            self.client.post("/api/predict/preproduction/",
+                             files={'image_file': (test_image, image_file, "image/png")})
