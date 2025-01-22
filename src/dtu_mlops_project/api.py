@@ -253,8 +253,8 @@ def api_predict(image_file: fastapi.UploadFile):
             review_summary.observe(len(image_file.file.read()))
             image_file.file.seek(0)  # Reset file pointer after reading
 
-    probs, classes = wandb_model(image)
-    logger.debug(f"Model computed probabilities: '{probs}' with corresponding class indices: '{classes}'")
+            probs, classes = production_model(image)
+            logger.debug(f"Model computed probabilities: '{probs}' with corresponding class indices: '{classes}'")
 
             results = compute_results(probs, classes)
             logger.debug(f"Final results: '{results}'")
