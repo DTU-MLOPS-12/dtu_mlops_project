@@ -1,5 +1,5 @@
 torch==2.5.1
-timm==1.0.13
+timm==1.0.14
 datasets==3.2.0
 typer==0.15.1
 fastapi==0.115.6
@@ -7,10 +7,10 @@ uvicorn==0.34.0
 pillow==11.1.0
 scikit-learn==1.6.1
 matplotlib==3.10.0
-wandb==0.19.2
+wandb==0.19.4
 loguru==0.7.3
 pydantic==2.10.5
 python-multipart==0.0.20
-google-api-python-client==2.158.0
+google-api-python-client==2.159.0
 dvc-gs==3.0.1
 google-cloud-secret-manager==2.22.1
