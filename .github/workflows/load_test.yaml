@@ -66,6 +66,7 @@ jobs:
           DEPLOYED_MODEL_URL=$(gcloud run services describe fastapi-app-test \
           --region=europe-west4 \
           --format='value(status.url)')
+          echo $DEPLOYED_MODEL_URL
           echo "DEPLOYED_MODEL_URL=$DEPLOYED_MODEL_URL" >> $GITHUB_ENV
 
       - name: Run the load tests
