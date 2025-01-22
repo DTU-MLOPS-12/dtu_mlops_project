@@ -9,3 +9,4 @@ python-multipart==0.0.20
 wandb==0.19.4
 python-dotenv==1.0.1
 google-cloud-secret-manager==2.22.1
+prometheus-client==0.21.1
