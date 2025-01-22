@@ -331,10 +331,14 @@ TODO: Describe the continues deployment workflow (3 step workflow)
 >
 > Answer:
 
-We used config files for training our models to ensure reproducibility. These config files were adapted from the ones provided by Ross Wightman, the creator of the TIMM library (found here: https://gist.github.com/rwightman/f6705cb65c03daeebca8aa129b1b94ad). As an example, a config file can be provided to our training script as follows:
-`python3 src/dtu_mlops_project/train.py --config configs/mobilenetv4_conv_small_fine_tuning.yaml`
+We used config files for training our models to ensure reproducibility. These config files were adapted from the ones provided by Ross Wightman, the creator of the TIMM library (found here: https://gist.github.com/rwightman/f6705cb65c03daeebca8aa129b1b94ad). 
 
-This command will start the training process using the specified configuration file ensuring parameters are applied.
+As an example, a config file can be provided to our training script as follows:
+```bash
+python3 src/dtu_mlops_project/train.py --config configs/mobilenetv4_conv_small_fine_tuning.yaml`
+```
+
+This command will execute the training process using the specified configuration file ensuring parameters are applied.
 
 ### Question 13
 
