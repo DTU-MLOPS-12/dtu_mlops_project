@@ -6,6 +6,11 @@ on:
       tags:
         description: "Test scenario tags"
 
+env:
+  TAG: latest # ${{ github.event.release.tag_name }}
+  GAR_LOCATION: europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/
+  GCP_PROJECT_ID: 840739092468
+
 jobs:
   testrunner:
     name: "Run a locust load test suite"
@@ -29,7 +34,7 @@ jobs:
         with:
           auto-update-conda: true
           activate-environment: dtu_mlops_project
-          python-version: 3.12 
+          python-version: 3.12
           channels: conda-forge
 
       - name: Authenticate to Google Cloud
@@ -46,6 +51,12 @@ jobs:
       - name: Setup GCP SDK
         uses: "google-github-actions/setup-gcloud@v2"
 
+      - name: Deploy API testing instance
+        run: |
+          gcloud run deploy fastapi-app-test --image ${{ env.GAR_LOCATION }}api:${{ env.TAG }} \
+            --platform managed --region europe-west4 --allow-unauthenticated --set-env-vars GCP_PROJECT_ID="${{ env.GCP_PROJECT_ID }}" &
+          wait
+
       - name: Install dependencies
         run: |
           pip install -r deps/requirements_loadtest.txt
@@ -61,6 +72,13 @@ jobs:
         run: |
           locust -f tests/performancetests/locustfile.py \
             --headless -u 100 -r 10 --run-time 10m --host=$DEPLOYED_MODEL_URL --csv=/locust/results
+
+      - name: Upload locust test results to WandB
+        run: |
+          wandb login {{ secrets.WANDB_API_KEY_GRP_12 }}
+          python src/dtu_mlops_project/upload_loadtest_results.py --result-stats /locust/results_stats.csv \
+            --result-failures /locust/results_failures.csv --result-exceptions /locust/results_exceptions.csv \
+            --result-stats-history /locust/result_stats_history.csv
 
       - name: Upload locust results
         uses: actions/upload-artifact@v4
