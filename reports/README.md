@@ -353,12 +353,21 @@ This command will execute the training process using the specified configuration
 >
 > Answer:
 
-A successful training run of a TIMM model outputs to a directory a set files containing
+We ensured the reproducibility of our experiments by using configuration files and logging all relevant information. A successful training run of a TIMM model outputs to a directory a set files containing:
+
 * The config file
 * Training run statistics per epoch (loss, accuracy etc.)
 * The final output model
 
-Given this, any experiment could be reproduced by re-running the training with a given config file. Furthermore, by logging the model training in Weights & Biases, we could access any previous model and its configuration. 
+Given this, any experiment could be reproduced by re-running the training with a given config file. Furthermore, by logging the model training in Weights & Biases, we could access any previous model and its configuration. This logging includes metrics, metadata and artifacts, which ensures that we can trace back and reproduce any experiment:
+
+To reproduce an experiment, one would have to:
+
+1. Retrieve the relevant configuration file.
+2. Use the configuration file to re-run the training script.
+3. Compare the new training logs with the old training logs stored in Weights & Biases.
+
+
 
 ### Question 14
 
