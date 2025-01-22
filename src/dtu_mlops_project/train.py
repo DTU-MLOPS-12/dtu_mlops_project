@@ -622,6 +622,12 @@ group.add_argument(
 )
 
 
+def count_classes(data_dir: str) -> int:
+    """Count the number of classes in the input data"""
+    train_dir = data_dir + "/train"
+    return len([d for d in os.listdir(train_dir) if os.path.isdir(os.path.join(train_dir, d))])
+
+
 def _parse_args():
     # Do we have a config file to parse?
     args_config, remaining = config_parser.parse_known_args()
@@ -708,8 +714,7 @@ def main():
 
     # Infer the number of classes by counting the number of folders in supplied dataset directory
     if args.infer_classcount and args.data_dir is not None:
-        train_dir = args.data_dir + "/train"
-        args.num_classes = len([d for d in os.listdir(train_dir) if os.path.isdir(os.path.join(train_dir, d))])
+        args.num_classes = count_classes(args.data_dir)
 
     model = create_model(
         args.model,
