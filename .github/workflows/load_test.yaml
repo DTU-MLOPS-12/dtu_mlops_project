@@ -71,7 +71,7 @@ jobs:
       - name: Run the load tests
         run: |
           locust -f tests/performancetests/locustfile.py \
-            --headless -u 100 -r 10 --run-time 1m --host=${{ env.DEPLOYED_MODEL_URL }} --csv=results
+            --headless -u 100 -r 10 --run-time 1m --host=$DEPLOYED_MODEL_URL --csv=results
 
       - name: Upload locust test results to WandB
         run: |
