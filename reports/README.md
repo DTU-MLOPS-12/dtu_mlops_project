@@ -305,9 +305,9 @@ We did make use of DVC in the project to have version control on our training da
 
 Our group have organized our continuous integration into separate workflows: one for linting and formatting code, one for running the test suite including unit test cases, and three workflows as a part of the continues building and deployment. 
 
-For the code check workflow we used `ruff` to check for code quality and formatting issues automatically with GitHub Actions bot which is triggered on every pull request or workflow dispatch. An example of a triggered workflow through a pull request can be seen here: https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/runs/12905630833/job/35985228785
+For the code check workflow we used `ruff` to check for code quality and formatting issues automatically with GitHub Actions bot which is triggered on every pull request or workflow dispatch. An example of a triggered workflow through a pull request can be seen [here](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/runs/12905630833/job/35985228785).
 
-Test suite was running in a seperate workflow which runs our unit tests and integration tests using `pytest` framework in `tests` folder. This workflow is also triggered on every pull request when the changes in the pull request include updates to python files. An example of a triggered workflow can be seen here: https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/runs/12909923637
+Test suite was running in a seperate workflow which runs our unit tests and integration tests using `pytest` framework in `tests` folder. This workflow is also triggered on every pull request when the changes in the pull request include updates to python files. An example of a triggered workflow can be seen [here](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/runs/12909923637).
 
 Lastly, we have a three workflow that is a part of our continues deployment pipeline. First we 
 
@@ -331,7 +331,7 @@ TODO: Describe the continues deployment workflow (3 step workflow)
 >
 > Answer:
 
-We used config files for training our models to ensure reproducibility. These config files were adapted from the ones provided by Ross Wightman, the creator of the TIMM library (found here: https://gist.github.com/rwightman/f6705cb65c03daeebca8aa129b1b94ad). 
+We used config files for training our models to ensure reproducibility. These config files were adapted from the ones provided by Ross Wightman, the creator of the TIMM library (found [here](https://gist.github.com/rwightman/f6705cb65c03daeebca8aa129b1b94ad)). 
 
 As an example, a config file can be provided to our training script as follows:
 ```bash
