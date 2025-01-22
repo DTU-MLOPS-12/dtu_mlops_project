@@ -283,9 +283,10 @@ Branches and PRs helped our group keeping version control by isolating new featu
 >
 > Answer:
 
-- Thomas
-  
-We did make use of DVC in the project to have version control on our training data. In the end it helped us in ... for controlling ... part of our pipeline..
+DVC was used in the project to ensure version control of our training and validation datasets, based on a subset of the ImageNet-1K dataset. Integrating GCP buckets with object versioning and DVC let us combine both cloud storage and version control, resulting in enhanced protection against accidental deletions or modifications. Two primary dataset versions were created, consisting of first 3 ImageNet class IDs (654, 436, 555), and were further expanded with two additional classes (671, 670), resulting in 6,760 items, totaling 367 MB. DVC checkout allowed us to easily retrieve specific versions of tracked data, enabling quick experimentation and debugging.
+
+A GitHub Action is created that triggers the [MLOps training pipeline](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/workflows/data_version_control.yml) when a GitHub pull request includes a data version change. 
+In the training pipeline the dataset is downloaded during the Docker build process, making it ready for training when the Docker container is deployed to more expensive GPU servers for model training using Vertex AI custom-jobs.
 
 ### Question 11
 
@@ -478,7 +479,9 @@ We used the Compute Engine to run our training and inference tasks. We utilized 
 >
 > Answer:
 
--Thomas
+[GCP buckets](figures/bucket.png)
+
+[GCP bucket containing training and validation datasets](figures/GPC_bucket.png)
 
 ### Question 20
 
