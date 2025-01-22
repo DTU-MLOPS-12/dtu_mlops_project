@@ -70,6 +70,7 @@ jobs:
           echo "The URL is: $DEPLOYED_MODEL_URL"
           locust -f tests/performancetests/locustfile.py \
             --headless -u 100 -r 10 --run-time 1m --host=$DEPLOYED_MODEL_URL --csv=results
+          echo "Load testing complete. Results ready for upload."
 
       - name: Upload locust test results to WandB
         run: |
