@@ -208,7 +208,7 @@ The main directories include `src`, `data`, `tests`, `configs`, and `.github/wor
 >
 > Answer:
 
-We used `ruff` for checking our code quality and format. `ruff` was used for both linting and formatting our source codebase runned as a workflow for each pull request with GitHub Actions. Specific rules in `ruff` was applied from `isort`, `Pyflake`, and `Pyupgrade`. For typing we used ... and for documentation ...
+We used `ruff` for checking our code quality and format. `ruff` was used for both linting and formatting our source codebase runned as a workflow for each pull request with GitHub Actions where GitHub. GitHub Action Bot was in charge of automatically apply the changes commiting it to the pull request. Specific rules in `ruff` was applied from `isort`, `Pyflake`, and `Pyupgrade`.
 
 Practices implementing code quality and format are crucial in larger projects as they help enhance code consistency and readability. Furtermore, it can help to keep compliance with specific style guides like `PEP 8` for large codebases. This can make it easier for team members to understand and contribute to larger projects where it can be hard to maintain good code quality.
 
