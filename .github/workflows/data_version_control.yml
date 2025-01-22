@@ -27,7 +27,6 @@ env:
 jobs:
   build-images:
     runs-on: ubuntu-latest
-    needs: detect-dvc-change
     steps:
       - uses: actions/checkout@v4
       
