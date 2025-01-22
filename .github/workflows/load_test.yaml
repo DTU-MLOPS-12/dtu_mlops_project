@@ -1,4 +1,4 @@
-name: Run a locust load test on the API testing instance
+name: 2. Run a locust load test on the API testing instance (Pre-Production)
 
 on:
   workflow_dispatch:
