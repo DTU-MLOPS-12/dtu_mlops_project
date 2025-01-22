@@ -71,17 +71,11 @@ jobs:
       - name: Run the load tests
         run: |
           locust -f tests/performancetests/locustfile.py \
-            --headless -u 100 -r 10 --run-time 10m --host=$DEPLOYED_MODEL_URL --csv=/locust/results
+            --headless -u 100 -r 10 --run-time 10m --host=$DEPLOYED_MODEL_URL --csv=results
 
       - name: Upload locust test results to WandB
         run: |
           wandb login {{ secrets.WANDB_API_KEY_GRP_12 }}
-          python src/dtu_mlops_project/upload_loadtest_results.py --result-stats /locust/results_stats.csv \
-            --result-failures /locust/results_failures.csv --result-exceptions /locust/results_exceptions.csv \
-            --result-stats-history /locust/result_stats_history.csv
-
-      - name: Upload locust results
-        uses: actions/upload-artifact@v4
-        with:
-          name: locust-results
-          path: /locust
+          python src/dtu_mlops_project/upload_loadtest_results.py --result-stats results_stats.csv \
+            --result-failures results_failures.csv --result-exceptions results_exceptions.csv \
+            --result-stats-history result_stats_history.csv
