@@ -61,16 +61,11 @@ jobs:
         run: |
           pip install -r deps/requirements_loadtest.txt
 
-      - name: Extract deployed model URL
+      - name: Extract deployed model URL Run the load tests
         run: |
           DEPLOYED_MODEL_URL=$(gcloud run services describe fastapi-app-test \
           --region=europe-west4 \
           --format='value(status.url)')
-          echo $DEPLOYED_MODEL_URL
-          echo "DEPLOYED_MODEL_URL=$DEPLOYED_MODEL_URL" >> $GITHUB_ENV
-
-      - name: Run the load tests
-        run: |
           locust -f tests/performancetests/locustfile.py \
             --headless -u 100 -r 10 --run-time 1m --host=$DEPLOYED_MODEL_URL --csv=results
 
