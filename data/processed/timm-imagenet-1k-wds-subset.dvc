@@ -590,13 +590,6 @@ outs:
       remote_storage:
         etag: 08f7f992adde888b031001
         version_id: '1737528577408247'
-  - relpath: train/436/1358.jpg
-    md5: e38d735a4349b254b6b5298411278c69
-    size: 55476
-    cloud:
-      remote_storage:
-        etag: 0893d0dbacde888b031001
-        version_id: '1737528576501779'
   - relpath: train/436/1360.jpg
     md5: 1499d6274b1850557e3de0d351e216cf
     size: 29203
@@ -1857,13 +1850,6 @@ outs:
       remote_storage:
         etag: 08bfe7cfacde888b031001
         version_id: '1737528576308159'
-  - relpath: train/436/2141.jpg
-    md5: 7f2ee5f4b50a1d56beff80c2b32e2e6b
-    size: 42252
-    cloud:
-      remote_storage:
-        etag: 088796afadde888b031001
-        version_id: '1737528577870599'
   - relpath: train/436/2147.jpg
     md5: b6653d476d20292864e42a1a78ee940e
     size: 54466
@@ -2676,13 +2662,6 @@ outs:
       remote_storage:
         etag: 08e2a7b9aede888b031001
         version_id: '1737528580133858'
-  - relpath: train/436/2708.jpg
-    md5: 359d9ef702f37421e89913fb11473ff7
-    size: 46878
-    cloud:
-      remote_storage:
-        etag: 08dcede0acde888b031001
-        version_id: '1737528576587484'
   - relpath: train/436/2714.jpg
     md5: 8f185fe0e75a2d8b294518230957ed5f
     size: 57655
@@ -5840,13 +5819,6 @@ outs:
       remote_storage:
         etag: 08fbc2afacde888b031001
         version_id: '1737528575779195'
-  - relpath: train/436/474.jpg
-    md5: 90fc4301c7cdab75a4b63718dfb3cc5f
-    size: 38693
-    cloud:
-      remote_storage:
-        etag: 08e09ee3acde888b031001
-        version_id: '1737528576626528'
   - relpath: train/436/4743.jpg
     md5: 73c89b322f3b05311f0bfe1b6d57de65
     size: 47733
@@ -7030,13 +7002,6 @@ outs:
       remote_storage:
         etag: 0896d8d7adde888b031001
         version_id: '1737528578534422'
-  - relpath: train/436/555.jpg
-    md5: e3237f039609d39878de85d5f3894b2c
-    size: 47842
-    cloud:
-      remote_storage:
-        etag: 08a0e6c1adde888b031001
-        version_id: '1737528578175776'
   - relpath: train/436/5552.jpg
     md5: 9ac9ac14fd027337b97aef14c818d0a1
     size: 47340
@@ -8276,13 +8241,6 @@ outs:
       remote_storage:
         etag: 08d5df9badde888b031001
         version_id: '1737528577552341'
-  - relpath: train/436/6411.jpg
-    md5: 11980bd6c299de355f08c64456cad37a
-    size: 120084
-    cloud:
-      remote_storage:
-        etag: 0882cebeacde888b031001
-        version_id: '1737528576026370'
   - relpath: train/436/6412.jpg
     md5: b64b5bac2ce1e9dea40e45e1076c1b1f
     size: 40628
@@ -13778,13 +13736,6 @@ outs:
       remote_storage:
         etag: 0888b9d7a8de888b031001
         version_id: '1737528568044680'
-  - relpath: train/555/401.jpg
-    md5: b90fbdeffc2093a4a0a484f44bf227f3
-    size: 26241
-    cloud:
-      remote_storage:
-        etag: 08e2acb5aade888b031001
-        version_id: '1737528571680354'
   - relpath: train/555/4013.jpg
     md5: e0db921f359e7a78cca35879f4aa3d3e
     size: 38793
@@ -14002,13 +13953,6 @@ outs:
       remote_storage:
         etag: 08b2bc8faade888b031001
         version_id: '1737528571059762'
-  - relpath: train/555/4171.jpg
-    md5: e340ad434e4bcdcce66148711bf8582c
-    size: 34822
-    cloud:
-      remote_storage:
-        etag: 08cfe5d2a8de888b031001
-        version_id: '1737528567968463'
   - relpath: train/555/4172.jpg
     md5: 73008d99decedba4dadefdeae4955756
     size: 36888
@@ -16942,13 +16886,6 @@ outs:
       remote_storage:
         etag: 08bc88f0aade888b031001
         version_id: '1737528572642364'
-  - relpath: train/555/6004.jpg
-    md5: 21d0e9d81989132f6bb02f7821d8bb54
-    size: 27590
-    cloud:
-      remote_storage:
-        etag: 08b6a482aade888b031001
-        version_id: '1737528570843702'
   - relpath: train/555/6006.jpg
     md5: ae7f8c30676ea11948544e2cdbe5f74a
     size: 46093
@@ -17768,13 +17705,6 @@ outs:
       remote_storage:
         etag: 08f6efc1a9de888b031001
         version_id: '1737528569788406'
-  - relpath: train/555/68.jpg
-    md5: 12056e58ffa248bb5653faf024ed03c9
-    size: 56169
-    cloud:
-      remote_storage:
-        etag: 08f8fac4a8de888b031001
-        version_id: '1737528567741816'
   - relpath: train/555/685.jpg
     md5: 425246ed2d5b729057c8f230894a2c25
     size: 63801
@@ -17950,13 +17880,6 @@ outs:
       remote_storage:
         etag: 08bfbdb5aade888b031001
         version_id: '1737528571682495'
-  - relpath: train/555/824.jpg
-    md5: 6d7571272b07ad22a8490b3859e87a76
-    size: 52726
-    cloud:
-      remote_storage:
-        etag: 08b0cedeaade888b031001
-        version_id: '1737528572356400'
   - relpath: train/555/830.jpg
     md5: 3d6e43220a79415f578c43c773861dd6
     size: 58795
@@ -19728,13 +19651,6 @@ outs:
       remote_storage:
         etag: 08afdce8b0de888b031001
         version_id: '1737528585104943'
-  - relpath: train/654/2045.jpg
-    md5: 2a0cff439fcd4833a1ba88bdb507d3a3
-    size: 54591
-    cloud:
-      remote_storage:
-        etag: 08e595bfafde888b031001
-        version_id: '1737528582327013'
   - relpath: train/654/2046.jpg
     md5: 44a40da0116090073aeb3d2b0d47443a
     size: 35843
@@ -22290,13 +22206,6 @@ outs:
       remote_storage:
         etag: 08a69fe9aede888b031001
         version_id: '1737528580919206'
-  - relpath: train/654/3610.jpg
-    md5: 5ab1c49aab17c7a5a1e7b498ce9bbaf0
-    size: 40114
-    cloud:
-      remote_storage:
-        etag: 0896c1a7b0de888b031001
-        version_id: '1737528584036502'
   - relpath: train/654/3619.jpg
     md5: 07bd8dd30f6ed1d6571ce2b7ca7fa479
     size: 47310
@@ -25615,13 +25524,6 @@ outs:
       remote_storage:
         etag: 088ff6ecaede888b031001
         version_id: '1737528580979471'
-  - relpath: train/654/5785.jpg
-    md5: 521e0bb5dc55be0f7d2da2cd9fdc1979
-    size: 22152
-    cloud:
-      remote_storage:
-        etag: 08fe9cc6afde888b031001
-        version_id: '1737528582442622'
   - relpath: train/654/5786.jpg
     md5: 59618c47665a762a1baf7599f4e4886f
     size: 37370
@@ -25650,13 +25552,6 @@ outs:
       remote_storage:
         etag: 08d8cea3b1de888b031001
         version_id: '1737528586069848'
-  - relpath: train/654/5797.jpg
-    md5: 0d4a23da1778bd3b518c3ac6c54073ad
-    size: 39013
-    cloud:
-      remote_storage:
-        etag: 08b7b196afde888b031001
-        version_id: '1737528581658807'
   - relpath: train/654/5799.jpg
     md5: cd12f309864b1f556dbd85b9d22f5c27
     size: 12875
@@ -28667,13 +28562,6 @@ outs:
       remote_storage:
         etag: 08bf8a98b7de888b031001
         version_id: '1737528598463807'
-  - relpath: train/670/1895.jpg
-    md5: aa721c7027eb11dbdd53d66e2d89997f
-    size: 44218
-    cloud:
-      remote_storage:
-        etag: 08a5c5e8b4de888b031001
-        version_id: '1737528593490597'
   - relpath: train/670/19.jpg
     md5: 9c38e79f8ca7055500b3d81cd269c87f
     size: 33494
@@ -30242,13 +30130,6 @@ outs:
       remote_storage:
         etag: 08c9dbe2b5de888b031001
         version_id: '1737528595492297'
-  - relpath: train/670/2862.jpg
-    md5: 44fdce5c7e0fa2824b889c7e2850b2b0
-    size: 38853
-    cloud:
-      remote_storage:
-        etag: 088adea5b5de888b031001
-        version_id: '1737528594493194'
   - relpath: train/670/2865.jpg
     md5: 8caf29f16b535490806a63aab9098895
     size: 25428
@@ -31019,13 +30900,6 @@ outs:
       remote_storage:
         etag: 08e2e7b6b6de888b031001
         version_id: '1737528596870114'
-  - relpath: train/670/3419.jpg
-    md5: 8643e662684bba9e2905827196b4c562
-    size: 50498
-    cloud:
-      remote_storage:
-        etag: 08a5d4feb4de888b031001
-        version_id: '1737528593852965'
   - relpath: train/670/3421.jpg
     md5: 6b5fa069cded51ef800b6017b01f9eb7
     size: 36423
@@ -31313,13 +31187,6 @@ outs:
       remote_storage:
         etag: 0898bad0b4de888b031001
         version_id: '1737528593095960'
-  - relpath: train/670/3617.jpg
-    md5: 89a982d0c95f70e42411e525447164c3
-    size: 31463
-    cloud:
-      remote_storage:
-        etag: 08ab9dc4b4de888b031001
-        version_id: '1737528592895659'
   - relpath: train/670/3618.jpg
     md5: 3b0f19a0a904f6ba86b4ef7b42ab39a8
     size: 61256
@@ -32706,13 +32573,6 @@ outs:
       remote_storage:
         etag: 0896d5b5b6de888b031001
         version_id: '1737528596851350'
-  - relpath: train/670/4517.jpg
-    md5: a52e7c0122cc86996e49c4e926fc805b
-    size: 36038
-    cloud:
-      remote_storage:
-        etag: 08e98ed9b4de888b031001
-        version_id: '1737528593237865'
   - relpath: train/670/4519.jpg
     md5: 07b5034348358dc71b078b6228723a3f
     size: 28613
@@ -34029,13 +33889,6 @@ outs:
       remote_storage:
         etag: 08b8fcceb4de888b031001
         version_id: '1737528593071672'
-  - relpath: train/670/5387.jpg
-    md5: 889985f7b40e775873338929d23201a6
-    size: 32038
-    cloud:
-      remote_storage:
-        etag: 08abcda2b7de888b031001
-        version_id: '1737528598636203'
   - relpath: train/670/5392.jpg
     md5: 73cd6c04a78f9319b5678a89016f2357
     size: 49932
@@ -35954,13 +35807,6 @@ outs:
       remote_storage:
         etag: 08c7e083b7de888b031001
         version_id: '1737528598130759'
-  - relpath: train/670/721.jpg
-    md5: 34e574e901a1fb6cda15a5d65445e086
-    size: 51440
-    cloud:
-      remote_storage:
-        etag: 089ece8fb6de888b031001
-        version_id: '1737528596227870'
   - relpath: train/670/726.jpg
     md5: f69d255edb7bb42abea5769031dda6a7
     size: 28285
@@ -36983,13 +36829,6 @@ outs:
       remote_storage:
         etag: 088fded6b2de888b031001
         version_id: '1737528589004559'
-  - relpath: train/671/1359.jpg
-    md5: a8f231eb0b879b98bbf2da10e2aaa142
-    size: 68529
-    cloud:
-      remote_storage:
-        etag: 08bd81d3b1de888b031001
-        version_id: '1737528586846397'
   - relpath: train/671/136.jpg
     md5: d1034038705998ece23711696a2963e2
     size: 37005
@@ -37312,13 +37151,6 @@ outs:
       remote_storage:
         etag: 08a9fccdb2de888b031001
         version_id: '1737528588860969'
-  - relpath: train/671/1553.jpg
-    md5: 33eda90bd4a4098dc4cfa4b090b2681e
-    size: 64573
-    cloud:
-      remote_storage:
-        etag: 08a3fcabb4de888b031001
-        version_id: '1737528592498211'
   - relpath: train/671/1561.jpg
     md5: 43fc72977a9b0c1348a8ee9c0d39a31b
     size: 89766
@@ -37410,13 +37242,6 @@ outs:
       remote_storage:
         etag: 08d2a6d2b3de888b031001
         version_id: '1737528591029074'
-  - relpath: train/671/1604.jpg
-    md5: d5601a6cf8db7f1de6972ebca589e314
-    size: 85746
-    cloud:
-      remote_storage:
-        etag: 08b9f9a1b4de888b031001
-        version_id: '1737528592334009'
   - relpath: train/671/1605.jpg
     md5: 9f125354dfdc7884ed812725a0279a24
     size: 38985
@@ -37802,13 +37627,6 @@ outs:
       remote_storage:
         etag: 08caa1bcb3de888b031001
         version_id: '1737528590667978'
-  - relpath: train/671/1852.jpg
-    md5: 54dc1eb7a0019d1d1d503a64d5027a87
-    size: 44064
-    cloud:
-      remote_storage:
-        etag: 08c5cfb8b1de888b031001
-        version_id: '1737528586414021'
   - relpath: train/671/1854.jpg
     md5: a2d68749639a4880c31e9dd4bc61d4e5
     size: 37000
@@ -39489,13 +39307,6 @@ outs:
       remote_storage:
         etag: 08a5cb9cb3de888b031001
         version_id: '1737528590149029'
-  - relpath: train/671/2934.jpg
-    md5: 1fd37dcb0f1b50412e8fbd24cfdd7721
-    size: 33925
-    cloud:
-      remote_storage:
-        etag: 0889e8c8b3de888b031001
-        version_id: '1737528590873609'
   - relpath: train/671/294.jpg
     md5: cf8fd9000adef8bea3a79aa83628e11e
     size: 92860
@@ -41883,13 +41694,6 @@ outs:
       remote_storage:
         etag: 08e0f3cab2de888b031001
         version_id: '1737528588810720'
-  - relpath: train/671/4448.jpg
-    md5: f0f5e8bb49f4cc18379a577f7e7b9e40
-    size: 39995
-    cloud:
-      remote_storage:
-        etag: 0896f2fcb1de888b031001
-        version_id: '1737528587532566'
   - relpath: train/671/4449.jpg
     md5: baef6bcf21c42e7e95e9d79620782012
     size: 82866
@@ -41974,13 +41778,6 @@ outs:
       remote_storage:
         etag: 08efceebb3de888b031001
         version_id: '1737528591443823'
-  - relpath: train/671/450.jpg
-    md5: eb5445508eceea82be99e091acea4b64
-    size: 33809
-    cloud:
-      remote_storage:
-        etag: 08d69db5b1de888b031001
-        version_id: '1737528586358486'
   - relpath: train/671/4504.jpg
     md5: 01ac270ba5e235a883e024ac93693440
     size: 41119
@@ -42128,13 +41925,6 @@ outs:
       remote_storage:
         etag: 089dfef2b2de888b031001
         version_id: '1737528589467421'
-  - relpath: train/671/4600.jpg
-    md5: d92f5ba7408a611eff92fd09d4408ad9
-    size: 31628
-    cloud:
-      remote_storage:
-        etag: 08f7f091b2de888b031001
-        version_id: '1737528587876471'
   - relpath: train/671/4603.jpg
     md5: 3c356abf48f42bad94299076386d3d7e
     size: 51335
@@ -45502,13 +45292,6 @@ outs:
       remote_storage:
         etag: 08d0d19bb4de888b031001
         version_id: '1737528592230608'
-  - relpath: validation/436/1.jpg
-    md5: 703cd54989fea4c7b22df1b3c39e2069
-    size: 37965
-    cloud:
-      remote_storage:
-        etag: 08a9b196a8de888b031001
-        version_id: '1737528566978729'
   - relpath: validation/436/102.jpg
     md5: 910345fabe90c784fd3627f37cbecbca
     size: 52282
