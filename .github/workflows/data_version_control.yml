@@ -23,30 +23,14 @@ env:
   GAR_LOCATION: europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/
   BACKEND_URL: https://fastapi-app-ypqrr5d7oa-ez.a.run.app/
   GCP_PROJECT_ID: 840739092468
-
+  PR_NUMBER: ${{ github.event.number }}
+  
 jobs:
-  detect-dvc-change:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        
-      - name: Detect DVC changes
-        run: echo "change detected"
-        
-      - name: Extract PR number
-        id: extract_pr_number
-        run: |
-          PR_NUMBER=$(echo "${{ github.event.pull_request.number }}")
-          echo "Pull request number: $PR_NUMBER"
-          echo "::set-output name=pr_number::$PR_NUMBER"
-
   build-images:
     runs-on: ubuntu-latest
     needs: detect-dvc-change
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       
       - name: Authenticate to Google Cloud
         id: auth
@@ -112,7 +96,7 @@ jobs:
         run: |
           gcloud ai custom-jobs create \
             --region ${{ env.LOCATION }} \
-            --display-name="PR-${{ needs.detect-dvc-change.outputs.pr_number }}" \
+            --display-name="PR-${{ PR_NUMBER }}" \
             --config=configs/vertex_ai_config_gpu.yaml \
             --command 'python' \
             --args='src/dtu_mlops_project/train.py,--config,configs/mobilenetv4_conv_small_fine_tuning.yaml,--epochs,30,--wandb-project,mlops_project'
