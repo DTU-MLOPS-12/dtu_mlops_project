@@ -283,6 +283,8 @@ Branches and PRs helped our group keeping version control by isolating new featu
 >
 > Answer:
 
+- Thomas
+  
 We did make use of DVC in the project to have version control on our training data. In the end it helped us in ... for controlling ... part of our pipeline..
 
 ### Question 11
