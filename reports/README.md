@@ -386,9 +386,12 @@ To reproduce an experiment, one would have to:
 
 For all our experiments, we tracked several metrics related to the model training. These include:
 
-* training and validation loss/accuracy curves, which indicate if the model is learning from the data. These can also be useful for tuning hyperparameters such as the learning rate, as too high learning rates will often lead to noisy loss curves and the training getting stuck in local minima.
-* histogram of model gradients, which is useful to identify issues such as vanishing gradients.
-* ROC curves, which show how well the model is able to classify positive and negative examples. We opted to log a ROC curve for each training epoch that shows the per-class performance.
+* **Training and Validation Loss/Accuracy Curves**: These indicate if the model is learning from the data. They are also essential for diagnosing issues such as overfitting or underfitting. Additionally, these curves can also be useful for tuning hyperparameters such as the learning rate, as too high learning rates will often lead to noisy loss curves and the training getting stuck in local minima.
+  
+* **Histogram of Model Gradients**: This metric is useful to identify issues such as vanishing gradients, which can impede the models learning process. By logging the distribution of gradients, we can ensure that the model is learning effectively.
+  
+* **ROC (Receiver Operating Characteristic) Curves**: ROC curves show how well the model is able to classify positive and negative examples. We opted to log a ROC curve for each training epoch that shows the per-class performance. This can help to understand the model's performance across different classes and identifying any potential issues.
+
 
 ![wandb figure 1](figures/wandb_1.png)
 ![wandb figure 2](figures/wandb_2.png)
