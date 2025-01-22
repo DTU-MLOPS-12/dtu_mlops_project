@@ -13,7 +13,7 @@ import wandb
 import os
 from loguru import logger
 from PIL import Image
-from prometheus_client import Counter, Histogram, Summary, make_asgi_app
+from prometheus_client import Counter, Histogram, Summary, CollectorRegistry, make_asgi_app
 
 # Allow loading weights using pickle
 torch.serialization.add_safe_globals([argparse.Namespace])
@@ -143,10 +143,12 @@ preproduction_model = get_wandb_model("preprod")
 IMAGE_MIME_TYPES = ("image/jpeg", "image/png", "image/svg", "image/svg+xml")
 
 # Metrics
-error_counter = Counter("prediction_error", "Number of prediction errors")
-request_counter = Counter("prediction_requests", "Number of prediction requests")
-request_latency = Histogram("prediction_latency_seconds", "Prediction latency in seconds")
-review_summary = Summary("review_length_summary", "Review length summary")
+MY_REGISTRY = CollectorRegistry()
+
+error_counter = Counter("prediction_error", "Number of prediction errors", registry=MY_REGISTRY)
+request_counter = Counter("prediction_requests", "Number of prediction requests", registry=MY_REGISTRY)
+request_latency = Histogram("prediction_latency_seconds", "Prediction latency in seconds", registry=MY_REGISTRY)
+review_summary = Summary("review_length_summary", "Review length summary", registry=MY_REGISTRY)
 
 
 @asynccontextmanager
@@ -158,7 +160,7 @@ async def lifespan(app: fastapi.FastAPI):
 
 # The FastAPI app object
 app = fastapi.FastAPI(lifespan=lifespan)
-app.mount("/metrics", make_asgi_app())
+app.mount("/metrics", make_asgi_app(registry=MY_REGISTRY))
 
 # A base response for indicating OK requests.
 HTTP_200_OK = {"message": HTTPStatus.OK.phrase, "status-code": HTTPStatus.OK}
