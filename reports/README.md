@@ -392,6 +392,7 @@ For all our experiments, we tracked several metrics related to the model trainin
   
 * **ROC (Receiver Operating Characteristic) Curves**: ROC curves show how well the model is able to classify positive and negative examples. We opted to log a ROC curve for each training epoch that shows the per-class performance. This can help to understand the model's performance across different classes and identifying any potential issues.
 
+TODO: Elaborate more on the plots below
 
 ![wandb figure 1](figures/wandb_1.png)
 ![wandb figure 2](figures/wandb_2.png)
