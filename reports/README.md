@@ -490,7 +490,9 @@ We used the following GCP services in our project:
 >
 > Answer:
 
-We used the Compute Engine to run our training and inference tasks. We utilized instances with NVIDIA Tesla P4 GPU to accelerate our model training process. The virtual machines were started using custom Docker containers that included all necessary dependencies and code for our project. This setup allowed us to leverage the computational power of the GPUs, ensuring efficient and faster training times for our machine learning models.
+We first tried out using Compute Engine to run our training and inference task. We started running on CPU with machine type `n1-standard-1` untill we had the option to accelerate our Compute Engine with a GPU. A new VM was deployed utilizing GPU instances with 1x NVIDIA Tesla P4. When running we always took a look at the metrics for the CPU and GPU as we could see that the CPU was utilized to its full capacity during training. After deploying the new VM this significantly reduced the training time compared to using only CPU instances.
+
+We did change from training the model in Compute Engine VMs to training it in Vertex AI custom jobs as this benefits us by providing an easier runs for our training jobs. Vertex AI custom jobs allow us to more easily configure and run training jobs with the necessary resources, such as GPUs, without the need to manually manage the underlying infrastructure as in Compute Engine. This also simplified the process of scaling up or down based on the computational requirements of our training tasks as we do not have to start and stop our VMs.
 
 ### Question 19
 
