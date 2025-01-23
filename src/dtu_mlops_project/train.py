@@ -1208,6 +1208,12 @@ def main():
                 if has_wandb and args.log_wandb:
                     artifact = wandb.Artifact("model", type="model", description="Best model checkpoint")
                     artifact.add_file(os.path.join(output_dir, "model_best.pth.tar"))
+
+                    if idx_to_class:
+                        with open(os.path.join(output_dir, "idx_to_class.json"), "w") as f:
+                            json.dump(idx_to_class, f)
+                        artifact.add_file(os.path.join(output_dir, "idx_to_class.json"))
+
                     wandb.log_artifact(artifact, aliases=["best", f"epoch-{epoch}"])
 
             if lr_scheduler is not None:
