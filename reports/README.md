@@ -251,11 +251,17 @@ The implemented unit tests is for `data.py` and `train.py`. These tests ensure t
 >
 > Answer:
 
-Currently, for the API integration tests, the code coverage is 81%. Do note that this is an integration test and the purpose is 
+From our GitHub Actions CI pipeline, we can inspect our code coverage results:
+
+![Code Coverage Test](figures/coverage_test1.png)
+
+Our codebase have a total code coverage of 39% including our most essential code in our project. Data unit test has a coverage on 42% and the train unit test has a coverage on 39%. It indicates that less than half of our code is being tested and tells that over half of our code are not covered by any tests.
+
+The API integration test has a coverage on 77%. Note that this is an integration test and the purpose is 
 to test the functionality of the interface as a whole, because we're dealing with I/O. So, it is difficult to test in isolation,
 which would require a sophisticated mocking framework, but that would sort of ruin the purpose and turn it into a white box test.
 
-![Code Coverage Test](figures/coverage_test1.png)
+We are far away from 100% coverage so it is clear that our test strategy is insufficient. On the other hand, even if we got 100% code coverage, our test strategy would not be garanteed error-free as we can only verify the presence of known issues, not the absence of unknown.
 
 ### Question 9
 
