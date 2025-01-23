@@ -448,7 +448,9 @@ The link to the training dockerfile can be found [here.](https://github.com/DTU-
 >
 > Answer:
 
-The groups debugging methods varied among group members. Print statements used quickly can be used to trace the flow of the code and identify issues. Others also used more advanced tools like interactive debugging sessions (run and debug) in Visual Studio Code. ...
+The groups debugging methods varied among group members. Print statements were quickly used to trace the flow of the code and identify issues. Others also used more advanced tools like interactive debugging sessions (run and debug) in Visual Studio Code or in general using the Python debugger `pdb`. Additionally, we used propper logging to capture detailed information about the execution of our code when running our training script in Google Cloud. The idea was that it could help us to diagnose issues and monitoring the state of the program while running.
+
+Some group member performed profiling using `cProfile` to identify performance bottlenecks in our code as it could help us to optimize the code execution time.
 
 
 ## Working in the cloud
