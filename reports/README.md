@@ -730,7 +730,13 @@ The diagram illustrates the overall architecture of the MLOps system, highlighti
 >
 > Answer:
 
---- question 30 fill here ---
+Some of our biggest challenges in the project were using Google Cloud Platform (GCP) services and managing quotas. The reason for this was the complexity and learning curve associated with GCP, as well as the limitations imposed by default quotas.
+
+We spent some time understanding and configuring various GCP services such as Compute Engine, Vertex AI, Cloud Run, and Cloud Storage. Each service had its own set of configurations and requirements, which required thorough documentation and experimentation to get right. Additionally, managing quotas was a challenge as we frequently encountered limitations on resources for GPUs.
+
+Another challenge was ensuring the reproducibility of our experiments. We had to carefully manage our dependencies, configuration files, and data versions to ensure that our experiments could be reliably reproduced. This involved setting up DVC for data version control, using configuration files for experiments, and logging all relevant information in Weights & Biases.
+
+We also faced difficulties in setting up continuous integration and deployment (CI/CD) pipelines. Ensuring that our code was automatically tested, built, and deployed required a deep understanding of GitHub Actions and the integration with GCP services. We spent some time on debugging and refining our CI/CD workflows to ensure they worked seamlessly.
 
 ### Question 31
 
