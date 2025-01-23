@@ -636,7 +636,7 @@ a final quality control before pushing a new model to production.
 >
 > Answer:
 
-Yes, we managed to implement monitoring for our backend application. We used Google Cloud Monitoring to track the performance and health of our backend/API application by setting up alerting systems to notify us if the application was not behaving correctly. For this we used predefined metrics for Cloud Run revisions and certain thresholds monitoring request count, log entries, CPU utilization, and revision instance count. 
+Yes, we managed to implement monitoring for our backend application. We used Google Cloud Monitoring to track the performance and health of our backend/API application by setting up alerting systems to notify us in our groups private Slack channel if the application was not behaving correctly. For this we used predefined metrics for Cloud Run revisions and certain thresholds monitoring request count, log entries, CPU utilization, and revision instance count. 
 
 Additionally, we manually monitored specific jobs and runs in GCP as our custom jobs in Vertex AI. Using the cloud console, we tracked metrics like CPU and GPU utilization, memory usage, and job completion times. This was to ensure that our training and inference processes were running efficiently and identify any potential issues. We also inspected the logs which provided real-time insights so we where able to track how the jobs have performed and potentially do debugging if nessecary.
 
