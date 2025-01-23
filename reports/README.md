@@ -253,7 +253,9 @@ The implemented unit tests is for `data.py` and `train.py`. These tests ensure t
 
 Currently, for the API integration tests, the code coverage is 81%. Do note that this is an integration test and the purpose is 
 to test the functionality of the interface as a whole, because we're dealing with I/O. So, it is difficult to test in isolation,
-which would require a sophisticated mocking framework, but that would sort of ruin the purpose and turn it into a white box test. 
+which would require a sophisticated mocking framework, but that would sort of ruin the purpose and turn it into a white box test.
+
+![Code Coverage Test](figures/coverage_test1.png)
 
 ### Question 9
 
