@@ -512,7 +512,9 @@ We did change from training the model in Compute Engine VMs to training it in Ve
 >
 > Answer:
 
--Nicolai
+![GCP Artifact Registry Overview](figures/registry1.png)
+
+![GCP Artifact Registry Containers](figures/registry2.png)
 
 ### Question 21
 
