@@ -499,9 +499,8 @@ We did change from training the model in Compute Engine VMs to training it in Ve
 >
 > Answer:
 
-![GCP buckets](figures/bucket.png)
-
-![GCP bucket containing training and validation datasets](figures/GCP_bucket.png)
+<img src="figures/bucket.png" alt="GCP buckets" width="90%">
+<img src="figures/GCP_bucket.png" alt="GCP bucket containing training and validation datasets" width="90%">
 
 ### Question 20
 
