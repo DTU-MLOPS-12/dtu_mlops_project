@@ -74,6 +74,22 @@ The directory structure of the project looks like this:
 
 Created using [mlops_template](https://github.com/SkafteNicki/mlops_template)
 
+## Intended Workflow for model training, testing and deployment 
+
+The workflow for the system is semi-automatic involving a "Human in the Loop" (HitL) consists of the following steps:
+
+- The "HitL" commits a new version of the dataset using `dvc` and initiates the training stage by starting the GH action nr. 1
+- After training is complete and the newly trained model has been uploaded to Weights & Biases (W&B), the "HitL" tags the model in W&B with `preprod`
+  if they are satisfied with the evaluation metrics of the model. 
+- As a final quality control, the "HitL" starts GH action nr. 2 which deploys a test instance with the new `preprod` model and performs a load test.
+  The results are published to W&B, where they are inspected with an emphasis on performance.
+- If satisfied with the `preprod` model, the "HitL" tags the model with `prod` in W&B and runs GH action nr. 3 to restart the API service in the production
+  environment (models are updated and loaded upon application startup).
+
+The new model is now deployed to production. Yay!
+
+Note, that this workflow is for the model only. Development, testing and deployment of the services (frontend, API, etc.) are completely detached from
+the model, such that they can effectively be developed and improved in parallel without mutual dependence.
 
 ## MLops tools
 
