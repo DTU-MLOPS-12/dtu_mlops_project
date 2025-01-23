@@ -754,4 +754,16 @@ We also faced difficulties in setting up continuous integration and deployment (
 > *We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.*
 > Answer:
 
---- question 31 fill here ---
+* Student s233489 was in charge of
+
+* Student jonnil focused on 
+
+* Student s091969 was responsible for 
+
+* Student s233480 contributed to 
+
+All members contributed to the source code by 
+
+We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.*
+
+(TODO: Write individal contributions)
