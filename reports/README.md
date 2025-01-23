@@ -411,11 +411,33 @@ TODO: Elaborate more on the plots below
 >
 > Answer:
 
-In this project, we developed several docker images that was build to containerize our deployment. First of all we have one dockerfile for building and running data collection and preperation of the TIMM dataset. Another dockerfile handles the build and running of training our model. Then we have one dockerfile for building and running the backend utilizing FastApi, while another dockerfile is for building and running the frontend utilizing Streamlit.
+In this project, we developed several docker images that was build to containerize our applications into Google Cloud:
 
-The Docker images were ran with Vertex AI and Cloud Run after they have been builded and uploaded to the artifact registry on Google Cloud Platform. E.g. a run of the training docker image was leveraged with the command: ...
+* **Data Container**: A Dockerfile for building and running a container for data collection and data preparation of the TIMM dataset.
+* **Training Container**: A Dockerfile for building and running a container for the training script for fine-tuning the TIMM model.
+* **Backend Container**: A Dockerfile for building and running a container for the backend application utilizing the FastAPI framework.
+* **Frontend Container**: A Dockerfile for building and running a container for the frontend application utilizing the Streamlit framework.
 
-The link to the training dockerfile is: <weblink>
+The Docker images of applications were ran with either Vertex AI or Cloud Run after they have been builded and uploaded to the artifact registry on Google Cloud Platform. 
+
+For example, a local run of the training script docker image with 5 epochs, it could be leveraged with the command:
+```bash
+docker run train:latest --config configs/mobilenetv4_conv_small_fine_tuning.yaml --epochs=5 --wandb-project=mlops_dtu
+```
+
+To run the backend (api) container locally, you can use the following command:
+```bash
+docker run api:latest
+```
+This will start the FastAPI application and make it accessible at `http://localhost:8000`.
+
+To run the frontend container locally, you can use the following command:
+```bash
+docker run frontend:latest
+```
+This will start the Streamlit application and make it accessible at `http://localhost:8501`.
+
+The link to the training dockerfile can be found [here.](https://github.com/DTU-MLOPS-12/dtu_mlops_project/blob/main/dockerfiles/train.dockerfile)
 
 ### Question 16
 
