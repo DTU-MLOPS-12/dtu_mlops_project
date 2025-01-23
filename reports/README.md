@@ -501,9 +501,9 @@ We did change from training the model in Compute Engine VMs to training it in Ve
 >
 > Answer:
 
-[GCP buckets](figures/bucket.png)
+![GCP buckets](figures/bucket.png)
 
-[GCP bucket containing training and validation datasets](figures/GPC_bucket.png)
+![GCP bucket containing training and validation datasets](figures/GPC_bucket.png)
 
 ### Question 20
 
