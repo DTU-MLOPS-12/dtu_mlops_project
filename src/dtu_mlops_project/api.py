@@ -100,7 +100,7 @@ def download_wandb_model(version: str = "latest") -> tuple[dict, typing.Callable
         if (entry := f.download(replace=True)) and ".json" in entry.name:
             indices_map = {int(k): labels[int(v)] for k, v in json.load(entry).items()}
 
-    return torch.load(model, map_location="cpu"), lambda: indices_map
+    return torch.load(model, weights_only=True, map_location="cpu"), lambda: indices_map
 
 
 @functools.cache
