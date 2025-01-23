@@ -165,16 +165,21 @@ As a starting point, we used a pre-made `train.py` script from the TIMM codebase
 >
 > Answer:
 
-The `pip` package manager was used for managing our dependencies. The list of dependencies was manually maintained in the `requirements.txt` and `requirements_dev.txt` files. With Python 3.12 and `pip` installed, a complete copy of our development environment can be obtained by cloning the repository and running the following commands:
+The `pip` package manager was used for managing our dependencies. The list of dependencies was manually maintained in the `requirements.txt` and `requirements_dev.txt` files as well as the `requirements` files in the `deps` folder. Requirements in the `deps` folder is specific dependencies used when containerizing our applications. 
+
+Assuming that Python 3.12 and `pip` is installed, a complete copy of our development environment can be obtained by cloning the repository and running the following commands. These creates a new virtual environment in Python, activates it and install dependencies using `pip` installer:
 
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 pip install -r requirements.txt
 pip install -r requirements_dev.txt
+pip install -r deps/requirements_data.txt
+pip install -r deps/requirements_model.txt
+pip install -r deps/requirements_train.txt
 ```
 
-This will ensures that all packages in their specific versions are installed, hereby replicating the exact environment.
+This will ensures that all packages used in the whole project in their specific versions are installed, hereby replicating the exact environment.
 
 ### Question 5
 
