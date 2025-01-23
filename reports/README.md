@@ -509,9 +509,8 @@ We did change from training the model in Compute Engine VMs to training it in Ve
 >
 > Answer:
 
-![GCP Artifact Registry Overview](figures/registry1.png)
-
-![GCP Artifact Registry Containers](figures/registry2.png)
+<img src="figures/registry1.png" alt="GCP Artifact Registry Overview" width="90%">
+<img src="figures/registry2.png" alt="GCP Artifact Registry Containers" width="90%">
 
 ### Question 21
 
