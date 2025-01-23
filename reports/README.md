@@ -519,7 +519,9 @@ We did change from training the model in Compute Engine VMs to training it in Ve
 >
 > Answer:
 
--Nicolai
+Instead of using Cloud Build in GCP, we utilized only GitHub Actions for building our Docker images and other task in our CI/CD pipeline. Below are a screenshot of our GitHub Actions workflows history for successfully builds on main branch:
+
+![GitHub Actions Overview](figures/actions1.png)
 
 ### Question 22
 
