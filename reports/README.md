@@ -179,7 +179,7 @@ pip install -r deps/requirements_model.txt
 pip install -r deps/requirements_train.txt
 ```
 
-This will ensures that all packages used in the whole project in their specific versions are installed, hereby replicating the exact environment.
+This will ensures that all packages used in the whole project in their specific versions are installed, hereby replicating the exact environment. Note that currently sub-dependencies are not locked in the requirement files.
 
 ### Question 5
 
@@ -285,7 +285,7 @@ Branches and PRs helped our group keeping version control by isolating new featu
 >
 > Answer:
 
-DVC was used in the project to ensure version control of our training and validation datasets, based on a subset of the ImageNet-1K dataset. Integrating GCP buckets with object versioning and DVC let us combine both cloud storage and version control, resulting in enhanced protection against accidental deletions or modifications. Two primary dataset versions were created, consisting of first 3 ImageNet class IDs (654, 436, 555), and were further expanded with two additional classes (671, 670), resulting in 6,760 items, totaling 367 MB. DVC checkout allowed us to easily retrieve specific versions of tracked data, enabling quick experimentation and debugging.
+DVC was used in the project to ensure version control of our [training](figures/data_samples_train.png) and [validation](figures/data_samples_validation.png) datasets, based on a subset of the ImageNet-1K dataset. Integrating GCP buckets with object versioning and DVC let us combine both cloud storage and version control, resulting in enhanced protection against accidental deletions or modifications. Two primary dataset versions were created, consisting of first 3 ImageNet class IDs (654, 436, 555), and were further expanded with two additional classes (671, 670), resulting in 6,760 items, totaling 367 MB. DVC checkout allowed us to easily retrieve specific versions of tracked data, enabling quick experimentation and debugging.
 
 A GitHub Action is created that triggers the [MLOps training pipeline](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/workflows/data_version_control.yml) when a GitHub pull request includes a data version change. 
 In the training pipeline the dataset is downloaded during the Docker build process, making it ready for training when the Docker container is deployed to more expensive GPU servers for model training using Vertex AI custom-jobs.
@@ -411,8 +411,8 @@ Below we have shown two screenshots of experiments in W&B. The two experiments a
 
 In this project, we developed several docker images that was build to containerize our applications into Google Cloud:
 
-* **Data Container**: A Dockerfile for building and running a container for data collection and data preparation of the TIMM dataset.
-* **Training Container**: A Dockerfile for building and running a container for the training script for fine-tuning the TIMM model.
+* **Data Container**: A Dockerfile for building and running a container for data collection and data preparation of the ImageNet-1k dataset.
+* **Training Container**: A Dockerfile for building and running a container for the training script for fine-tuning the MobileNet-V4 models.
 * **Backend Container**: A Dockerfile for building and running a container for the backend application utilizing the FastAPI framework.
 * **Frontend Container**: A Dockerfile for building and running a container for the frontend application utilizing the Streamlit framework.
 
