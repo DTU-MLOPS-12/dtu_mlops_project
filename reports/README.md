@@ -696,7 +696,27 @@ Furthermore, we experimented with quantization of our models to improve inferenc
 >
 > Answer:
 
---- question 29 fill here ---
+![MLOps Architecture](figures/mlops.drawio.png)
+
+The diagram illustrates the overall architecture of the MLOps system, highlighting the various services and components involved in our project.
+
+1. **Local Development**: The starting point of the model begins with local development, where team members write and test code on their local machines. We use GitHub for version control, ensuring that all changes are tracked and managed effectively.
+
+2. **GitHub Actions**: Upon committing and pushing code to GitHub, GitHub Actions are triggered. These actions include linting, running unit tests, and building Docker images. The built images are then pushed to the Google Artifact Registry.
+
+3. **Google Cloud Storage**: Our datasets are stored in Google Cloud Storage, which integrates with DVC for version control. This ensures that we can manage and track changes to our data over time.
+
+4. **Vertex AI**: For model training, we use Vertex AI. The training jobs are configured to use the Docker images stored in the Artifact Registry. Vertex AI provides the necessary computational resources, including GPUs, to train our models efficiently.
+
+5. **Cloud Run**: Once the models are trained, they are deployed using Cloud Run. Cloud Run allows us to deploy containerized applications in a serverless environment, ensuring scalability and ease of management.
+
+6. **FastAPI and Streamlit**: Our API, built with FastAPI, is deployed on Cloud Run. This API serves as the backend for our application, handling inference requests. Additionally, we have a frontend built with Streamlit, which provides a user-friendly interface for interacting with the API.
+
+7. **Monitoring and Logging**: We use Google Cloud Monitoring to track the performance and health of our deployed applications. This includes setting up alerts for any anomalies or issues that may arise.
+
+8. **Continuous Integration and Deployment (CI/CD)**: The entire process is automated through CI/CD pipelines, ensuring that any changes to the codebase are automatically tested, built, and deployed. This automation enhances the efficiency and reliability of our development workflow.
+
+
 
 ### Question 30
 
