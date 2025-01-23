@@ -234,9 +234,9 @@ Practices implementing code quality and format are crucial in larger projects as
 >
 > Answer:
 
-(TODO: update after implementing unit tests for `data.py` and `model.py`)
+In our project, we have implemented XX tests in total counting performance tests with `locust` together unit tests and integration test utilized with `pytest`. We have primarily been testing our API service `api.py` with performance tests (loadtesting) and integration tests as this is the most critical service serving our projects backend.
 
-Currently, we have implemented integration tests for the API service.
+The implemented unit tests is for `data.py` and `train.py`. These tests ensure that the data preprocessing and model training functions work as expected.
 
 ### Question 8
 
