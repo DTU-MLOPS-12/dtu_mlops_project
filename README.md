@@ -23,123 +23,116 @@ Resources:
 - [PyTorch Image Models (TIMM) Documentation](https://github.com/huggingface/pytorch-image-models?tab=readme-ov-file#getting-started-documentation)
 - [MobileNet-V4](https://huggingface.co/blog/rwightman/mobilenetv4)
 - [Dataset imagenet-1k-wds (subset)](https://huggingface.co/datasets/timm/imagenet-1k-wds)
+- [Structure created using mlops_template](https://github.com/SkafteNicki/mlops_template)
 
 
-## Project Structure
+## MLOps pipeline
 
-The directory structure of the project looks like this:
-```txt
-├── .github/                  # Github actions and dependabot
-│   ├── dependabot.yaml
-│   └── workflows/
-│       └── tests.yaml
-├── configs/                  # Configuration files
-├── data/                     # Data directory
-│   ├── processed
-│   └── raw
-├── dockerfiles/              # Dockerfiles
-│   ├── api.Dockerfile
-│   └── train.Dockerfile
-├── docs/                     # Documentation
-│   ├── mkdocs.yml
-│   └── source/
-│       └── index.md
-├── models/                   # Trained models
-├── notebooks/                # Jupyter notebooks
-├── reports/                  # Reports
-│   └── figures/
-├── src/                      # Source code
-│   ├── project_name/
-│   │   ├── __init__.py
-│   │   ├── api.py
-│   │   ├── data.py
-│   │   ├── evaluate.py
-│   │   ├── models.py
-│   │   ├── train.py
-│   │   └── visualize.py
-└── tests/                    # Tests
-│   ├── __init__.py
-│   ├── test_api.py
-│   ├── test_data.py
-│   └── test_model.py
-├── .gitignore
-├── .pre-commit-config.yaml
-├── LICENSE
-├── pyproject.toml            # Python project file
-├── README.md                 # Project README
-├── requirements.txt          # Project requirements
-├── requirements_dev.txt      # Development requirements
-└── tasks.py                  # Project tasks
-```
+The MLOps pipeline is semi-automatic with a "Human in the Loop" and consists of the following steps:
 
-Created using [mlops_template](https://github.com/SkafteNicki/mlops_template)
+1. Commits a new version of the dataset (see the `Dataset` below) and create a GitHub PR. This will automatically initiate the training pipeline in a [GitHub Action nr. 1](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/workflows/data_version_control.yml).
 
-## Intended Workflow for model training, testing and deployment 
+2. When the training pipeline is complete, newly trained models and matrices are available at [Weights & Biases (W&B)](https://wandb.ai/dtu_mlops_project_grp_12/mlops_project/) for review. If the predefined hyperparameters have resulted in a satisfactory model, the model is sent to load testing by adding alias `preprod` to the model in W&B and activate [GitHub Action nr. 2](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/workflows/load_test.yaml). Alternatively custom training parameters can be activated using this [GitHub action](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/workflows/start_vertex_ai.yaml).
 
-The workflow for the system is semi-automatic involving a "Human in the Loop" (HitL) consists of the following steps:
+3. The load test results are published to [W&B](https://wandb.ai/dtu_mlops_project_grp_12/mlops_project/), where they are inspected with an emphasis on inference performance. If satisfied, tag the model with `prod` in W&B and activate [GitHub Action nr. 3](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/workflows/restart_api.yaml) to restart the API service in the production environment. 
 
-- The "HitL" commits a new version of the dataset using `dvc` and initiates the training stage by starting the GH action nr. 1
-- After training is complete and the newly trained model has been uploaded to Weights & Biases (W&B), the "HitL" tags the model in W&B with `preprod`
-  if they are satisfied with the evaluation metrics of the model. 
-- As a final quality control, the "HitL" starts GH action nr. 2 which deploys a test instance with the new `preprod` model and performs a load test.
-  The results are published to W&B, where they are inspected with an emphasis on performance.
-- If satisfied with the `preprod` model, the "HitL" tags the model with `prod` in W&B and runs GH action nr. 3 to restart the API service in the production
-  environment (models are updated and loaded upon application startup).
-
-The new model is now deployed to production. Yay!
+The new image classification model is now deployed. Visit the [frontend app](https://streamlit-app-ypqrr5d7oa-ez.a.run.app/) to use the model. Yay!
 
 Note, that this workflow is for the model only. Development, testing and deployment of the services (frontend, API, etc.) are completely detached from
 the model, such that they can effectively be developed and improved in parallel without mutual dependence.
+
+## Dataset
+
+Clone the git project repo and installing requremnts (see `Dev Environment Setup` below) you are ready to expand the classification model.
+
+1. Identify relevant new [ImageNet-1k Class IDs](https://deeplearning.cms.waikato.ac.nz/user-guide/class-maps/IMAGENET/) to expand the dataset with and add to `configs/vehicle_classes.json` 
+2. Run the `data.py`to download the dataset to the `processed` folder. Add Huggingface as enviroment variable named `HUGGING_FACE_HUB_TOKEN` and run:
+
+- Download validation dataset for classes 
+    ```bash
+    python src/dtu_mlops_project/data.py process-splits --splits validation --buffer-size 10000 
+    ```
+
+- Download train dataset
+    ```bash
+    python src/dtu_mlops_project/data.py process-splits --splits train --buffer-size 10000
+    ```
+
+Or build the docker images and run
+
+- Download validation dataset for classes 
+    ```bash
+    docker run --rm --name experiment1 -e HUGGING_FACE_HUB_TOKEN=${{ secrets.HUGGING_FACE_HUB_TOKEN }}  -v data:/data/ -v configs:/configs data:latest process-splits --splits validation --buffer-size 10000 
+    ```
+
+- Download train dataset
+    ```bash
+    docker run --rm --name experiment1 -e HUGGING_FACE_HUB_TOKEN=${{ secrets.HUGGING_FACE_HUB_TOKEN }}  -v data:/data/ -v configs:/configs data:latest process-splits --splits train --buffer-size 10000
+    ```
+
+3. Add dataset in a new feature branch using `DVC` to the `processed` folder
+
+    ```bash
+    dvc add data/processed/timm-imagenet-1k-wds-subset/
+    git add .
+    git commit -m "New dataset"
+    git tag -a "v2.0" -m "data v2.0"
+    dvc push --no-run-cache
+    git push
+    ```
+
+
 
 ## MLops tools
 
 ### Dev Environment Setup
 - Setup first time
-```bash
-cd /dtu_mlops_project 
-sudo apt install python3.12-venv # Optional if not installed
-python3 -m venv env  # create a virtual environment in project
-source env/bin/activate  # activate that virtual environment
-```
+    ```bash
+    cd /dtu_mlops_project 
+    sudo apt install python3.12-venv # Optional if not installed
+    python3 -m venv env  # create a virtual environment in project
+    source env/bin/activate  # activate that virtual environment
+    ```
 
 - Install pip requirements
-```bash
-# install requirements.txt
-pip install .
-# or in developer mode requirements_dev.txt
-pip install -e .
-```
+    ```bash
+    # install requirements.txt
+    pip install .
+    # or in developer mode requirements_dev.txt
+    pip install -e .
+    ```
 
 - Open project in VS Code with active env
-```bash
-code .
-```
+    ```bash
+    code .
+    ```
 
 - Deactivate env and delete files (debugging)
-```bash
-cd /dtu_mlops_project
-deactivate
-python3 -m venv --clear env
-```
+    ```bash
+    cd /dtu_mlops_project
+    deactivate
+    python3 -m venv --clear env
+    ```
+
 ### Linting
 
-This [page](https://docs.astral.sh/ruff/) contains an overview of the Ruff tool, which is an extremely fast code linter and formatter. As an example, you can run the following:
+- This [page](https://docs.astral.sh/ruff/) contains an overview of the Ruff tool, which is an extremely fast code linter and formatter. As an example, you can run the following:
 
-```bash
-ruff check tasks.py
-```
+    ```bash
+    ruff check tasks.py
+    ```
 
 ### Typing
 This [cheat sheet](https://mypy.readthedocs.io/en/stable/cheat_sheet_py3.html) is a good resource on typing. Run [mypy](https://mypy.readthedocs.io/en/stable/index.html) on the `tasks.py` file
-```bash
-mypy tasks.py
-```
+    ```bash
+    mypy tasks.py
+    ```
 
 ## Invoke Commands
 Information about all available executable tasks:
- ```bash
- invoke --list
- ```
+    ```bash
+    invoke --list
+    ```
 
 ### Setup Commands
 - Create a new conda environment for the project:
@@ -194,7 +187,7 @@ Information about all available executable tasks:
     invoke serve-docs
     ```
 
-## CLI's
+### CLI's
 
 This project comes with a few different scripts, each with their own options:
 
@@ -209,113 +202,105 @@ This project comes with a few different scripts, each with their own options:
 ### `visualize.py`
 
 
-### Dataset
-
-- Download validation dataset for classes 
-```bash
-docker run --rm --name experiment1 -e HUGGING_FACE_HUB_TOKEN=${{ secrets.HUGGING_FACE_HUB_TOKEN }}  -v data:/data/ -v configs:/configs data:latest process-splits --splits validation --buffer-size 10000 
-```
-
-- Download train dataset
-```bash
-docker run --rm --name experiment1 -e HUGGING_FACE_HUB_TOKEN=${{ secrets.HUGGING_FACE_HUB_TOKEN }}  -v data:/data/ -v configs:/configs data:latest process-splits --splits train --buffer-size 10000
-```
-
-
 
 ### GCP
 
 - Login
-```bash
-gcloud auth login
-gcloud auth application-default login
-```
+    ```bash
+    gcloud auth login
+    gcloud auth application-default login
+    ```
 
 - Projects list
-```bash
-gcloud projects list
-```
+    ```bash
+    gcloud projects list
+    ```
 
 - Config project with dtu-mlops PROJECT_ID
-```bash
-gcloud config set project <project-id>
-```
+    ```bash
+    gcloud config set project <project-id>
+    ```
 
 
 
-### DVC Setup with Public Remote Storage
+#### DVC Setup with Public Remote Storage
 
 - Initialized DVC repository.
-```bash
-dvc init
-```
+    ```bash
+    dvc init
+    ```
 
 - Add remote storage and support for object versioning
-```bash
-dvc remote add -d remote_storage gs://mlops_grp_12_data_bucket_public/
-git add .dvc/config
-```
+
+    ```bash
+    dvc remote add -d remote_storage gs://mlops_grp_12_data_bucket_public/
+    git add .dvc/config
+    ```
 
 - Support for object versioning
-```bash
-dvc remote modify remote_storage version_aware true
-```
+
+    ```bash
+    dvc remote modify remote_storage version_aware true
+    ```
 
 - Remove Public action prevention from the bucket 
-```bash
-gcloud storage buckets update gs://mlops_grp_12_data_bucket_public/ --no-public-access-prevention
-```
+    ```bash
+    gcloud storage buckets update gs://mlops_grp_12_data_bucket_public/ --no-public-access-prevention
+    ```
 
 - Make the bucket public using the below command
-```bash
-gcloud storage buckets add-iam-policy-binding gs://mlops_grp_12_data_bucket_public/ --member=allUsers --role=roles/storage.objectViewer
-```
+    ```bash
+    gcloud storage buckets add-iam-policy-binding gs://mlops_grp_12_data_bucket_public/ --member=allUsers --role=roles/storage.objectViewer
+    ```
 
 - Verify login 
-```bash
-gcloud auth application-default login
-```
+    ```bash
+    gcloud auth application-default login
+    ```
 
 - Add processed data
-```bash
-dvc add data/processed/timm-imagenet-1k-wds-subset/
-git add data/processed/timm-imagenet-1k-wds-subset.dvc
-git add data/processed/.gitignore
-git commit -m "First datasets"
-git tag -a "v1.0" -m "data v1.0"
-dvc push
-```
+    ```bash
+    dvc add data/processed/timm-imagenet-1k-wds-subset/
+    git add data/processed/timm-imagenet-1k-wds-subset.dvc
+    git add data/processed/.gitignore
+    git commit -m "First datasets"
+    git tag -a "v1.0" -m "data v1.0"
+    dvc push --no-run-cache
+    git push
+    ```
 
 ## Building and pushing an image to the artifact registry
 
-To build an OCI image using `docker`, simply run the following from the root directory of the project:
+- To build an OCI image using `docker`, simply run the following from the root directory of the project:
 
-```sh
-docker build -f dockerfiles/<service-name>.dockerfile . -t <tag-name>:<version-name>
-```
-where `<service-name>` is the name of the service container to build (`api`, `train`, etc.),
-`<tag-name>` is the name of the tag and the `<version-name>` is the name of the version 
-of the image, i.e. `latest`, `dev` `1.0.0`. While the `<service-name>` and the `<tag-name>`
-can be different, it is easier if they are the same, so one can tell which dockerfile is 
-used to create a given image.
+    ```bash
+    docker build -f dockerfiles/<service-name>.dockerfile . -t <tag-name>:<version-name>
+    ```
 
-Now, we create a tag and upload it to our artifact registry on GCP:
+    where `<service-name>` is the name of the service container to build (`api`, `train`, etc.),
+    `<tag-name>` is the name of the tag and the `<version-name>` is the name of the version 
+    of the image, i.e. `latest`, `dev` `1.0.0`. While the `<service-name>` and the `<tag-name>`
+    can be different, it is easier if they are the same, so one can tell which dockerfile is 
+    used to create a given image.
 
-```sh
-docker tag <tag-name> europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/<tag-name>:<version-name>
-docker push europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/<tag-name>:<version-name>
-```
+- Now, we create a tag and upload it to our artifact registry on GCP:
 
-### Make life easier with `docker compose`
+    ```bash
+    docker tag <tag-name> europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/<tag-name>:<version-name>
+    docker push europe-docker.pkg.dev/dtu-mlops-447711/default-container-repository/<tag-name>:<version-name>
+    ```
+
+### Make life easier with docker compose
 
 You can also use `docker compose` to build and run multiple containers at once.
-From the project root directory, simply run:
 
-```shell
-docker compose up -d
-```
+- From the project root directory, simply run:
 
-Now, `docker` will build or fetch all images required to run the specified services and
+    ```shell
+    docker compose up -d
+    ```
+
+- Now, `docker` will build or fetch all images required to run the specified services and
 subsequently start them.
 
 
@@ -323,14 +308,14 @@ subsequently start them.
 
 
 - Start Draw.io server locally
-```shell
-docker run -it --rm --name="draw" -p 8080:8080 -p 8443:8443 jgraph/drawio
-```
+    ```shell
+    docker run -it --rm --name="draw" -p 8080:8080 -p 8443:8443 jgraph/drawio
+    ```
 
 - Service url `http://localhost:8080`
 
 - Open file path
 
-```shell
-reports/figures/mlops.drawio.png
-```
+    ```shell
+    reports/figures/mlops.drawio.png
+    ```
