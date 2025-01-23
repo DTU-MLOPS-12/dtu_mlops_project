@@ -70,4 +70,4 @@ jobs:
           wandb login ${{ secrets.WANDB_API_KEY_GRP_12 }}
           python src/dtu_mlops_project/upload_loadtest_results.py --result-stats results_stats.csv \
             --result-failures results_failures.csv --result-exceptions results_exceptions.csv \
-            --result-stats-history result_stats_history.csv
+            --result-stats-history results_stats_history.csv
