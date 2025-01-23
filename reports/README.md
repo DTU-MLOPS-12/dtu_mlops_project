@@ -190,7 +190,7 @@ This will ensures that all packages in their specific versions are installed, he
 >
 > Answer:
 
-Using the cookiecutter template from the ![template repository](https://github.com/SkafteNicki/mlops_template), we have 
+Using the cookiecutter template from the [template repository](https://github.com/SkafteNicki/mlops_template), we have 
 filled out the `src`, `data`, `configs`, `dockerfiles`, and `tests` folders specific to our project. We have removed the `notebook` and `models` folder as we did not use Jupyter Notebooks in our project and our models was stored at Weights and Baises Model Registry. Additionally, we have added GitHub workflows in `.github/workflows` for our CI/CD (continues integration and continues development) for building and deploying our project to cloud, data version control in `.dvc` folder, and a specific `deps` folder containing dependencies for specific code in the `src` used in our dockerfiles. 
 
 The main directories include `src`, `data`, `tests`, `configs`, and `.github/workflows`. The `src` directory contains the core codebase, including scripts for data processing, model training, and inference. The `data` directory is used for data storage and management, while the `tests` directory holds all unit and integration tests to ensure code quality and functionality. 
@@ -503,7 +503,7 @@ We did change from training the model in Compute Engine VMs to training it in Ve
 
 ![GCP buckets](figures/bucket.png)
 
-![GCP bucket containing training and validation datasets](figures/GPC_bucket.png)
+![GCP bucket containing training and validation datasets](figures/GCP_bucket.png)
 
 ### Question 20
 
