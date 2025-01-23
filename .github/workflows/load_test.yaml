@@ -29,14 +29,6 @@ jobs:
           python-version: 3.12
           cache: 'pip'
 
-      - name: Set up Miniconda
-        uses: conda-incubator/setup-miniconda@v3
-        with:
-          auto-update-conda: true
-          activate-environment: dtu_mlops_project
-          python-version: 3.12
-          channels: conda-forge
-
       - name: Authenticate to Google Cloud
         id: auth
         uses: "google-github-actions/auth@v2"
