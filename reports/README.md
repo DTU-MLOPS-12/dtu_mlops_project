@@ -671,13 +671,14 @@ However, working in GCP required careful monitoring of resource usage to manage 
 >
 > Answer:
 
--Nicolai
-
 We implemented a frontend for our API using `streamlit` to improve user-friendliness for end-users.
 The frontend provides an easy way to use all of the different models that the API exposes to perform
-inference on images with a few clicks.
+inference on images with a few clicks:
 
 ![streamlit](figures/streamlit.png)
+
+Furthermore, we experimented with quantization of our models to improve inference speed and reduce the model size. This involved using methods like `dynamic_quantization` from `torch.quantization` to convert our models to a quantized version. Unfortunately ...
+
 (TODO: quantization test)
 
 ### Question 29
