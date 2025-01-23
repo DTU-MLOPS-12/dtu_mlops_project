@@ -393,8 +393,8 @@ For all our experiments, we tracked several metrics related to the model trainin
 
 Below we have shown two screenshots of experiments in W&B. The two experiments are two training runs done with different GPUs (P4 and V100). The first screenshot shows some loss and accuracy curves, while the second shows the ROC curves for a subset of epochs.
 
-<img src="figures/wandb_1.png" alt="wandb figure 1" width="70%">
-<img src="figures/wandb_2.png" alt="wandb figure 2" width="70%">
+<img src="figures/wandb_1.png" alt="wandb figure 1" width="90%">
+<img src="figures/wandb_2.png" alt="wandb figure 2" width="90%">
 
 ### Question 15
 
