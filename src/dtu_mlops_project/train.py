@@ -1213,7 +1213,7 @@ def main():
                         with open(os.path.join(output_dir, "idx_to_class.json"), "w") as f:
                             json.dump(idx_to_class, f)
                         artifact.add_file(os.path.join(output_dir, "idx_to_class.json"))
-                        
+
                     wandb.log_artifact(artifact, aliases=["best", f"epoch-{epoch}"])
 
             if lr_scheduler is not None:
