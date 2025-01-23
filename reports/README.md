@@ -677,7 +677,7 @@ We implemented a frontend for our API using `streamlit` to improve user-friendli
 The frontend provides an easy way to use all of the different models that the API exposes to perform
 inference on images with a few clicks.
 
-(TODO: Insert screenshot of frontend)
+![streamlit](figures/streamlit.png)
 (TODO: quantization test)
 
 ### Question 29
