@@ -74,6 +74,7 @@ jobs:
 
       - name: Upload locust test results to WandB
         run: |
+          ls -lah .
           wandb login ${{ secrets.WANDB_API_KEY_GRP_12 }}
           python src/dtu_mlops_project/upload_loadtest_results.py --result-stats results_stats.csv \
             --result-failures results_failures.csv --result-exceptions results_exceptions.csv \
