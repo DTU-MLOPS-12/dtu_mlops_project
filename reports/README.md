@@ -650,7 +650,12 @@ Additionally, we manually monitored specific jobs and runs in GCP as our custom 
 >
 > Answer:
 
---- question 27 fill here ---
+In total, we have spent around XX kr. in credits using free promotion codes during the development of the project in Google Cloud. The most expensive service was Compute Engine and Vertex AI services. This was primarily due to the costs associated with using VMs with allocated CPU and GPU instances for running the training of our models.
+
+Working in the cloud has been a valuable and good experience. It has provided our group with scalable resources, a broad spectum of services and new frameworks. When using Google Cloud, we have been able to manage and deploy our applications efficiently with seemless integration between the different services when using GCP. Furthermore, GCP have a good integration into GitHub Actions, which allowed us to automate various tasks such as building Docker images, running tests, and deploying applications. 
+
+However, working in Google Cloud also required careful monitoring of resource usage to manage costs effectively in Billing. Other limitations and challenges our group dealt with was to have Google to increase our quota limits for certain services, such as GPU instances, which was necessary to run our training jobs efficiently. This process involved submitting a request to Google Cloud support and providing justification for the increased quota with many of our quotas either being rejected by Google or Google having a long response time. Furthermore, we found that GCP is a complex platform to work on and required us to understand the various services and tools.
+
 
 ### Question 28
 
