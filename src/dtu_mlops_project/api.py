@@ -259,7 +259,9 @@ def api_predict(image_file: fastapi.UploadFile):
     image = preprocess_image(image_file)
 
     probs, classes = preproduction_model(image)
-    logger.debug(f"(Pre-production) Model computed probabilities: '{probs}' with corresponding class indices: '{classes}'")
+    logger.debug(
+        f"(Pre-production) Model computed probabilities: '{probs}' with corresponding class indices: '{classes}'"
+    )
 
     results = compute_results(probs, classes)
     logger.debug(f"Final results: '{results}'")
