@@ -393,8 +393,8 @@ For all our experiments, we tracked several metrics related to the model trainin
 
 Below we have shown two screenshots of experiments in W&B. The two experiments are two training runs done with different GPUs (P4 and V100). The first screenshot shows some loss and accuracy curves, while the second shows the ROC curves for a subset of epochs.
 
-<img src="figures/wandb_1.png" alt="wandb figure 1" width="90%">
-<img src="figures/wandb_2.png" alt="wandb figure 2" width="90%">
+![wandb figure 1](figures/wandb_1.png)
+![wandb figure 2](figures/wandb_2.png)
 
 ### Question 15
 
@@ -499,8 +499,8 @@ We did change from training the model in Compute Engine VMs to training it in Ve
 >
 > Answer:
 
-<img src="figures/bucket.png" alt="GCP buckets" width="90%">
-<img src="figures/GCP_bucket.png" alt="GCP bucket containing training and validation datasets" width="90%">
+![GCP buckets](figures/bucket.png)
+![GCP bucket containing training and validation datasets](figures/GCP_bucket.png)
 
 ### Question 20
 
@@ -509,8 +509,8 @@ We did change from training the model in Compute Engine VMs to training it in Ve
 >
 > Answer:
 
-<img src="figures/registry1.png" alt="GCP Artifact Registry Overview" width="90%">
-<img src="figures/registry2.png" alt="GCP Artifact Registry Containers" width="90%">
+![GCP Artifact Registry Overview](figures/registry1.png)
+![GCP Artifact Registry Containers](figures/registry2.png)
 
 ### Question 21
 
