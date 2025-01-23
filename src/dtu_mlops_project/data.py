@@ -13,6 +13,7 @@ app = typer.Typer()
 # HF_TOKEN = "add_your_token_here"
 # os.environ["HUGGING_FACE_HUB_TOKEN"] = HF_TOKEN
 
+
 # Paths and configuration
 @dataclass
 class Config:
@@ -21,12 +22,15 @@ class Config:
     config_path: Path = Path("configs/vehicle_classes.json")
     labels_path: Path = Path("src/dtu_mlops_project/imagenet-simple-labels.json")
 
+
 config = Config()
+
 
 def load_vehicle_classes():
     with open(config.config_path) as f:
         vehicle_classes = json.load(f)
     return vehicle_classes
+
 
 # Load vehicle classes from JSON
 VEHICLE_CLASSES = load_vehicle_classes()
@@ -38,6 +42,7 @@ target_classes = [cls for classes in VEHICLE_CLASSES.values() for cls in classes
 # Source: https://github.com/anishathalye/imagenet-simple-labels
 with open(config.labels_path) as f:
     labels = json.load(f)
+
 
 def class_id_to_label(i):
     return labels[i]
@@ -207,7 +212,6 @@ def process_splits(
             logger.info(f"  {label}: {count}")
 
     check_dataset_classes(filtered_ds, split)
-
 
 
 if __name__ == "__main__":
