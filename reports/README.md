@@ -425,17 +425,13 @@ For example, a local run of the training script docker image with 5 epochs, it c
 docker run train:latest --config configs/mobilenetv4_conv_small_fine_tuning.yaml --epochs=5 --wandb-project=mlops_dtu
 ```
 
-To run the backend (api) container locally, you can use the following command:
+To run the backend (api) and frotnend container locally, the following commands can be used:
 ```bash
 docker run api:latest
 ```
-This will start the FastAPI application and make it accessible at `http://localhost:8000`.
-
-To run the frontend container locally, you can use the following command:
 ```bash
 docker run frontend:latest
 ```
-This will start the Streamlit application and make it accessible at `http://localhost:8501`.
 
 The link to the training dockerfile can be found [here.](https://github.com/DTU-MLOPS-12/dtu_mlops_project/blob/main/dockerfiles/train.dockerfile)
 
