@@ -763,7 +763,7 @@ We also faced difficulties in setting up continuous integration and deployment (
 
 * Student s233489 was in charge of
 
-* Student jonnil focused on 
+* Student jonnil focused on development of the model training, testing new functionalities both locally and in Google Cloud's Compute Engine, as well as running training jobs through Vertex AI. He also ensured correct logging of model checkpoints and training statistics to Weigths & Biases.
 
 * Student s091969 was responsible for 
 
