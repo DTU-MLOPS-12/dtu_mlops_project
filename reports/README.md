@@ -451,11 +451,11 @@ The groups debugging methods varied among group members. Print statements used q
 We used the following GCP services in our project:
 
 1. Compute Engine: Used for running virtual machines to handle various computational machine learning training tasks.
-2. Cloud Storage: Utilized for storing large datasets and model artifacts using DVC.
+2. Cloud Storage: Utilized for storing datasets combined with DVC for version control.
 3. Artifact Registry: Used for storing and managing Docker images.
-4. Vertex AI: Leveraged for training and deploying machine learning models.
-5. Cloud Run: Deployed our containerized applications for scalable and managed serverless execution e.g. Frontend and Backend utilizing FASTApi.
-6. Cloud Monitoring: Implemented to monitor the performance and health of our deployed applications.
+4. Vertex AI: Leveraged for the training pipeline using a `ai custom-jobs` command with a Nvidia V100 GPU.
+5. Cloud Run: Deployed our containerized applications for scalable and managed serverless execution e.g. frontend and backend utilizing Streamlit and FastAPI.
+6. Cloud Monitoring: Implemented to monitor the performance and health of our deployed applications. 
 
 ### Question 18
 
@@ -514,7 +514,7 @@ We used the Compute Engine to run our training and inference tasks. We utilized 
 >
 > Answer:
 
-We managed to train our model in the cloud using Vertex AI. We did this by setting up a GitHub Actions workflow that automates the process of building and pushing our Docker image to Google Artifact Registry, and then starting a custom training job on Vertex AI.
+We managed to train our model in the cloud using Vertex AI. We did this by setting up a [GitHub Actions training workflow](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/workflows/data_version_control.yml), that automates the process of building and pushing our Docker image to Google Artifact Registry, and then starting a custom training job on Vertex AI utilizing an Nvidia V100 GPU.
 
 First, we created a Dockerfile to containerize our training script. We then configured a GitHub Actions workflow to authenticate with Google Cloud using service account credentials stored in GitHub Secrets. The workflow builds the Docker image, pushes it to the Artifact Registry, and made a custom jobs in Vertex UI with a `gcloud` create command to start the training job on Vertex AI.
 
