@@ -1,4 +1,4 @@
-# Base image
+# Build locally
 # docker build -f dockerfiles/data.dockerfile . -t data:latest
 
 FROM python:3.12-slim
@@ -10,6 +10,7 @@ RUN apt update && \
 COPY requirements.txt requirements.txt
 COPY pyproject.toml pyproject.toml
 COPY src/ src/
+COPY configs/ configs/
 
 WORKDIR /
 RUN pip install -r requirements.txt --no-cache-dir

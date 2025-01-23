@@ -1,37 +1,46 @@
 import json
 import os
-import random
 from pathlib import Path
-from typing import Optional, Union
-import matplotlib.pyplot as plt
+from typing import Any
 import typer
 from loguru import logger
-from PIL import Image
 from datasets import Dataset, DatasetDict, load_dataset
+from dataclasses import dataclass
 
 app = typer.Typer()
 
+# Set up Huggingface credentials using python locally or use docker -e to pass the HUGGING_FACE_HUB_TOKEN
+# HF_TOKEN = "add_your_token_here"
+# os.environ["HUGGING_FACE_HUB_TOKEN"] = HF_TOKEN
 
-# Define paths
-download_path = "data/raw/timm-imagenet-1k-wds"
-processed_path = "data/processed/timm-imagenet-1k-wds-subset/"
 
-# Vehicle class IDs to filter
-VEHICLE_CLASSES = {
-    "bus": [654],  # 874, 779
-    "car": [436],  # 468, 627, 717, 751, 817, 867
-    "truck": [555],  # 867, 569, 864
-    #'minivan': [656],
-    #'bicycle': [444, 671],
-    #'motorcycle': [665,670],
-}
+# Paths and configuration
+@dataclass
+class Config:
+    download_path: Path = Path("data/raw/timm-imagenet-1k-wds")
+    processed_path: Path = Path("data/processed/timm-imagenet-1k-wds-subset/")
+    config_path: Path = Path("configs/vehicle_classes.json")
+    labels_path: Path = Path("src/dtu_mlops_project/imagenet-simple-labels.json")
+
+
+config = Config()
+
+
+def load_vehicle_classes():
+    with open(config.config_path) as f:
+        vehicle_classes = json.load(f)
+    return vehicle_classes
+
+
+# Load vehicle classes from JSON
+VEHICLE_CLASSES = load_vehicle_classes()
 
 # Flatten class list
 target_classes = [cls for classes in VEHICLE_CLASSES.values() for cls in classes]
 
 # Load class labels
 # Source: https://github.com/anishathalye/imagenet-simple-labels
-with open("src/dtu_mlops_project/imagenet-simple-labels.json") as f:
+with open(config.labels_path) as f:
     labels = json.load(f)
 
 
@@ -39,13 +48,10 @@ def class_id_to_label(i):
     return labels[i]
 
 
-# logger.info(class_id_to_label(654))
-
-
 # batch filter function
-def batch_filter(examples):
-    """Filter function that only keeps vehicle classes"""
-    valid_classes = set()
+def batch_filter(examples: dict[str, Any]) -> list[bool]:
+    """Filter function that only keeps classes defined in config_path JSON-file."""
+    valid_classes: set[str] = set()
     for class_list in VEHICLE_CLASSES.values():
         valid_classes.update(class_list)
 
@@ -116,7 +122,7 @@ def check_dataset_classes(dataset, split):
 @app.command()
 # Process a single dataset split
 def process_dataset_split(
-    split: str, download_path: str, processed_path: str, buffer_size: int = 1000, batch_size: int = 100
+    split: str, download_path: str, processed_path: str, buffer_size: int = 10000, batch_size: int = 100
 ) -> tuple[DatasetDict, dict]:
     """Process a single dataset split.
 
@@ -124,12 +130,20 @@ def process_dataset_split(
         split: Dataset split name ('train' or 'validation')
         download_path: Path to store raw downloaded data
         processed_path: Path to store processed data
-        buffer_size: Number of samples to buffer in memory
+        buffer_size: Number of images to buffer in memory, at a minimum set to 1500 * number of classes
         batch_size: Batch size for filtering
 
     Returns:
         tuple of (filtered dataset, label counts)
     """
+    # Add validation
+    if split not in ["train", "validation"]:
+        raise ValueError("Split must be either 'train' or 'validation'")
+    if buffer_size < 1:
+        raise ValueError("Buffer size must be positive")
+    if batch_size < 1:
+        raise ValueError("Batch size must be positive")
+
     # Set paths
     save_path = f"data/raw/filtered_dataset/{split}"
     processed_path_split = os.path.join(processed_path, split)
@@ -180,7 +194,7 @@ def process_splits(
     buffer_size: int = typer.Option(1000, help="Number of samples to buffer"),
     batch_size: int = typer.Option(100, help="Batch size for filtering"),
 ) -> None:
-    """Process ImageNet dataset splits into vehicle class subset."""
+    """Process ImageNet dataset splits into class subset."""
     for split in splits:
         filtered_ds, label_counts = process_dataset_split(
             split=split,
@@ -198,71 +212,6 @@ def process_splits(
             logger.info(f"  {label}: {count}")
 
     check_dataset_classes(filtered_ds, split)
-
-    # save_images_to_files(filtered_ds, processed_path_split)
-
-
-# display samples
-def show_subset_samples(
-    output_dir: Union[str, DatasetDict], save_path: str, n_samples: int = 9, seed: int = 42, split: Optional[str] = None
-) -> str:
-    """Display sample images from dataset and save to file."""
-    splits = ["train", "validation"] if split is None else [split]
-    # Set seed for reproducibility
-    random.seed(seed)
-    fig = plt.figure(figsize=(12, 12))
-    for split_name in splits:
-        if isinstance(output_dir, DatasetDict):
-            dataset = output_dir[split_name]
-            samples = random.sample(range(len(dataset)), min(n_samples, len(dataset)))
-            for i, idx in enumerate(samples, 1):
-                ax = plt.subplot(3, 3, i)
-                try:
-                    img = dataset[idx]["jpg"]
-                    label = dataset[idx]["json"]["label"]
-                    filename = dataset[idx]["json"]["filename"]
-                    classname = class_id_to_label(label)
-                    plt.imshow(img)
-                    plt.title(f"Class {label}: {classname.capitalize()}")
-                    # plt.title(f"Class {label}: {classname.capitalize()}\n{filename}") # Option to show filename
-                    plt.suptitle(f"Samples from {split_name}", fontsize=16)
-                    plt.axis("off")
-                except KeyError as e:
-                    logger.error(f"Missing key in dataset: {e}")
-                    logger.error(f"Available keys: {dataset[idx].keys()}")
-                    raise
-        else:
-            # Handle filesystem path input
-            split_dir = Path(output_dir) / split_name
-            image_files = list(split_dir.glob("**/*.JPEG"))
-            samples = random.sample(image_files, min(n_samples, len(image_files)))
-            for i, img_path in enumerate(samples, 1):
-                ax = plt.subplot(3, 3, i)
-                img = Image.open(img_path)
-                plt.imshow(img)
-                plt.title(f"{split_name}: {img_path.parent.name}")
-                plt.axis("off")
-
-    plt.tight_layout()
-    plt.savefig(save_path)
-    plt.close()
-    return save_path
-
-
-## Verify save worked by trying to load
-# try:
-#    loaded_ds = load_from_disk(save_path)
-#    logger.info(f"\nSuccessfully saved and verified dataset at: {save_path}")
-# except Exception as e:
-#    logger.error(f"Error verifying saved dataset: {e}")
-#
-## Plot samples:
-# saved_fig = show_subset_samples(output_dir=loaded_ds, save_path="reports/figures/data_samples_seed40_"+split+".png", split=split, seed=40)
-# saved_fig = show_subset_samples(output_dir=loaded_ds, save_path="reports/figures/data_samples_seed41_"+split+".png", split=split, seed=41)
-# saved_fig = show_subset_samples(output_dir=loaded_ds, save_path="reports/figures/data_samples_seed42_"+split+".png", split=split, seed=42)
-# saved_fig = show_subset_samples(output_dir=loaded_ds, save_path="reports/figures/data_samples_seed43_"+split+".png", split=split, seed=43)
-# saved_fig = show_subset_samples(output_dir=loaded_ds, save_path="reports/figures/data_samples_seed44_"+split+".png", split=split, seed=44)
-# saved_fig = show_subset_samples(output_dir=loaded_ds, save_path="reports/figures/data_samples_seed45_"+split+".png", split=split, seed=45)
 
 
 if __name__ == "__main__":
