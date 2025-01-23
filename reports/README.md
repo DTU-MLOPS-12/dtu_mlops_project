@@ -229,7 +229,6 @@ Practices implementing code quality and format are crucial in larger projects as
 >
 > Answer:
 
---- question 7 fill here ---
 (TODO: update after implementing unit tests for `data.py` and `model.py`)
 
 Currently, we have implemented integration tests for the API service.
@@ -246,8 +245,6 @@ Currently, we have implemented integration tests for the API service.
 > *code and even if we were then...*
 >
 > Answer:
-
---- question 8 fill here ---
 
 Currently, for the API integration tests, the code coverage is 81%. Do note that this is an integration test and the purpose is 
 to test the functionality of the interface as a whole, because we're dealing with I/O. So, it is difficult to test in isolation,
