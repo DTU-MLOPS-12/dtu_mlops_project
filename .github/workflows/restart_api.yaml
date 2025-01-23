@@ -1,4 +1,4 @@
-name: Restart API Container in Production Environment
+name: 3. Restart API Container in Production Environment
 
 on:
   workflow_dispatch:
