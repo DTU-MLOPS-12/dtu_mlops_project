@@ -305,17 +305,13 @@ In the training pipeline the dataset is downloaded during the Docker build proce
 >
 > Answer:
 
-
 Our group have organized our continuous integration into separate workflows: one for linting and formatting code, one for running the test suite including unit test cases, and three workflows as a part of the continues building and deployment. 
 
 For the code check workflow we used `ruff` to check for code quality and formatting issues automatically with GitHub Actions bot which is triggered on every pull request or workflow dispatch. An example of a triggered workflow through a pull request can be seen [here](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/runs/12905630833/job/35985228785).
 
-Test suite was running in a seperate workflow which runs our unit tests and integration tests using `pytest` framework in `tests` folder. This workflow is also triggered on every pull request when the changes in the pull request include updates to python files. An example of a triggered workflow can be seen [here](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/runs/12909923637).
+Test suite was running in a seperate workflow which runs our unit tests and integration tests using `pytest` framework in `tests` folder. This workflow is also triggered on every pull request when the changes in the pull request include updates to python files. By using a matrix in our workflow file we ran the test suite on multiple operating systems in parallel (mac-os and linux) which enhanced the reliability of our testing by ensuring compatibility across operating systems. An example of a triggered workflow can be seen [here](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/runs/12909923637).
 
-Lastly, we have a three workflow that is a part of our continues deployment pipeline. First we 
-
-TODO: Describe the continues deployment workflow (3 step workflow)
-
+We also made use of caching in our GitHub workflows to speed up the installation of dependencies and reduce build times. By caching the dependencies, we could avoid downloading and installing the same packages repeatedly saving us time when executing workflows.
 
 ## Running code and tracking experiments
 
