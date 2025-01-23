@@ -654,7 +654,7 @@ In total, we have spent around XX kr. in credits using free promotion codes duri
 
 Working in the cloud has been a valuable provided our group with scalable resources and many services. By using Google Cloud, we could manage and deploy our applications efficiently and with integration between the different services. Furthermore, we find it useable that GCP have an integration to GitHub Actions allowed us to run our CI/CD pipeline. 
 
-However, working in GCP required careful monitoring of resource usage to manage costs effectively. Our group also have the challenge to have Google to increase our quota limits which was necessary to run our training jobs efficiently. This process involved submitting a request to Google Cloud support for the increased quota with many of our quotas either being rejected or having a long response time. Furthermore, we found that GCP is a complex platform to work on and required us to understand the various services and tools.
+However, working in GCP required careful monitoring of resource usage to manage costs effectively. Our group also have the challenge to have Google to increase our quota limits which was necessary to run our training jobs efficiently. This process involved submitting a request to Google for the increased quota. Many of our quotas got rejected or Google having a long response time. We also found GCP as a complex platform to work on which required us to understand the various services and tools.
 
 
 ### Question 28
