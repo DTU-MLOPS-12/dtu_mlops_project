@@ -1,3 +1,4 @@
+from collections import defaultdict
 import functools
 from google.cloud import secretmanager
 from contextlib import asynccontextmanager
@@ -36,7 +37,7 @@ def get_wandb_key(project_id: str, secret_id: str = "WANDB_API_KEY", version_id:
 
 
 @functools.cache
-def get_labels() -> dict:
+def get_dummy_labels() -> dict:
     """
     Loads and caches the labels for the corresponding class indices.
     """
@@ -52,7 +53,7 @@ def get_dummy_model() -> typing.Callable:
 
     :returns: A callable which can run the initialized model.
     """
-    model_name = "mobilenetv4_conv_small.e2400_r224_in1k"
+    model_name = "mobilenetv4_hybrid_medium"
     mobilenetv4_model = timm.create_model(model_name, pretrained=True)
     mobilenetv4_model = mobilenetv4_model.eval()
 
@@ -77,7 +78,7 @@ def get_dummy_model() -> typing.Callable:
 
 
 @functools.cache
-def download_wandb_model(version: str = "latest") -> dict:
+def download_wandb_model(version: str = "latest") -> tuple[dict, typing.Callable]:
     """
     Downloads the model from W&B with a given version.
 
@@ -90,25 +91,31 @@ def download_wandb_model(version: str = "latest") -> dict:
         wandb.login(key=wandb_key, anonymous="allow")
 
     run = wandb.init()
-    model_artifact = run.use_artifact(f"{MODEL_NAME}:{version}", type="model")
-    model_artifact.download()
+    model_artifact = run.use_artifact(f"{MODEL_NAME}:{version}")
+    model = model_artifact.get_entry(name="model_best.pth.tar").download()
 
-    return torch.load(model_artifact.file(), map_location="cpu")
+    indices_map = defaultdict()
+    labels = get_dummy_labels()
+    for f in model_artifact.files():
+        if (entry := f.download(replace=True)) and ".json" in entry.name:
+            indices_map = {int(k): labels[int(v)] for k, v in json.load(entry).items()}
+
+    return torch.load(model, weights_only=True, map_location="cpu"), lambda: indices_map
 
 
 @functools.cache
-def get_wandb_model(version: str = "latest"):
+def get_wandb_model(version: str = "latest") -> tuple[typing.Callable, typing.Callable]:
     """
     Downloads and initializes the model from W&B with a
     given version.
 
     :param version: the version of the model to use.
-    :returns: a loaded and initialized model.
+    :returns: a loaded and initialized model and a callable returning a label mapping.
     """
-    wandb_model_checkpoint = download_wandb_model(version)
+    wandb_model_checkpoint, get_labels = download_wandb_model(version)
     num_classes = wandb_model_checkpoint["args"].num_classes
 
-    model_name = "mobilenetv4_conv_small.e2400_r224_in1k"
+    model_name = "mobilenetv4_hybrid_medium"
     mobilenetv4_model = timm.create_model(model_name, num_classes=num_classes)
 
     mobilenetv4_model.load_state_dict(wandb_model_checkpoint["state_dict"])
@@ -131,7 +138,7 @@ def get_wandb_model(version: str = "latest"):
         probabilities, class_indices = torch.topk(output.softmax(dim=1) * 100, k=k)
         return probabilities, class_indices
 
-    return _run_model
+    return _run_model, get_labels
 
 
 dummy_model = get_dummy_model()
@@ -171,7 +178,7 @@ def about():
     A small 'about' section
     """
     # TODO: Fetch the model name dynamically from W&B artifact registry in the future
-    model_name = "mobilenetv4_conv_small.e2400_r224_in1k"
+    model_name = "mobilenetv4_hybrid_medium"
     return HTTP_200_OK | {
         "model_name": f"{model_name}",
         "repository_url": "https://github.com/DTU-MLOPS-12/dtu_mlops_project",
@@ -216,7 +223,7 @@ def preprocess_image(image_file: fastapi.UploadFile) -> Image:
     return image
 
 
-def compute_results(probs: torch.Tensor, classes: torch.Tensor) -> dict:
+def compute_results(probs: torch.Tensor, classes: torch.Tensor, get_labels=None) -> dict:
     """
     Converts the probability and class indices tensors to a
     human-readable table.
@@ -225,7 +232,8 @@ def compute_results(probs: torch.Tensor, classes: torch.Tensor) -> dict:
     :param classes: class indices tensor
     :returns: a table relating class names to probabilities
     """
-    labels = get_labels()
+    labels = get_labels() if get_labels else get_dummy_labels()
+    logger.debug(f"Using labels: {labels}")
     return {labels[clz.item()]: prob.item() for prob, clz in zip(probs[0], classes[0])}
 
 
@@ -238,10 +246,11 @@ def api_predict(image_file: fastapi.UploadFile):
     check_image(image_file)
     image = preprocess_image(image_file)
 
-    probs, classes = production_model(image)
+    model, get_labels = production_model
+    probs, classes = model(image)
     logger.debug(f"Model computed probabilities: '{probs}' with corresponding class indices: '{classes}'")
 
-    results = compute_results(probs, classes)
+    results = compute_results(probs, classes, get_labels=get_labels)
     logger.debug(f"Final results: '{results}'")
 
     return HTTP_200_OK | {
@@ -258,12 +267,13 @@ def api_predict(image_file: fastapi.UploadFile):
     check_image(image_file)
     image = preprocess_image(image_file)
 
-    probs, classes = preproduction_model(image)
+    model, get_labels = preproduction_model
+    probs, classes = model(image)
     logger.debug(
         f"(Pre-production) Model computed probabilities: '{probs}' with corresponding class indices: '{classes}'"
     )
 
-    results = compute_results(probs, classes)
+    results = compute_results(probs, classes, get_labels=get_labels)
     logger.debug(f"Final results: '{results}'")
 
     return HTTP_200_OK | {
