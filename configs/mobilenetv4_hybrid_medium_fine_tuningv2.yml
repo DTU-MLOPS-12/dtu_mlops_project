@@ -128,7 +128,7 @@ std: null
 sync_bn: false
 synchronize_step: false
 target_key: null
-torchcompile: null
+torchcompile: inductor
 torchscript: false
 train_crop_mode: null
 train_interpolation: random
