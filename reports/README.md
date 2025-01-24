@@ -145,7 +145,7 @@ s233489, jonnil, s091969, s233480
 
 The third-party framework [TIMM (PyTorch Image Models) from Huggingface](https://github.com/huggingface/pytorch-image-models) was used in our project. We used functionality from the package to access a wide variety of models and the ImageNet-1k dataset. By doing this, we could quickly experiment with different architectures, sizes and finetune a image classification model for our specific task.
 
-As a starting point, we used a pre-made `train.py` script from the TIMM codebase, which provides a very high level of parameter customization either through command-line arguments or via a configuration YAML-file specifying the desired parameters. This script was modified with additional functionality related to our MLOps pipeline. As an example, an option to automatically detect the number of classes in the input data was added, such that a change in the input data would automatically be handled in the model construction. 
+As a starting point, we used a pre-made `train.py` script from the TIMM codebase, which provides a very high level of parameter customization either through command-line arguments or via a configuration YAML-file specifying the desired parameters. This script was modified with additional functionality related to our MLOps pipeline. As an example, an option to automatically detect the number of classes in the input data was added, such that a change in the input data would automatically be handled in the model construction. Furthermore, we extended the script's logging functionality by adding additional logging of information to Weights & Biases, both related to the model configuration parameters and training metrics.
 
 ## Coding environment
 
@@ -399,7 +399,7 @@ For all our experiments, we tracked several metrics related to the model trainin
   
 * **ROC (Receiver Operating Characteristic) Curves**: ROC curves show how well the model is able to classify positive and negative examples. We opted to log a ROC curve for each training epoch that shows the per-class performance. This can help to understand the model's performance across different classes and identifying any potential issues.
 
-Below we have shown two screenshots of experiments in W&B. The two experiments are two training runs done with different GPUs (P4 and V100). The first screenshot shows some loss and accuracy curves, while the second shows the ROC curves for a subset of epochs.
+Below we have shown two screenshots of experiments in W&B. The two experiments are two training runs done with different number of epochs (30 vs 200). The first screenshot shows some loss and accuracy curves along with other metrics logged during training (e.g. learning rate), while the second shows the ROC curves for a subset of epochs.
 
 ![wandb figure 1](figures/wandb_1.png)
 ![wandb figure 2](figures/wandb_2.png)
