@@ -773,6 +773,6 @@ with automatic publication of test results to W&B using the `wandb` API.
 
 * Student s091969 was responsible for version control of data and GCE bucket integration. Setup Continuous Machine Learning using GitHub Actions workflows with Vertex AI and docker in the training pipeline.
 
-* Student s233480 developed the frontend application in Streamlit and automatic code check using `ruff` and assisted with other GitHub Actions workflows. He also contributed to developing the `fastapi` backend application. He was involved in setting up the Google Cloud project from the beginning including the relevant services used while keeping track of the credits used. He did set up monitoring using alerts on Google Cloud.
+* Student s233480 developed the frontend application using `streamlit` and automatic code check using `ruff` and assisted with other GitHub Actions workflows. He also contributed to developing the `fastapi` backend application. He was involved in setting up the Google Cloud project from the beginning including the relevant services used while keeping track of the credits used. He did set up monitoring using alerts on Google Cloud.
 
 Lastly, it is worth to notice that we have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code. These tools was helpfull as it could speed up the development process through the project and to overcome challenges more efficiently.
