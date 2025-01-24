@@ -26,66 +26,7 @@ Resources:
 - [Structure created using mlops_template](https://github.com/SkafteNicki/mlops_template)
 
 
-## MLOps pipeline
-
-The MLOps pipeline is semi-automatic with a "Human in the Loop" and consists of the following steps:
-
-1. Commits a new version of the dataset (see the `Dataset` below) and create a GitHub PR. This will automatically initiate the training pipeline in a [GitHub Action nr. 1](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/workflows/data_version_control.yml).
-
-2. When the training pipeline is complete, newly trained models and matrices are available at [Weights & Biases (W&B)](https://wandb.ai/dtu_mlops_project_grp_12/mlops_project/) for review. If the predefined hyperparameters have resulted in a satisfactory model, the model is sent to load testing by adding alias `preprod` to the model in W&B and activate [GitHub Action nr. 2](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/workflows/load_test.yaml). Alternatively custom training parameters can be activated using this [GitHub action](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/workflows/start_vertex_ai.yaml).
-
-3. The load test results are published to [W&B](https://wandb.ai/dtu_mlops_project_grp_12/mlops_project/), where they are inspected with an emphasis on inference performance. If satisfied, tag the model with `prod` in W&B and activate [GitHub Action nr. 3](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/workflows/restart_api.yaml) to restart the API service in the production environment. 
-
-The new image classification model is now deployed. Visit the [frontend app](https://streamlit-app-ypqrr5d7oa-ez.a.run.app/) to use the model. Yay!
-
-Note, that this workflow is for the model only. Development, testing and deployment of the services (frontend, API, etc.) are completely detached from
-the model, such that they can effectively be developed and improved in parallel without mutual dependence.
-
-## Dataset
-
-Clone the git project repo and installing requremnts (see `Dev Environment Setup` below) you are ready to expand the classification model.
-
-1. Identify relevant new [ImageNet-1k Class IDs](https://deeplearning.cms.waikato.ac.nz/user-guide/class-maps/IMAGENET/) to expand the dataset with and add to `configs/vehicle_classes.json` 
-2. Run the `data.py`to download the dataset to the `processed` folder. Add Huggingface as enviroment variable named `HUGGING_FACE_HUB_TOKEN` and run:
-
-- Download validation dataset for classes 
-    ```bash
-    python src/dtu_mlops_project/data.py process-splits --splits validation --buffer-size 10000 
-    ```
-
-- Download train dataset
-    ```bash
-    python src/dtu_mlops_project/data.py process-splits --splits train --buffer-size 10000
-    ```
-
-Or build the docker images and run
-
-- Download validation dataset for classes 
-    ```bash
-    docker run --rm --name experiment1 -e HUGGING_FACE_HUB_TOKEN=${{ secrets.HUGGING_FACE_HUB_TOKEN }}  -v data:/data/ -v configs:/configs data:latest process-splits --splits validation --buffer-size 10000 
-    ```
-
-- Download train dataset
-    ```bash
-    docker run --rm --name experiment1 -e HUGGING_FACE_HUB_TOKEN=${{ secrets.HUGGING_FACE_HUB_TOKEN }}  -v data:/data/ -v configs:/configs data:latest process-splits --splits train --buffer-size 10000
-    ```
-
-3. Add dataset in a new feature branch using `DVC` to the `processed` folder
-
-    ```bash
-    dvc add data/processed/timm-imagenet-1k-wds-subset/
-    git add .
-    git commit -m "New dataset"
-    git tag -a "v2.0" -m "data v2.0"
-    dvc push --no-run-cache
-    git push
-    ```
-
-
-
-## MLops tools
-
-### Dev Environment Setup
+## Installation
 - Setup first time
     ```bash
     cd /dtu_mlops_project 
@@ -112,20 +53,6 @@ Or build the docker images and run
     cd /dtu_mlops_project
     deactivate
     python3 -m venv --clear env
-    ```
-
-### Linting
-
-- This [page](https://docs.astral.sh/ruff/) contains an overview of the Ruff tool, which is an extremely fast code linter and formatter. As an example, you can run the following:
-
-    ```bash
-    ruff check tasks.py
-    ```
-
-### Typing
-This [cheat sheet](https://mypy.readthedocs.io/en/stable/cheat_sheet_py3.html) is a good resource on typing. Run [mypy](https://mypy.readthedocs.io/en/stable/index.html) on the `tasks.py` file
-    ```bash
-    mypy tasks.py
     ```
 
 ## Invoke Commands
@@ -187,23 +114,80 @@ Information about all available executable tasks:
     invoke serve-docs
     ```
 
-### CLI's
 
-This project comes with a few different scripts, each with their own options:
+## MLOps pipeline
 
-### `data.py`
+The MLOps pipeline is semi-automatic with a "Human in the Loop" and consists of the following steps:
 
-### `evaluate.py`
+1. Commits a new version of the dataset (see the `Dataset` below) and create a GitHub PR. This will automatically initiate the training pipeline in a [GitHub Action nr. 1](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/workflows/data_version_control.yml).
 
-### `model.py`
+2. When the training pipeline is complete, newly trained models and matrices are available at [Weights & Biases (W&B)](https://wandb.ai/dtu_mlops_project_grp_12/mlops_project/) for review. If the predefined hyperparameters have resulted in a satisfactory model, the model is sent to load testing by adding alias `preprod` to the model in W&B and activate [GitHub Action nr. 2](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/workflows/load_test.yaml). Alternatively custom training parameters can be activated using this [GitHub action](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/workflows/start_vertex_ai.yaml).
 
-### `train.py`
+3. The load test results are published to [W&B](https://wandb.ai/dtu_mlops_project_grp_12/mlops_project/), where they are inspected with an emphasis on inference performance. If satisfied, tag the model with `prod` in W&B and activate [GitHub Action nr. 3](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/workflows/restart_api.yaml) to restart the API service in the production environment. 
 
-### `visualize.py`
+The new image classification model is now deployed. Visit the [frontend app](https://streamlit-app-ypqrr5d7oa-ez.a.run.app/) to use the model. Yay!
+
+Note, that this workflow is for the model only. Development, testing and deployment of the services (frontend, API, etc.) are completely detached from
+the model, such that they can effectively be developed and improved in parallel without mutual dependence.
+
+### Change MLOps Pipeline
 
 
+- Start Draw.io server locally
+    ```shell
+    docker run -it --rm --name="draw" -p 8080:8080 -p 8443:8443 jgraph/drawio
+    ```
 
-### GCP
+- Service url `http://localhost:8080`
+
+- Open file path
+
+    ```shell
+    reports/figures/mlops_pipeline.png
+    ```
+
+## Dataset
+
+Clone the git project repo and installing requremnts (see [dev environment setup](#dev-environment-setup) below) you are ready to expand the classification model.
+
+1. Identify relevant new [ImageNet-1k Class IDs](https://deeplearning.cms.waikato.ac.nz/user-guide/class-maps/IMAGENET/) to expand the dataset with and add to `configs/vehicle_classes.json` 
+2. Run the `data.py`to download the dataset to the `processed` folder. Add Huggingface as enviroment variable named `HUGGING_FACE_HUB_TOKEN` and run:
+
+- Download validation dataset for classes 
+    ```bash
+    python src/dtu_mlops_project/data.py process-splits --splits validation --buffer-size 10000 
+    ```
+
+- Download train dataset
+    ```bash
+    python src/dtu_mlops_project/data.py process-splits --splits train --buffer-size 10000
+    ```
+
+Or build the docker images and run
+
+- Download validation dataset for classes 
+    ```bash
+    docker run --rm --name experiment1 -e HUGGING_FACE_HUB_TOKEN=${{ secrets.HUGGING_FACE_HUB_TOKEN }}  -v data:/data/ -v configs:/configs data:latest process-splits --splits validation --buffer-size 10000 
+    ```
+
+- Download train dataset
+    ```bash
+    docker run --rm --name experiment1 -e HUGGING_FACE_HUB_TOKEN=${{ secrets.HUGGING_FACE_HUB_TOKEN }}  -v data:/data/ -v configs:/configs data:latest process-splits --splits train --buffer-size 10000
+    ```
+
+3. Add dataset in a new feature branch using `DVC` to the `processed` folder
+
+    ```bash
+    dvc add data/processed/timm-imagenet-1k-wds-subset/
+    git add .
+    git commit -m "New dataset"
+    git tag -a "v2.0" -m "data v2.0"
+    dvc push --no-run-cache
+    git push
+    ```
+
+
+## GCP
 
 - Login
     ```bash
@@ -222,8 +206,7 @@ This project comes with a few different scripts, each with their own options:
     ```
 
 
-
-#### DVC Setup with Public Remote Storage
+### DVC Setup with Public Remote Storage
 
 - Initialized DVC repository.
     ```bash
@@ -304,18 +287,4 @@ You can also use `docker compose` to build and run multiple containers at once.
 subsequently start them.
 
 
-### MLOps pipeline overview
 
-
-- Start Draw.io server locally
-    ```shell
-    docker run -it --rm --name="draw" -p 8080:8080 -p 8443:8443 jgraph/drawio
-    ```
-
-- Service url `http://localhost:8080`
-
-- Open file path
-
-    ```shell
-    reports/figures/mlops_pipeline.png
-    ```
