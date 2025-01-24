@@ -698,7 +698,7 @@ Furthermore, we experimented with quantization of our models to improve inferenc
 >
 > Answer:
 
-![MLOps Architecture](figures/mlops.drawio.png)
+![MLOps Architecture](figures/mlops_pipeline.png)
 
 The diagram illustrates the overall architecture of the MLOps system, highlighting the various services and components involved in our project.
 
