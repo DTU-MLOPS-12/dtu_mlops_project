@@ -739,13 +739,13 @@ Upon validation, the user can proceed to deploy the production model and applica
 >
 > Answer:
 
-Some of our biggest challenges in the project were using Google Cloud Platform (GCP) services and managing quotas. The reason for this was the complexity and learning curve associated with GCP, as well as the limitations imposed by default quotas.
+Some of our biggest challenges in the project were using Google Cloud Platform (GCP) services and managing quotas. The reason for this was the complexity ssociated with GCP, as well as the limitations imposed by default quotas.
 
-We spent some time understanding and configuring various GCP services such as Compute Engine, Vertex AI, Cloud Run, and Cloud Storage. Each service had its own set of configurations and requirements, which required thorough documentation and experimentation to get right. Additionally, managing quotas was a challenge as we frequently encountered limitations on resources for GPUs.
+We spent some time understanding and configuring various GCP services such as Compute Engine, Vertex AI, Cloud Run, and Cloud Storage. Each service had its own set of configurations and requirements, which required us to go through documentation and make experimentations along with the exercises to get right. Additionally, it was challenging to managing quotas as we frequently encountered limitations on resources for GPUs. This resulted in that we multiple times should sent a quota request to Google Cloud Support and wait for their actions which slowed down our work.
 
-Another challenge was ensuring the reproducibility of our experiments. We had to carefully manage our dependencies, configuration files, and data versions to ensure that our experiments could be reliably reproduced. This involved setting up DVC for data version control, using configuration files for experiments, and logging all relevant information in Weights & Biases.
+Another challenge was ensuring the reproducibility of our experiments. We did carefully manage our dependencies, configuration files, and data versions to ensure that our experiments could be reproduced. This involved setting up DVC for data version control, using configuration files for experiments, and logging all relevant information in Weights & Biases. Using these frameworks was challenging because they required some time to set up correctly for our project.
 
-We also faced difficulties in setting up continuous integration and deployment (CI/CD) pipelines. Ensuring that our code was automatically tested, built, and deployed required a deep understanding of GitHub Actions and the integration with GCP services. We spent some time on debugging and refining our CI/CD workflows to ensure they worked seamlessly.
+We faced some difficulties in setting up continuous integration and deployment (CI/CD) pipelines. Ensuring that our code was automatically tested, built, and deployed required a deeper understanding of GitHub Actions and the integration with GCP services. Furthermore, we spent some time on debugging and refining our CI/CD workflows to ensure they worked seamlessly and effectively reducing the amounts of GitHub Action minutes used.
 
 Model training experiments were conducted on a Compute Engine with GPU and SSH, enabling parallel work on the automation of the Vertex AI pipeline used in the final model training phase. Integrating the dataset download, W&B keys, and updating the base Docker image to `nvidia/cuda-runtime` was especially time-consuming tasks, necessary for Vertex AI `custom-jobs create` to work in the pipeline.
 
