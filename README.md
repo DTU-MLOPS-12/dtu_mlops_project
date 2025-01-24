@@ -175,8 +175,7 @@ Or build the docker images and run
     git push
     ```
 
-
-## GCP
+## Google Cloud Platform
 
 - Login
     ```bash
@@ -241,7 +240,7 @@ Or build the docker images and run
     git push
     ```
 
-## Building and pushing an image to the artifact registry
+### Building and pushing an image to the artifact registry
 
 - To build an OCI image using `docker`, simply run the following from the root directory of the project:
 
