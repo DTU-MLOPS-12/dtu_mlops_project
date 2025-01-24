@@ -365,17 +365,17 @@ This command will execute the training process using the specified configuration
 >
 > Answer:
 
-We ensured the reproducibility of our experiments by using configuration files and logging all relevant information. A successful training run of a TIMM model outputs to a directory a set files containing:
+We ensured the reproducibility of our experiments by including configuration files and dataset in the train Docker image and by logging all relevant information to Weights & Biases. A successful training experiment using the MLOps pipeline outputs:
 
 * The config file
 * Training run statistics per epoch (loss, accuracy etc.)
 * The final output model
 
-Given this, any experiment could be reproduced by re-running the training with a given config file. Furthermore, by logging the model training in Weights & Biases, we could access any previous model and its configuration. This logging includes metrics, metadata and artifacts, which ensures that we can trace back and reproduce any experiment.
+Given this, any experiment could be reproduced by re-running the training Docker image by saving the image sha256 DIGEST. Furthermore, by logging the model training in Weights & Biases, we could access any previous model and its configuration. This logging includes metrics, metadata and artifacts, which ensures that we can trace back and reproduce any experiment.
 
 To reproduce an experiment, one would have to:
 
-1. Retrieve the relevant configuration file.
+1. Retrieve the relevant configuration file and dataset version.
 2. Use the configuration file to re-run the training script.
 3. Compare the new training logs with the old training logs stored in Weights & Biases.
 
@@ -757,7 +757,7 @@ with automatic publication of test results to W&B using the `wandb` API.
 
 * Student jonnil focused on development of the model training, testing new functionalities both locally and in Google Cloud's Compute Engine, as well as running training jobs through Vertex AI. He also ensured correct logging of model checkpoints and training statistics to Weigths & Biases.
 
-* Student s091969 was responsible for version control of data and GCE bucket integration. Setup Continuous Machine Learning using GitHub Actions workflows with Vertex AI and docker in the training pipeline.
+* Student s091969 was responsible for version control of data and GCP bucket integration. Setup Continuous Machine Learning using GitHub Actions workflows with Vertex AI and docker in the training pipeline.
 
 * Student s233480 developed the frontend application using `streamlit` and automatic code check using `ruff` and assisted with other GitHub Actions workflows. He also contributed to developing the `fastapi` backend application. He was involved in setting up the Google Cloud project from the beginning including the relevant services used while keeping track of the credits used. He did set up monitoring using alerts on Google Cloud.
 
