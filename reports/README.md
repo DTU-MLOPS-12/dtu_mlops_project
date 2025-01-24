@@ -689,11 +689,11 @@ However, working in GCP required careful monitoring of resource usage to manage 
 >
 > Answer:
 
-We implemented a frontend for our API using `streamlit` to improve user-friendliness for end-users.
+We implemented a frontend for our API using `streamlit` to improve user-friendliness for end-users to validate the solution.
 The frontend provides an easy way to use all of the different models that the API exposes to perform
 inference on images with a few clicks:
 
-![streamlit](figures/streamlit.png)
+![streamlit](figures/frontend_app.png)
 
 Furthermore, we experimented with quantization of our models to improve inference speed and reduce the model size. This involved running [quantized TIMM models](https://huggingface.co/blog/timm-transformers#running-quantized-timm-models) and using `dynamic_quantization` from [torch.quantization](https://pytorch.org/docs/stable/quantization.html) to convert our models to a quantized version. Unfortunately, the TIMM framework did not provide the `MobileNetV4` model through the `transformers` library and `torch.quantization` was not able to do `dynamic_quantization` on our model checkpoint.
 
@@ -769,7 +769,7 @@ with automatic publication of test results to W&B using the `wandb` API.
 
 * Student jonnil focused on development of the model training, testing new functionalities both locally and in Google Cloud's Compute Engine, as well as running training jobs through Vertex AI. He also ensured correct logging of model checkpoints and training statistics to Weigths & Biases.
 
-* Student s091969 was responsible for version control of data and GCE Bucket integration. Setup Continuous Machine Learning using GitHub Actions workflows with Vertex AI and docker in the training pipeline.
+* Student s091969 was responsible for version control of data and GCE bucket integration. Setup Continuous Machine Learning using GitHub Actions workflows with Vertex AI and docker in the training pipeline.
 
 * Student s233480 contributed to
 
