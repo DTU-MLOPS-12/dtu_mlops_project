@@ -707,21 +707,13 @@ Furthermore, we experimented with quantization of our models to improve inferenc
 
 The diagram illustrates the overall architecture of the MLOps system, highlighting the various services and components involved in our project.
 
-1. **Local Development**: The starting point of the model begins with local development, where team members write and test code on their local machines. We use GitHub for version control, ensuring that all changes are tracked and managed effectively.
+Taking the starting point of the process is the local development environment, the user can interact with the code repository hosted on GitHub. Data versioning is managed using DVC (Data Version Control), which syncs datasets to Google Cloud Storage buckets. Any changes in the dataset or code are committed and pushed to the repository.
 
-2. **GitHub Actions**: Upon committing and pushing code to GitHub, GitHub Actions are triggered. These actions include linting, running unit tests, and building Docker images. The built images are then pushed to the Google Artifact Registry.
+Once changes to DVC are pushed, GitHub Actions is triggered to automate tasks such for building Docker images. The Docker images are then stored in the Google Artifact Registry for deployment.
 
-3. **Google Cloud Storage**: Our datasets are stored in Google Cloud Storage, which integrates with DVC for version control. This ensures that we can manage and track changes to our data over time.
+The pipeline leverages Vertex AI for model training and experimentation. When a data update occurs, Vertex AI starts training the updated model. Experiment results, metrics, and evaluations are logged to Weights & Biases (W&B) to track progress and compare model performance. The trained model is tested in a pre-production environment by deploying it as a test application using Google Cloud Run. Locust is used for load testing during this stage.
 
-4. **Vertex AI**: For model training, we use Vertex AI. The training jobs are configured to use the Docker images stored in the Artifact Registry. Vertex AI provides the necessary computational resources, including GPUs, to train our models efficiently.
-
-5. **Cloud Run**: Once the models are trained, they are deployed using Cloud Run. Cloud Run allows us to deploy containerized applications in a serverless environment, ensuring scalability and ease of management.
-
-6. **FastAPI and Streamlit**: Our API, built with FastAPI, is deployed on Cloud Run. This API serves as the backend for our application, handling inference requests. Additionally, we have a frontend built with Streamlit, which provides a user-friendly interface for interacting with the API.
-
-7. **Monitoring and Logging**: We use Google Cloud Monitoring to track the performance and health of our deployed applications. This includes setting up alerts for any anomalies or issues that may arise.
-
-8. **Continuous Integration and Deployment (CI/CD)**: The entire process is automated through CI/CD pipelines, ensuring that any changes to the codebase are automatically tested, built, and deployed. This automation enhances the efficiency and reliability of our development workflow.
+Upon validation, the user can proceed to deploy the production model and applications via Cloud Run. The FastAPI service is used to provide REST APIs, while a Streamlit frontend enables user interaction.
 
 
 
