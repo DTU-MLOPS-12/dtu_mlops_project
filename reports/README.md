@@ -456,7 +456,7 @@ The link to the training dockerfile can be found [here.](https://github.com/DTU-
 
 The groups debugging methods varied among group members. Print statements were quickly used to trace the flow of the code and identify issues. Others also used more advanced tools like interactive debugging sessions (run and debug) in Visual Studio Code or in general using the Python debugger `pdb`. Additionally, we used propper logging to capture detailed information about the execution of our code when running our training script in Google Cloud. The idea was that it could help us to diagnose issues and monitoring the state of the program while running.
 
-Some group member performed profiling using `cProfile` to identify performance bottlenecks in our code as it could help us to optimize the code execution time.
+Our group didn't do profiling using `cProfile` or PyTorch profiling to identify performance bottlenecks in our code. We believe that our code could benefit from profiling to identify potential bottlenecks and optimize performance. It could have been useful for us especially to optimize the training pipeline and ensuring that our inference processes are as efficient as possible.
 
 
 ## Working in the cloud
