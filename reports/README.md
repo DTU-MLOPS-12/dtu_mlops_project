@@ -750,16 +750,16 @@ Model training experiments were conducted on a Compute Engine with GPU and SSH, 
 > *We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.*
 > Answer:
 
-All group members contributed to the source code and the project in generel. However we highligt the focus of the invidivual contributions:
+All group members contributed to the source code and the project in generel. However, here we highlight the focus of each member:
 
 * Student s233489 was in charge of developing the APIs using `fastapi` and a large part of the Continuous Integration/Continuous Deployment (CI/CD) pipeline using GH actions and docker to build,
-push and deploy containerized applications to Google Cloud Run. Furthermore, s233489 has also contributed with integration tests for said API, pre-commit config, and load testing using `locust`
+push and deploy containerized applications to Google Cloud Run. Furthermore, s233489 has also contributed to integration tests for said API, pre-commit config, and load testing using `locust`
 with automatic publication of test results to W&B using the `wandb` API.
 
-* Student jonnil focused on development of the model training, testing new functionalities both locally and in Google Cloud's Compute Engine, as well as running training jobs through Vertex AI. He also ensured correct logging of model checkpoints and training statistics to Weigths & Biases.
+* Student jonnil focused on development of the model training, testing new functionalities both locally and in Google Cloud's Compute Engine, as well as running training jobs through Vertex AI. He also ensured correct logging of model checkpoints and training statistics to W&B.
 
-* Student s091969 was responsible for version control of data and GCP bucket integration. Setup Continuous Machine Learning using GitHub Actions workflows with Vertex AI and docker in the training pipeline.
+* Student s091969 was responsible for version control of data and GCP bucket integration, and set up Continuous Machine Learning using GitHub Actions workflows with Vertex AI and docker in the training pipeline.
 
-* Student s233480 developed the frontend application using `streamlit` and automatic code check using `ruff` and assisted with other GitHub Actions workflows. He also contributed to developing the `fastapi` backend application. He was involved in setting up the Google Cloud project from the beginning including the relevant services used while keeping track of the credits used. He did set up monitoring using alerts on Google Cloud.
+* Student s233480 developed the frontend application using `streamlit` and automatic code check using `ruff`, and assisted with other GitHub Actions workflows. He also contributed to developing the `fastapi` backend application. He was involved in setting up the Google Cloud project from the beginning including the relevant services used while keeping track of the credits used. He also set up monitoring using alerts in Google Cloud.
 
-Lastly, it is worth to notice that we have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code. These tools was helpfull as it could speed up the development process through the project and to overcome challenges more efficiently.
+Lastly, it is worth mentioning that we have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code. These tools were helpful as they could speed up the development process through the project and helped overcome challenges more efficiently.
