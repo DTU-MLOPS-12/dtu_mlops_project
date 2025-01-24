@@ -64,7 +64,7 @@ jsd_loss: false
 layer_decay: null
 local_rank: 0
 log_interval: 50
-log_wandb: false
+log_wandb: true
 lr: 0.001
 lr_base: 0.1
 lr_base_scale: ''
@@ -95,6 +95,7 @@ no_ddp_bb: false
 no_prefetcher: false
 no_resume_opt: false
 num_classes: null
+infer_classcount: true
 opt: nadamw
 opt_betas: null
 opt_eps: null
@@ -127,7 +128,7 @@ std: null
 sync_bn: false
 synchronize_step: false
 target_key: null
-torchcompile: inductor
+torchcompile: null
 torchscript: false
 train_crop_mode: null
 train_interpolation: random
@@ -139,7 +140,7 @@ val_num_samples: null
 val_split: validation
 validation_batch_size: null
 vflip: 0.0
-warmup_epochs: 20
+warmup_epochs: 5
 warmup_lr: 0.0
 warmup_prefix: true
 weight_decay: 0.1
