@@ -317,5 +317,5 @@ subsequently start them.
 - Open file path
 
     ```shell
-    reports/figures/mlops.drawio.png
+    reports/figures/mlops_pipeline.png
     ```
