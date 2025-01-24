@@ -55,54 +55,6 @@ Resources:
     python3 -m venv --clear env
     ```
 
-## Invoke Commands
-Information about all available executable tasks:
-    ```bash
-    invoke --list
-    ```
-
-### Setup Commands
-- Create a new conda environment for the project:
-    ```bash
-    invoke create-environment
-    ```
-
-- Install project requirements from requirements.txt:
-    ```bash
-    invoke requirements
-    ```
-
-- Install development requirements from requirements_dev.txt:
-    ```bash
-    invoke dev-requirements
-    ```
-
-### MLOps Commands
-- Execute the data preprocessing pipeline, which includes data cleaning, normalization, and feature engineering:
-    ```bash
-    invoke preprocess-data
-    ```
-
-- Train the machine learning model using the preprocessed data and specified configuration settings:
-    ```bash
-    invoke train
-    ```
-
-- Run the test suite to evaluate the performance and accuracy of the trained model:
-    ```bash
-    invoke test
-    ```
-
-- Build Docker images for the project, including environments for training and API deployment:
-    ```bash
-    invoke docker-build
-    ```
-
-- Run and serve the backend API
-    ```bash
-    invoke runserver
-    ```
-
 
 ## MLOps pipeline
 
@@ -174,6 +126,56 @@ Or build the docker images and run
     dvc push --no-run-cache
     git push
     ```
+
+
+## Invoke Commands
+Information about all available executable tasks:
+    ```bash
+    invoke --list
+    ```
+
+### Setup Commands
+- Create a new conda environment for the project:
+    ```bash
+    invoke create-environment
+    ```
+
+- Install project requirements from requirements.txt:
+    ```bash
+    invoke requirements
+    ```
+
+- Install development requirements from requirements_dev.txt:
+    ```bash
+    invoke dev-requirements
+    ```
+
+### MLOps Commands
+- Execute the data preprocessing pipeline, which includes data cleaning, normalization, and feature engineering:
+    ```bash
+    invoke preprocess-data
+    ```
+
+- Train the machine learning model using the preprocessed data and specified configuration settings:
+    ```bash
+    invoke train
+    ```
+
+- Run the test suite to evaluate the performance and accuracy of the trained model:
+    ```bash
+    invoke test
+    ```
+
+- Build Docker images for the project, including environments for training and API deployment:
+    ```bash
+    invoke docker-build
+    ```
+
+- Run and serve the backend API
+    ```bash
+    invoke runserver
+    ```
+
 
 ## Google Cloud Platform
 
