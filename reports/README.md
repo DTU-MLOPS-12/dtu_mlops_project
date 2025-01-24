@@ -747,6 +747,8 @@ Another challenge was ensuring the reproducibility of our experiments. We had to
 
 We also faced difficulties in setting up continuous integration and deployment (CI/CD) pipelines. Ensuring that our code was automatically tested, built, and deployed required a deep understanding of GitHub Actions and the integration with GCP services. We spent some time on debugging and refining our CI/CD workflows to ensure they worked seamlessly.
 
+Model training experiments were conducted on a Compute Engine with GPU and SSH, enabling parallel work on the automation of the Vertex AI pipeline used in the final model training phase. Integrating the dataset download, W&B keys, and updating the base Docker image to `nvidia/cuda-runtime` was especially time-consuming tasks, necessary for Vertex AI `custom-jobs create` to work in the pipeline.
+
 ### Question 31
 
 > **State the individual contributions of each team member. This is required information from DTU, because we need to**
