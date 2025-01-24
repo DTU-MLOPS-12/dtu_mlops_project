@@ -165,7 +165,7 @@ As a starting point, we used a pre-made `train.py` script from the TIMM codebase
 >
 > Answer:
 
-The `pip` package manager was used for managing our dependencies. The list of dependencies was manually maintained in the `requirements.txt` and `requirements_dev.txt` files as well as the `requirements` files in the `deps` folder. Requirements in the `deps` folder is specific dependencies used when containerizing our applications. 
+The `pip` package manager was used for managing our dependencies. The list of dependencies was manually maintained in the `requirements.txt` and `requirements_dev.txt` files as well as the `requirements` files in the `deps` folder. Requirements in the `deps` folder is specific dependencies used when containerizing our applications.
 
 Assuming that Python 3.12 and `pip` is installed, a complete copy of our development environment can be obtained by cloning the repository and running the following commands. These creates a new virtual environment in Python, activates it and install dependencies using `pip` installer:
 
@@ -181,6 +181,16 @@ pip install -r deps/requirements_train.txt
 
 This will ensures that all packages used in the whole project in their specific versions are installed, hereby replicating the exact environment. Note that currently sub-dependencies are not locked in the requirement files.
 
+Another option is the use `conda`. We provide and `invoke` task for creating a virtual environment using `conda`.
+To do so, simply run:
+
+```bash
+invoke create-environment
+```
+
+This will create the virtual environment `dtu_mlops_project`. You can now enter it, using `conda activate dtu_mlops_project` and proceed to installing dependencies with `pip` as described above
+to avoid a system-wide installation of the packages used in the project.
+
 ### Question 5
 
 > **We expect that you initialized your project using the cookiecutter template. Explain the overall structure of your**
@@ -195,10 +205,10 @@ This will ensures that all packages used in the whole project in their specific 
 >
 > Answer:
 
-Using the cookiecutter template from the [template repository](https://github.com/SkafteNicki/mlops_template), we have 
-filled out the `src`, `data`, `configs`, `dockerfiles`, and `tests` folders specific to our project. We have removed the `notebook` and `models` folder as we did not use Jupyter Notebooks in our project and our models was stored at Weights and Baises Model Registry. Additionally, we have added GitHub workflows in `.github/workflows` for our CI/CD (continues integration and continues development) for building and deploying our project to cloud, data version control in `.dvc` folder, and a specific `deps` folder containing dependencies for specific code in the `src` used in our dockerfiles. 
+Using the cookiecutter template from the [template repository](https://github.com/SkafteNicki/mlops_template), we have
+filled out the `src`, `data`, `configs`, `dockerfiles`, and `tests` folders specific to our project. We have removed the `notebook` and `models` folder as we did not use Jupyter Notebooks in our project and our models was stored at Weights and Baises Model Registry. Additionally, we have added GitHub workflows in `.github/workflows` for our CI/CD (continues integration and continues development) for building and deploying our project to cloud, data version control in `.dvc` folder, and a specific `deps` folder containing dependencies for specific code in the `src` used in our dockerfiles.
 
-The main directories include `src`, `data`, `tests`, `configs`, and `.github/workflows`. The `src` directory contains the core codebase, including scripts for data processing, model training, and inference. The `data` directory is used for data storage and management, while the `tests` directory holds all unit and integration tests to ensure code quality and functionality. 
+The main directories include `src`, `data`, `tests`, `configs`, and `.github/workflows`. The `src` directory contains the core codebase, including scripts for data processing, model training, and inference. The `data` directory is used for data storage and management, while the `tests` directory holds all unit and integration tests to ensure code quality and functionality.
 
 ### Question 6
 
@@ -213,7 +223,7 @@ The main directories include `src`, `data`, `tests`, `configs`, and `.github/wor
 >
 > Answer:
 
-We used `ruff` for checking our code quality and format. `ruff` was used for both linting and formatting our source codebase runned as a workflow for each pull request with GitHub Actions where GitHub. GitHub Action Bot was in charge of automatically apply the changes commiting it to the pull request. Specific rules in `ruff` was applied from `isort`, `Pyflake`, and `Pyupgrade`.
+We used `ruff` for checking our code quality and format. `ruff` was used for both linting and formatting our source codebase runned as a workflow for each pull request with GitHub Actions where GitHub. GitHub Action Bot was in charge of automatically apply the changes commiting it to the pull request. Specific rules in `ruff` were adapted from `isort`, `Pyflake`, and `Pyupgrade`.
 
 Practices implementing code quality and format are crucial in larger projects as they help enhance code consistency and readability. Furtermore, it can help to keep compliance with specific style guides like `PEP 8` for large codebases. This can make it easier for team members to understand and contribute to larger projects where it can be hard to maintain good code quality.
 
@@ -234,7 +244,7 @@ Practices implementing code quality and format are crucial in larger projects as
 >
 > Answer:
 
-In our project, we have implemented XX tests in total counting performance tests with `locust` together unit tests and integration test utilized with `pytest`. We have primarily been testing our API service `api.py` with performance tests (loadtesting) and integration tests as this is the most critical service serving our projects backend.
+In our project, we have implemented 12 automated tests in total counting performance tests with `locust` together unit tests and integration test executed with `pytest`. We have primarily been testing our API service `api.py` with performance tests (loadtesting) and integration tests as this is the most critical service serving our projects backend.
 
 The implemented unit tests is for `data.py` and `train.py`. These tests ensure that the data preprocessing and model training functions work as expected.
 
@@ -257,11 +267,11 @@ From our GitHub Actions CI pipeline, we can inspect our code coverage results:
 
 Our codebase have a total code coverage of 39% including our most essential code in our project. Data unit test has a coverage on 42% and the train unit test has a coverage on 39%. It indicates that less than half of our code is being tested and tells that over half of our code are not covered by any tests.
 
-The API integration test has a coverage on 77%. Note that this is an integration test and the purpose is 
+The API integration test has a coverage on 77%. Note that this is an integration test and the purpose is
 to test the functionality of the interface as a whole, because we're dealing with I/O. So, it is difficult to test in isolation,
 which would require a sophisticated mocking framework, but that would sort of ruin the purpose and turn it into a white box test.
 
-We are far away from 100% coverage so it is clear that our test strategy is insufficient. On the other hand, even if we got 100% code coverage, our test strategy would not be garanteed error-free as we can only verify the presence of known issues, not the absence of unknown.
+We are far away from 100% coverage so it is clear that our test strategy is insufficient. On the other hand, even if we got 100% code coverage, our test strategy would not be guaranteed error-free as we can only verify the presence of known issues, not the absence of unknown ones.
 
 ### Question 9
 
@@ -276,7 +286,7 @@ We are far away from 100% coverage so it is clear that our test strategy is insu
 >
 > Answer:
 
-We made use of both branches and PRs in our project. Each group member had to checkout a new branch when working on features that they wanted to contribute to the GitHub repository. We only allowed changes on main branch for documentational changes (markdown-files) and the group was instructed to not develop any code on the main-branch. To merge a feature branch into main, each team member have to create pull requests (PRs) which were code reviewed by at least one other team member before merging. This way of working helped the group to ensure code quality and enhanced collaboration and discussion of changes. 
+We made use of both branches and PRs in our project. Each group member had to checkout a new branch when working on features that they wanted to contribute to the GitHub repository. We only allowed changes on main branch for documentational changes (markdown-files) and the group was instructed to not develop any code on the main-branch. To merge a feature branch into main, each team member have to create pull requests (PRs) which were code reviewed by at least one other team member before merging. This way of working helped the group to ensure code quality and enhanced collaboration and discussion of changes.
 
 Branches and PRs helped our group keeping version control by isolating new features into specific branches. This helped us also to ensure code quality as all PRs were checked using `ruff` and verified by running a test suite with `pytest` of all implemented tests in the `tests` folder.
 
@@ -295,7 +305,7 @@ Branches and PRs helped our group keeping version control by isolating new featu
 
 DVC was used in the project to ensure version control of our [training](figures/data_samples_train.png) and [validation](figures/data_samples_validation.png) datasets, based on a subset of the ImageNet-1K dataset. Integrating GCP buckets with object versioning and DVC let us combine both cloud storage and version control, resulting in enhanced protection against accidental deletions or modifications. Two primary dataset versions were created, consisting of first 3 ImageNet class IDs (654, 436, 555), and were further expanded with two additional classes (671, 670), resulting in 6,760 items, totaling 367 MB. DVC checkout allowed us to easily retrieve specific versions of tracked data, enabling quick experimentation and debugging.
 
-A GitHub Action is created that triggers the [MLOps training pipeline](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/workflows/data_version_control.yml) when a GitHub pull request includes a data version change. 
+A GitHub Action is created that triggers the [MLOps training pipeline](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/workflows/data_version_control.yml) when a GitHub pull request includes a data version change.
 In the training pipeline the dataset is downloaded during the Docker build process, making it ready for training when the Docker container is deployed to more expensive GPU servers for model training using Vertex AI custom-jobs.
 
 ### Question 11
@@ -313,7 +323,7 @@ In the training pipeline the dataset is downloaded during the Docker build proce
 >
 > Answer:
 
-Our group have organized our continuous integration into separate workflows: one for linting and formatting code, one for running the test suite including unit test cases, and three workflows as a part of the continues building and deployment. 
+Our group have organized our continuous integration into separate workflows: one for linting and formatting code, one for running the test suite including unit test cases, and three workflows as a part of the continues building and deployment.
 
 For the code check workflow we used `ruff` to check for code quality and formatting issues automatically with GitHub Actions bot which is triggered on every pull request or workflow dispatch. An example of a triggered workflow through a pull request can be seen [here](https://github.com/DTU-MLOPS-12/dtu_mlops_project/actions/runs/12905630833/job/35985228785).
 
@@ -338,7 +348,7 @@ We also made use of caching in our GitHub workflows to speed up the installation
 >
 > Answer:
 
-We used config files for training our models to ensure reproducibility. These config files were adapted from the ones provided by Ross Wightman, the creator of the TIMM library (found [here](https://gist.github.com/rwightman/f6705cb65c03daeebca8aa129b1b94ad)). 
+We used config files for training our models to ensure reproducibility. These config files were adapted from the ones provided by Ross Wightman, the creator of the TIMM library (found [here](https://gist.github.com/rwightman/f6705cb65c03daeebca8aa129b1b94ad)).
 
 As an example, a config file can be provided to our training script as follows:
 ```bash
@@ -394,9 +404,9 @@ To reproduce an experiment, one would have to:
 For all our experiments, we tracked several metrics related to the model training. These include:
 
 * **Training and Validation Loss/Accuracy Curves**: These indicate if the model is learning from the data. They are also essential for diagnosing issues such as overfitting or underfitting. Additionally, these curves can also be useful for tuning hyperparameters such as the learning rate, as too high learning rates will often lead to noisy loss curves and the training getting stuck in local minima.
-  
+
 * **Histogram of Model Gradients**: This metric is useful to identify issues such as vanishing gradients, which can impede the models learning process. By logging the distribution of gradients, we can ensure that the model is learning effectively.
-  
+
 * **ROC (Receiver Operating Characteristic) Curves**: ROC curves show how well the model is able to classify positive and negative examples. We opted to log a ROC curve for each training epoch that shows the per-class performance. This can help to understand the model's performance across different classes and identifying any potential issues.
 
 Below we have shown two screenshots of experiments in W&B. The two experiments are two training runs done with different number of epochs (30 vs 200). The first screenshot shows some loss and accuracy curves along with other metrics logged during training (e.g. learning rate), while the second shows the ROC curves for a subset of epochs.
@@ -424,7 +434,7 @@ In this project, we developed several docker images that was build to containeri
 * **Backend Container**: A Dockerfile for building and running a container for the backend application utilizing the FastAPI framework.
 * **Frontend Container**: A Dockerfile for building and running a container for the frontend application utilizing the Streamlit framework.
 
-The Docker images of applications were ran with either Vertex AI or Cloud Run after they have been builded and uploaded to the artifact registry on Google Cloud Platform. 
+The Docker images of applications were ran with either Vertex AI or Cloud Run after they have been builded and uploaded to the artifact registry on Google Cloud Platform.
 
 For example, a local run of the training script docker image with 5 epochs, it could be leveraged with the command:
 ```bash
@@ -481,7 +491,7 @@ We used the following GCP services in our project:
 3. Artifact Registry: Used for storing and managing Docker images.
 4. Vertex AI: Leveraged for the training pipeline using a `ai custom-jobs` command with a Nvidia V100 GPU.
 5. Cloud Run: Deployed our containerized applications for scalable and managed serverless execution e.g. frontend and backend utilizing Streamlit and FastAPI.
-6. Cloud Monitoring: Implemented to monitor the performance and health of our deployed applications. 
+6. Cloud Monitoring: Implemented to monitor the performance and health of our deployed applications.
 
 ### Question 18
 
@@ -597,7 +607,7 @@ to our Google Artifact registry (see `.github/workflows/deploy_api.yaml` for ref
 Similar actions exists for the other services including `frontend`, `data` and `train`.
 
 The API can be interacted with either programmatically, using e.g. `curl -X POST -F "image_file=@<image-file>.{.png,.svg,.jpeg} <url/to/endpoint>" `
-(note that the API expects content of the type `multipart/form-data` as specified by RFC 2388 with the form-field name `image_file`), 
+(note that the API expects content of the type `multipart/form-data` as specified by RFC 2388 with the form-field name `image_file`),
 or graphically, either by using the auto-generated `/docs` endpoint or by using our dedicated frontend made with `streamlit` which is probably
 the most user-friendly option.
 
@@ -617,7 +627,7 @@ the most user-friendly option.
 We made a few unit (integration) tests for our API obtaining a coverage of around 81%. The purpose of these tests are to verify the
 functionality of the service as a whole rather than testing the module as a unit in isolation.
 
-We made a simple `locustfile.py` using the locust framework for load testing, which tests the `/`, `/about/` and `/api/predict/` (using a dummy image).
+We made a simple `locustfile.py` using the locust framework for load testing, which tests the `/`, `/about/` and `/api/predict/preproduction/` endpoints (using a dummy image).
 This can be run locally, but in order to obtain the most representative result from the users perspective, we deploy another API instance to a testing server
 with specs identical to the production environment and use a GitHub action to run the locust load test. Following our pipeline architecture, this action
 is intended to be triggered manually by our "human-in-the-loop" to load test a pre-production model after completing the training stage. This serves as
@@ -636,7 +646,7 @@ a final quality control before pushing a new model to production.
 >
 > Answer:
 
-Yes, we managed to implement monitoring for our backend application. We used Google Cloud Monitoring to track the performance and health of our backend/API application by setting up alerting systems to notify us in our groups private Slack channel if the application was not behaving correctly. For this we used predefined metrics for Cloud Run revisions and certain thresholds monitoring request count, log entries, CPU utilization, and revision instance count. 
+Yes, we managed to implement monitoring for our backend application. We used Google Cloud Monitoring to track the performance and health of our backend/API application by setting up alerting systems to notify us in our groups private Slack channel if the application was not behaving correctly. For this we used predefined metrics for Cloud Run revisions and certain thresholds monitoring request count, log entries, CPU utilization, and revision instance count.
 
 Additionally, we manually monitored specific jobs and runs in GCP as our custom jobs in Vertex AI. Using the cloud console, we tracked metrics like CPU and GPU utilization, memory usage, and job completion times. This was to ensure that our training and inference processes were running efficiently and identify any potential issues. We also inspected the logs which provided real-time insights so we where able to track how the jobs have performed and potentially do debugging if nessecary.
 
@@ -658,9 +668,9 @@ Additionally, we manually monitored specific jobs and runs in GCP as our custom 
 >
 > Answer:
 
-In total, we have spent around 600 kr. in credits using free promotion codes during the development of the project in Google Cloud. The most expensive service was Compute Engine and Vertex AI services. This was primarily due to the costs associated with using VMs with allocated CPU and GPU instances for running the training of our models.
+In total, we have spent around 600 DKK in credits using free promotion codes during the development of the project in Google Cloud. The most expensive service was Compute Engine and Vertex AI services. This was primarily due to the costs associated with using VMs with allocated CPU and GPU instances for running the training of our models.
 
-Working in the cloud has been a valuable provided our group with scalable resources and many services. By using Google Cloud, we could manage and deploy our applications efficiently and with integration between the different services. Furthermore, we find it useable that GCP have an integration to GitHub Actions allowed us to run our CI/CD pipeline. 
+Working in the cloud has been a valuable provided our group with scalable resources and many services. By using Google Cloud, we could manage and deploy our applications efficiently and with integration between the different services. Furthermore, we find it useable that GCP have an integration to GitHub Actions allowed us to run our CI/CD pipeline.
 
 However, working in GCP required careful monitoring of resource usage to manage costs effectively. Our group also have the challenge to have Google to increase our quota limits which was necessary to run our training jobs efficiently. This process involved submitting a request to Google for the increased quota. Many of our quotas got rejected or Google having a long response time. We also found GCP as a complex platform to work on which required us to understand the various services and tools.
 
@@ -753,15 +763,17 @@ We also faced difficulties in setting up continuous integration and deployment (
 > *We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.*
 > Answer:
 
-* Student s233489 was in charge of
+* Student s233489 was in charge of developing the APIs using `fastapi` and a large part of the Continuous Integration/Continuous Deployment (CI/CD) pipeline using GH actions and docker to build,
+push and deploy containerized applications to Google Cloud Run. Furthermore, s233489 has also contributed with integration tests for said API, pre-commit config, and load testing using `locust`
+with automatic publication of test results to W&B using the `wandb` API.
 
-* Student jonnil focused on development of the model training, testing new functionalities both locally and in Google Cloud's Compute Engine, as well as running training jobs through Vertex AI. He also ensured correct logging of model checkpoints and training statistics to Weigths & Biases. 
+* Student jonnil focused on development of the model training, testing new functionalities both locally and in Google Cloud's Compute Engine, as well as running training jobs through Vertex AI. He also ensured correct logging of model checkpoints and training statistics to Weigths & Biases.
 
 * Student s091969 was responsible for version control of data and GCE bucket integration. Setup Continuous Machine Learning using GitHub Actions workflows with Vertex AI and docker in the training pipeline.
 
-* Student s233480 contributed to 
+* Student s233480 contributed to
 
-All members contributed to the source code by 
+All members contributed to the source code by
 
 We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.*
 
