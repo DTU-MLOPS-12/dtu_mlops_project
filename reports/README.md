@@ -181,15 +181,14 @@ pip install -r deps/requirements_train.txt
 
 This will ensures that all packages used in the whole project in their specific versions are installed, hereby replicating the exact environment. Note that currently sub-dependencies are not locked in the requirement files.
 
-Another option is the use `conda`. We provide and `invoke` task for creating a virtual environment using `conda`.
+Another option is `conda`. We provide and `invoke` task for creating a virtual environment using `conda`.
 To do so, simply run:
 
 ```bash
 invoke create-environment
 ```
 
-This will create the virtual environment `dtu_mlops_project`. You can now enter it, using `conda activate dtu_mlops_project` and proceed to installing dependencies with `pip` as described above
-to avoid a system-wide installation of the packages used in the project.
+This creates the virtual environment `dtu_mlops_project`. Activate it using `conda activate dtu_mlops_project` and install dependencies with `pip` as described above.
 
 ### Question 5
 
