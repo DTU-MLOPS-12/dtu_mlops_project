@@ -143,9 +143,9 @@ s233489, jonnil, s091969, s233480
 >
 > Answer:
 
-The third-party framework [TIMM (PyTorch Image Models) from Huggingface](https://github.com/huggingface/pytorch-image-models) was used in our project. We used functionality from the package to access a wide variety of pre-trained models and their associated utilities. By doing this, we could quickly experiment with different architectures and finetune a predefined model for our specific task.
+The third-party framework [TIMM (PyTorch Image Models) from Huggingface](https://github.com/huggingface/pytorch-image-models) was used in our project. We used functionality from the package to access a wide variety of models and the ImageNet-1k dataset. By doing this, we could quickly experiment with different architectures, sizes and finetune a image classification model for our specific task.
 
-As a starting point, we used a pre-made `train.py` script from the TIMM codebase, which provides a very high level of parameter customization either through command-line arguments or via a configuration file specifying the desired parameters. This script was modified with additional functionality related to our MLOps pipeline. As an example, an option to automatically detect the number of classes in the input data was added, such that a change in the input data would automatically be handled in the model construction.
+As a starting point, we used a pre-made `train.py` script from the TIMM codebase, which provides a very high level of parameter customization either through command-line arguments or via a configuration YAML-file specifying the desired parameters. This script was modified with additional functionality related to our MLOps pipeline. As an example, an option to automatically detect the number of classes in the input data was added, such that a change in the input data would automatically be handled in the model construction. 
 
 ## Coding environment
 
