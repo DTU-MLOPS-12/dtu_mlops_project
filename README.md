@@ -26,6 +26,36 @@ Resources:
 - [Structure created using mlops_template](https://github.com/SkafteNicki/mlops_template)
 
 
+## Installation
+- Setup first time
+    ```bash
+    cd /dtu_mlops_project 
+    sudo apt install python3.12-venv # Optional if not installed
+    python3 -m venv env  # create a virtual environment in project
+    source env/bin/activate  # activate that virtual environment
+    ```
+
+- Install pip requirements
+    ```bash
+    # install requirements.txt
+    pip install .
+    # or in developer mode requirements_dev.txt
+    pip install -e .
+    ```
+
+- Open project in VS Code with active env
+    ```bash
+    code .
+    ```
+
+- Deactivate env and delete files (debugging)
+    ```bash
+    cd /dtu_mlops_project
+    deactivate
+    python3 -m venv --clear env
+    ```
+
+
 ## MLOps pipeline
 
 The MLOps pipeline is semi-automatic with a "Human in the Loop" and consists of the following steps:
@@ -41,9 +71,25 @@ The new image classification model is now deployed. Visit the [frontend app](htt
 Note, that this workflow is for the model only. Development, testing and deployment of the services (frontend, API, etc.) are completely detached from
 the model, such that they can effectively be developed and improved in parallel without mutual dependence.
 
+### Change MLOps Pipeline
+
+
+- Start Draw.io server locally
+    ```shell
+    docker run -it --rm --name="draw" -p 8080:8080 -p 8443:8443 jgraph/drawio
+    ```
+
+- Service url `http://localhost:8080`
+
+- Open file path
+
+    ```shell
+    reports/figures/mlops_pipeline.png
+    ```
+
 ## Dataset
 
-Clone the git project repo and installing requremnts (see `Dev Environment Setup` below) you are ready to expand the classification model.
+Clone the git project repo and installing requremnts (see [dev environment setup](#dev-environment-setup) below) you are ready to expand the classification model.
 
 1. Identify relevant new [ImageNet-1k Class IDs](https://deeplearning.cms.waikato.ac.nz/user-guide/class-maps/IMAGENET/) to expand the dataset with and add to `configs/vehicle_classes.json` 
 2. Run the `data.py`to download the dataset to the `processed` folder. Add Huggingface as enviroment variable named `HUGGING_FACE_HUB_TOKEN` and run:
@@ -81,52 +127,6 @@ Or build the docker images and run
     git push
     ```
 
-
-
-## MLops tools
-
-### Dev Environment Setup
-- Setup first time
-    ```bash
-    cd /dtu_mlops_project 
-    sudo apt install python3.12-venv # Optional if not installed
-    python3 -m venv env  # create a virtual environment in project
-    source env/bin/activate  # activate that virtual environment
-    ```
-
-- Install pip requirements
-    ```bash
-    # install requirements.txt
-    pip install .
-    # or in developer mode requirements_dev.txt
-    pip install -e .
-    ```
-
-- Open project in VS Code with active env
-    ```bash
-    code .
-    ```
-
-- Deactivate env and delete files (debugging)
-    ```bash
-    cd /dtu_mlops_project
-    deactivate
-    python3 -m venv --clear env
-    ```
-
-### Linting
-
-- This [page](https://docs.astral.sh/ruff/) contains an overview of the Ruff tool, which is an extremely fast code linter and formatter. As an example, you can run the following:
-
-    ```bash
-    ruff check tasks.py
-    ```
-
-### Typing
-This [cheat sheet](https://mypy.readthedocs.io/en/stable/cheat_sheet_py3.html) is a good resource on typing. Run [mypy](https://mypy.readthedocs.io/en/stable/index.html) on the `tasks.py` file
-    ```bash
-    mypy tasks.py
-    ```
 
 ## Invoke Commands
 Information about all available executable tasks:
@@ -176,34 +176,8 @@ Information about all available executable tasks:
     invoke runserver
     ```
 
-### Documentation Commands
--  Build documentation from the docs directory into a static website:
-    ```bash 
-    invoke build-docs
-    ```
 
-- Starts a local server that can be used to view the documentation from the docs directory:
-    ```bash
-    invoke serve-docs
-    ```
-
-### CLI's
-
-This project comes with a few different scripts, each with their own options:
-
-### `data.py`
-
-### `evaluate.py`
-
-### `model.py`
-
-### `train.py`
-
-### `visualize.py`
-
-
-
-### GCP
+## Google Cloud Platform
 
 - Login
     ```bash
@@ -222,8 +196,7 @@ This project comes with a few different scripts, each with their own options:
     ```
 
 
-
-#### DVC Setup with Public Remote Storage
+### DVC Setup with Public Remote Storage
 
 - Initialized DVC repository.
     ```bash
@@ -269,7 +242,7 @@ This project comes with a few different scripts, each with their own options:
     git push
     ```
 
-## Building and pushing an image to the artifact registry
+### Building and pushing an image to the artifact registry
 
 - To build an OCI image using `docker`, simply run the following from the root directory of the project:
 
@@ -304,18 +277,4 @@ You can also use `docker compose` to build and run multiple containers at once.
 subsequently start them.
 
 
-### MLOps pipeline overview
 
-
-- Start Draw.io server locally
-    ```shell
-    docker run -it --rm --name="draw" -p 8080:8080 -p 8443:8443 jgraph/drawio
-    ```
-
-- Service url `http://localhost:8080`
-
-- Open file path
-
-    ```shell
-    reports/figures/mlops_pipeline.png
-    ```
