@@ -683,7 +683,7 @@ We implemented a frontend for our API using `streamlit` to improve user-friendli
 The frontend provides an easy way to use all of the different models that the API exposes to perform
 inference on images with a few clicks:
 
-![streamlit](figures/frontend_app.png)
+![streamlit frontend](figures/frontend_app.png)
 
 Furthermore, we experimented with quantization of our models to improve inference speed and reduce the model size. This involved running [quantized TIMM models](https://huggingface.co/blog/timm-transformers#running-quantized-timm-models) and using `dynamic_quantization` from [torch.quantization](https://pytorch.org/docs/stable/quantization.html) to convert our models to a quantized version. Unfortunately, the TIMM framework did not provide the `MobileNetV4` model through the `transformers` library and `torch.quantization` was not able to do `dynamic_quantization` on our model checkpoint.
 
