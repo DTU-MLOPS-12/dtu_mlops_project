@@ -698,18 +698,19 @@ Furthermore, we experimented with quantization of our models to improve inferenc
 >
 > Answer:
 
-![MLOps Architecture](figures/mlops.drawio.png)
+![MLOps Architecture](figures/mlops_pipeline.png)
 
-The diagram illustrates the overall architecture of the MLOps system, highlighting the various services and components involved in our project.
+The diagram illustrates the overall architecture of the MLOps pipeline where we highlight the various services and components involved in our project.
 
-The starting point of the process is the local development environment, where the user can interact with the code repository hosted on GitHub. Data versioning is managed using DVC (Data Version Control), which syncs datasets to Google Cloud Storage buckets. Any changes in the dataset or code are committed and pushed to the repository.
+The starting point of the diagram is the local development environment in the left side. A developer interact with the code repository hosted on GitHub by uploading a new version of the dataset. Data versioning is then used with DVC (Data Version Control), which syncs Google Cloud Storage buckets. Once changes to DVC are uploaded to a new branch with an open pull request into `main`, the first pipeline workflow is triggered along with automated tasks such as running tests and linting the code using `ruff`. Docker images are build and stored in Google Artifact Registry for deployment.
 
-Once changes to DVC are pushed, GitHub Actions is triggered to automate tasks such as building Docker images. The Docker images are then stored in the Google Artifact Registry for deployment.
+The pipeline leverages Vertex AI for model training and experimentation. When a data update occurs, Vertex AI starts training the updated model. Experiment results, metrics, and evaluations are logged to Weights & Biases (W&B) to track progress and compare model performance. 
 
-The pipeline leverages Vertex AI for model training and experimentation. When a data update occurs, Vertex AI starts training the updated model. Experiment results, metrics, and evaluations are logged to Weights & Biases (W&B) to track progress and compare model performance. The trained model is tested in a pre-production environment by deploying it as a test application using Google Cloud Run. Locust is used for load testing during this stage.
+After the training is complete, a newly trained model and metrics are avaliable at Weights & Baises for review by the experiment evaluator. If the predefined hyperparameters have resulted in a satisfactory model, the model is tested in a pre-production environment. This is done by tagging the model with `preprod` alias in Weights and Baises and activating the second pipeline workflow. This pipeline workflow deploys a test application using Google Cloud Run where `Locust` is used for load testing during this stage.
 
-Upon validation, the user can proceed to deploy the production model and applications via Cloud Run. The FastAPI service is used to provide REST APIs, while a Streamlit frontend enables user interaction.
+Upon sucessfull validation of the model, the developer can proceed to deploy the model to production. This involves tagging the model with `prod` alias in Weights and Baises and activate the third pipeline workflow. This workflow restarts the API service in the production environment to get the updated `prod` model deployed.
 
+The user can interact with the Streamlit Frontend, uploading images for classification. The frontend provides a REST API communication with the deployed API service. 
 
 
 ### Question 30
