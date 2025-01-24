@@ -103,17 +103,6 @@ Information about all available executable tasks:
     invoke runserver
     ```
 
-### Documentation Commands
--  Build documentation from the docs directory into a static website:
-    ```bash 
-    invoke build-docs
-    ```
-
-- Starts a local server that can be used to view the documentation from the docs directory:
-    ```bash
-    invoke serve-docs
-    ```
-
 
 ## MLOps pipeline
 

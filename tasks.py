@@ -97,20 +97,3 @@ def runserver(ctx: Context, port: int = 8000) -> None:
     :param port: socket port to run the backend on (default: 8000)
     """
     ctx.run(f"uvicorn --reload --port {port} dtu_mlops_project.api:app")
-
-
-# Documentation commands
-
-
-@task(dev_requirements)
-def build_docs(ctx: Context) -> None:
-    """Build documentation."""
-    ctx.run("mkdocs build --config-file docs/mkdocs.yaml --site-dir build",
-            echo=True, pty=not WINDOWS)
-
-
-@task(dev_requirements)
-def serve_docs(ctx: Context) -> None:
-    """Serve documentation."""
-    ctx.run("mkdocs serve --config-file docs/mkdocs.yaml",
-            echo=True, pty=not WINDOWS)
