@@ -3,7 +3,7 @@ httpx==0.28.1
 locust==2.32.6
 pillow==11.1.0
 python-multipart==0.0.20
-wandb==0.19.2
+wandb==0.19.5
 wandb-workspaces==0.1.8
 loguru==0.7.3
 typer==0.15.1
