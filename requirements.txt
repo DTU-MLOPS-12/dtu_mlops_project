@@ -2,7 +2,7 @@ torch==2.5.1
 timm==1.0.14
 datasets==3.2.0
 typer==0.15.1
-fastapi==0.115.6
+fastapi==0.115.8
 uvicorn==0.34.0
 pillow==11.1.0
 scikit-learn==1.6.1
