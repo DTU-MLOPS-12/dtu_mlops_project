@@ -12,7 +12,7 @@ locust==2.32.6
 wandb-workspaces==0.1.8
 
 # linting
-ruff==0.9.2
+ruff==0.9.6
 
 # typing
 mypy==1.14.1
